@@ -3,11 +3,11 @@
 In this repository we present a few examples for trading analytics that leverage 
 the Bayesian computation platform [NOA](https://github.com/grinisrit/noa) 
 and its experimental `kotlin-jvm` frontend 
-within the [KMath](https://github.com/mipt-npm/kmath) library. 
+within the [KMath](https://github.com/grinisrit/kmath/tree/feature/noa/kmath-noa) library. 
 
 ## Installation 
 
-Currently, the native artifacts are built only for `Unix` systems 
+Currently, the native artifacts are built only for `GNU`
 and `CUDA` as far as `GPU` execution is concerned.
 If you are on Windows, we recommend to install 
 everything on [WSL](https://docs.nvidia.com/cuda/wsl-user-guide/index.html).
