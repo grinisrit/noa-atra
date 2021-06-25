@@ -1,8 +1,9 @@
 # NOA: Analytics for Trading 
 
-In this repository we present a few examples for trading analytics that leverage the Bayesian computation platform 
-[NOA](https://github.com/grinisrit/noa) and its experimental `kotlin-jvm` 
-frontend within the [KMath](https://github.com/mipt-npm/kmath) library.
+In this repository we present a few examples for trading analytics that leverage 
+the Bayesian computation platform [NOA](https://github.com/grinisrit/noa) 
+and its experimental `kotlin-jvm` frontend 
+within the [KMath](https://github.com/mipt-npm/kmath) library. 
 
 ## Installation 
 
@@ -14,7 +15,11 @@ everything on [WSL](https://docs.nvidia.com/cuda/wsl-user-guide/index.html).
 For data storage you need to install 
 [MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/).
 
-## Data acquisition pipeline
+## High Frequency Trading in Crytocurrency markets
 
-We get the trading data feed from some of the major cryptocurrency exchanges. 
+We get the LOB data feed from some of the major cryptocurrency exchanges:
+
+* [Coinbase](https://docs.pro.coinbase.com/#the-level2-channel)
+* [Kraken](https://docs.kraken.com/websockets/#message-book/)
+* [Binance](https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md)
 
