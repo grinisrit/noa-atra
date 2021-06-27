@@ -19,7 +19,7 @@ For data storage you need to install
 
 We get the LOB data feed from the following cryptocurrency exchanges:
 
-* [Coinbase](https://docs.pro.coinbase.com/#the-level2-channel)
+* [Coinbase](https://docs.pro.coinbase.com/#websocket-feed)
 * [Kraken](https://docs.kraken.com/websockets/#message-book/)
 * [Binance](https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md)
 
