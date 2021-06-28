@@ -32,12 +32,11 @@ class MongoDBThread: Thread() {
 
         val client = KMongo.createClient(connStr)
         val database = client.getDatabase("coinbase")
-        val colHB = database.getCollection<CoinBaseChannelInfo>("heartbeat")
+        val col = database.getCollection<CoinBaseChannelInfo>("info")
 
         runBlocking {
             getMessage(socketSUB).collect {
-                println(it)
-                colHB.insertOne(it)
+                col.insertOne(it)
             }
         }
     }

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.zeromq.SocketType
 import org.zeromq.ZContext
+import java.io.File
 
 class CoinBaseThread : Thread() {
 
@@ -23,24 +24,15 @@ class CoinBaseThread : Thread() {
 
     }
 
-    val req = "{\n" +
-            "    \"type\": \"subscribe\",\n" +
-            "    \"product_ids\": [\n" +
-            "        \"ETH-USD\",\n" +
-            "        \"ETH-EUR\"\n" +
-            "    ],\n" +
-            "    \"channels\": [\n" +
-            "        \"heartbeat\"\n" +
-            "    ]\n" +
-            "}"
+    private val request = File("request.txt").readText()
 
     private fun info() = flow {
         val client = HttpClient(Java) {
             install(WebSockets)
         }
         client.wss(host = "ws-feed.pro.coinbase.com") {
-            send(Frame.Text(req))
-            incoming.receive() // todo make sense
+            send(Frame.Text(request))
+            println(incoming.receive())
             while (true) {
                 val frame = incoming.receive()
                 when (frame) {
