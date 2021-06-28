@@ -3,9 +3,8 @@ package com.grinisrit.crypto
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import org.litote.kmongo.KMongo
+import org.litote.kmongo.*
 import org.litote.kmongo.getCollection
 import org.zeromq.SocketType
 import org.zeromq.ZContext
@@ -17,8 +16,6 @@ class MongoDBThread: Thread() {
     val dbURL = "localhost"
     val dbPORT = "27017"
     val connStr = "mongodb://" + dbURL + ":" + dbPORT
-
-    val format = Json { isLenient = true }
 
     private fun getMessage(socketSUB: ZMQ.Socket) = flow {
         while (true) {
@@ -35,14 +32,12 @@ class MongoDBThread: Thread() {
 
         val client = KMongo.createClient(connStr)
         val database = client.getDatabase("coinbase")
-        val colHB = database.getCollection<Heartbeat>("heartbeat")
+        val colHB = database.getCollection<CoinBaseChannelInfo>("heartbeat")
 
         runBlocking {
             getMessage(socketSUB).collect {
                 println(it)
-                val hb = format.decodeFromString<Heartbeat>(it)
-                println(hb)
-                colHB.insertOne(hb)
+                colHB.insertOne(it)
             }
         }
     }
