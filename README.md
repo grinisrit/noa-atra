@@ -23,3 +23,9 @@ We get the LOB data feed from the following cryptocurrency exchanges:
 * [Binance](https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md)
 * [Deribit](https://docs.deribit.com/?python#subscriptions)
 
+for the pairs: 
+* USDBTC
+* EURBTC 
+* USDETH
+* EURETH
+* ETHBTC

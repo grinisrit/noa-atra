@@ -3,3 +3,8 @@ mongodb:
   address: localhost
   port: 27017
   status: on
+zeromq:
+  address:
+coinbase:
+  address: wss://ws-feed.pro.coinbase.com
+  status: on
