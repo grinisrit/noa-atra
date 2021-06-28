@@ -1,10 +1,17 @@
 package com.grinisrit.crypto
 
-//TODO: Andrei
+import java.io.File
+
 
 //TODO: provide path to conf.yaml as command line argument
 fun main(){
-    //TODO: read and parse configuration from conf.yaml
+
+    // plug, TODO: remove
+    val confPath = "conf.yaml"
+
+    val conf = parseConf(File(confPath).readText())
+
+    println(conf)
 
     //TODO: connect to MongoDB
 
@@ -17,4 +24,6 @@ fun main(){
     // with source: the WS stream from Coinbase
     // and sink: persisting data to MongoDB
     println("Fetching data from crypto exchanges")
+
+
 }
