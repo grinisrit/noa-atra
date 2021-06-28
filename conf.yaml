@@ -4,7 +4,9 @@ mongodb:
   port: 27017
   status: on
 zeromq:
-  address:
+  address: tcp://localhost
+  port: 5897
+  status: on
 coinbase:
   address: wss://ws-feed.pro.coinbase.com
   status: on
