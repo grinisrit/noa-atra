@@ -1,0 +1,5 @@
+version: 0.0.1
+mongodb:
+  address: localhost
+  port: 27017
+  status: on

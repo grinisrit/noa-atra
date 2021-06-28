@@ -13,7 +13,7 @@ module locally.
 
 For data storage, you have to install 
 [MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/).
-
+You can edit the configurations in [conf.yaml](conf.yaml) file.
 ## High Frequency Trading in Cryptocurrency markets
 
 We get the LOB data feed from the following cryptocurrency exchanges:
