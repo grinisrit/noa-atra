@@ -11,12 +11,14 @@ import org.zeromq.SocketType
 import org.zeromq.ZContext
 import java.io.File
 
-class CoinBaseThread : Thread() {
+class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() {
+
+    private val zeroMQAddress = "tcp://${zeroMQ.address}:${zeroMQ.port}"
 
     override fun run() {
         val context = ZContext()
         val socket = context.createSocket(SocketType.PUB)
-        socket.bind("tcp://localhost:5897")
+        socket.bind(zeroMQAddress)
 
         runBlocking {
             info().collect { socket.send(it) }
@@ -27,19 +29,20 @@ class CoinBaseThread : Thread() {
     private val request = File("request.txt").readText()
 
     private fun info() = flow {
+
         val client = HttpClient(Java) {
             install(WebSockets)
         }
-        client.wss(host = "ws-feed.pro.coinbase.com") {
+
+        client.wss(host = coinbase.address) {
             send(Frame.Text(request))
             println(incoming.receive())
             while (true) {
-                val frame = incoming.receive()
-                when (frame) {
+                when (val frame = incoming.receive()) {
                     is Frame.Text -> emit(frame.readText())
                 }
             }
-
         }
+
     }
 }

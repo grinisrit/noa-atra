@@ -1,17 +1,10 @@
 package com.grinisrit.crypto
 
-import io.ktor.client.*
-import io.ktor.client.features.websocket.*
-import io.ktor.http.*
-import io.ktor.http.cio.websocket.*
-import io.ktor.client.engine.java.*
-
-import kotlinx.coroutines.runBlocking
 import java.io.File
 
 
 //TODO: provide path to conf.yaml as command line argument
-fun main(){
+fun main() {
 
     // plug, TODO: remove
     val confPath = "conf.yaml"
@@ -28,14 +21,13 @@ fun main(){
     // the instruments "ETH-BTC" and "ETH-USD"
     // as in the example https://docs.pro.coinbase.com/#subscribe
 
-    val coinBaseThread = CoinBaseThread()
+    val coinBaseThread = CoinBaseThread(conf.coinbase, conf.zeromq)
 
     coinBaseThread.start()
 
-    val mongoDBThread = MongoDBThread()
+    val mongoDBThread = MongoDBThread(conf.mongodb, conf.zeromq)
 
     mongoDBThread.start()
-
 
 
     //TODO: set up a pub/sub broker using kotlinx.coroutines.flow and jeromq

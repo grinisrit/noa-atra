@@ -11,11 +11,11 @@ import org.zeromq.ZContext
 import org.zeromq.ZMQ
 
 
-class MongoDBThread: Thread() {
+class MongoDBThread(mongoDB: MongoDB, zeroMQ: ZeroMQ): Thread() {
 
-    val dbURL = "localhost"
-    val dbPORT = "27017"
-    val connStr = "mongodb://" + dbURL + ":" + dbPORT
+    private val mongoDBAddress = "mongodb://${mongoDB.address}:${mongoDB.port}"
+
+    private val zeroMQAddress = "tcp://${zeroMQ.address}:${zeroMQ.port}"
 
     private fun getMessage(socketSUB: ZMQ.Socket) = flow {
         while (true) {
@@ -27,10 +27,10 @@ class MongoDBThread: Thread() {
     override fun run() {
         val context = ZContext()
         val socketSUB = context.createSocket(SocketType.SUB)
-        socketSUB.connect("tcp://localhost:5897")
+        socketSUB.connect(zeroMQAddress)
         socketSUB.subscribe("")
 
-        val client = KMongo.createClient(connStr)
+        val client = KMongo.createClient(mongoDBAddress)
         val database = client.getDatabase("coinbase")
         val col = database.getCollection<CoinBaseChannelInfo>("info")
 

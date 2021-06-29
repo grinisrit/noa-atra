@@ -13,6 +13,7 @@ data class MongoDB(
 @Serializable
 data class ZeroMQ(
     val address: String,
+    val port: String,
 )
 
 @Serializable
