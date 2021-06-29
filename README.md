@@ -17,9 +17,13 @@ You can edit the configurations in the [conf.yaml](conf.yaml) file.
 
 ## High Frequency Trading in Cryptocurrency Markets
 
-In this study, you will find the data collection utilities 
+In this study, we explore the impact of High Frequency Trading 
+on execution costs and liquidity for several 
+Cryptocurrency exchanges.
+
+You will find the data collection utilities 
 within [crypto-hft-data](crypto-hft-analytics).
-We get the LOB data feed from the following cryptocurrency exchanges:
+We get the LOB data feed from the following exchanges:
 
 * [Coinbase](https://docs.pro.coinbase.com/#websocket-feed)
 * [Kraken](https://docs.kraken.com/websockets/#message-book/)
@@ -33,16 +37,15 @@ for the pairs:
 * EURETH
 * ETHBTC
 
-Once you've collected a bit of data you can study the impact of
-High Frequency Traders on the execution costs and liquidity with
+Once you've collected a bit of data you can run the analysis with
 the models we provide in [crypto-hft-analytics](crypto-hft-analytics). 
 
-For the above modules, we kindly acknowledge contributions from:
+We are very grateful to contributions from:
 * [Roland Grinis, GrinisRIT ltd.](https://github.com/grinisrit)
 * [Andrei Kislitsin](https://github.com/AndreiKingsley)
 
-We are very grateful to the support from 
-[JetBrain Research](https://research.jetbrains.org/) and
+We kindly acknowledge support from 
+[JetBrains Research](https://research.jetbrains.org/) and
 [Finery Markets](https://finerymarkets.com/).
 
 (c) 2021 noa-atra-examples contributors
