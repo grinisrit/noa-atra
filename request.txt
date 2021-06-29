@@ -1,0 +1,12 @@
+{
+    "type": "subscribe",
+    "product_ids": [
+        "ETH-BTC",
+        "ETH-USD"
+    ],
+    "channels": [
+        "level2",
+        "heartbeat",
+        "ticker"
+    ]
+}
