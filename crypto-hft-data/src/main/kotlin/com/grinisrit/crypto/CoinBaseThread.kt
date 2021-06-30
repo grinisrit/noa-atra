@@ -12,7 +12,8 @@ import org.zeromq.SocketType
 import org.zeromq.ZContext
 import java.io.File
 
-val reconnectDelay = 10000L
+const val incomingCheckDelay = 3000L
+const val reconnectDelay = 6000L
 
 class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() {
 
@@ -22,7 +23,6 @@ class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() 
         val context = ZContext()
         val socket = context.createSocket(SocketType.PUB)
         socket.bind(zeroMQAddress)
-
 
         runBlocking {
             while (true) {
@@ -52,20 +52,23 @@ class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() 
             send(Frame.Text(request))
             when (val frame = incoming.receive()) {
                 is Frame.Text -> {
+                    println("Request sent. Server response:")
                     println(frame.readText())
                 }
             }
             while (true) {
                 if (incoming.isEmpty) {
-                    delay(reconnectDelay)
+                    println("Incoming is empty. Waiting...")
+                    delay(incomingCheckDelay)
                     if (incoming.isEmpty) {
-                        println("disconnect")
+                        println("Disconnect")
                         break
                     }
                 }
                 when (val frame = incoming.receive()) {
                     is Frame.Text -> {
                         emit(frame.readText())
+                        delay(1000L)
                     }
                 }
             }
