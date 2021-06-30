@@ -56,7 +56,9 @@ class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() 
                     println(frame.readText())
                 }
             }
+
             while (true) {
+
                 if (incoming.isEmpty) {
                     println("Incoming is empty. Waiting...")
                     delay(incomingCheckDelay)
@@ -65,10 +67,10 @@ class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() 
                         break
                     }
                 }
+
                 when (val frame = incoming.receive()) {
                     is Frame.Text -> {
                         emit(frame.readText())
-                        delay(1000L)
                     }
                 }
             }
