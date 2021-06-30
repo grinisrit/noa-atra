@@ -23,18 +23,12 @@ Cryptocurrency exchanges.
 
 You will find the data collection utilities 
 within [crypto-hft-data](crypto-hft-analytics).
-We get the LOB data feed from the following exchanges:
+We get the LOB data feed from the following exchange:
 
 * [Coinbase](https://docs.pro.coinbase.com/#websocket-feed)
-* [Kraken](https://docs.kraken.com/websockets/#message-book/)
-* [Binance](https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md)
-* [Deribit](https://docs.deribit.com/?python#subscriptions)
 
 for the pairs: 
-* USDBTC
-* EURBTC 
-* USDETH
-* EURETH
+* BTCUSD
 * ETHBTC
 
 Once you've collected a bit of data you can run the analysis with
