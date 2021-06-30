@@ -31,8 +31,8 @@ class MongoDBThread(mongoDB: MongoDB, zeroMQ: ZeroMQ): Thread() {
         socketSUB.subscribe("")
 
         val client = KMongo.createClient(mongoDBAddress)
-        val database = client.getDatabase("coinbase")
-        val col = database.getCollection<CoinBaseChannelInfo>("info")
+        val database = client.getDatabase("crypto-hft")
+        val col = database.getCollection<CoinBaseChannelInfo>("coinbase")
 
         runBlocking {
             getMessage(socketSUB).collect {
