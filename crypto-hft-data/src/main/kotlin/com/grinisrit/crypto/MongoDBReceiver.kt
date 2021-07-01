@@ -1,5 +1,7 @@
 package com.grinisrit.crypto
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -11,32 +13,37 @@ import org.zeromq.ZContext
 import org.zeromq.ZMQ
 
 
-class MongoDBThread(mongoDB: MongoDB, zeroMQ: ZeroMQ): Thread() {
 
-    private val mongoDBAddress = "mongodb://${mongoDB.address}:${mongoDB.port}"
 
-    private val zeroMQAddress = "tcp://${zeroMQ.address}:${zeroMQ.port}"
+class MongoDBReceiver(val channelName: String, mongoDB: MongoDB, zeroMQ: ZeroMQ) {
 
-    private fun getMessage(socketSUB: ZMQ.Socket) = flow {
+     val mapper = jacksonObjectMapper()
+
+     val mongoDBAddress = "mongodb://${mongoDB.address}:${mongoDB.port}"
+
+     val zeroMQAddress = "tcp://${zeroMQ.address}:${zeroMQ.port}"
+
+     fun getMessage(socketSUB: ZMQ.Socket) = flow {
         while (true) {
             val data = socketSUB.recvStr()
             emit(data)
         }
     }
 
-    override fun run() {
+    inline fun <reified T: CoinBaseChannel> mongoConnect() {
         val context = ZContext()
         val socketSUB = context.createSocket(SocketType.SUB)
         socketSUB.connect(zeroMQAddress)
-        socketSUB.subscribe("")
+        socketSUB.subscribe("{\"type\":\"$channelName\"")
 
         val client = KMongo.createClient(mongoDBAddress)
         val database = client.getDatabase("coinbase")
-        val col = database.getCollection<CoinBaseChannelInfo>("info")
+        val col = database.getCollection<T>(channelName)
 
         runBlocking {
             getMessage(socketSUB).collect {
-                col.insertOne(it)
+                val hb: T = mapper.readValue(it)
+                col.insertOne(hb)
             }
         }
     }
