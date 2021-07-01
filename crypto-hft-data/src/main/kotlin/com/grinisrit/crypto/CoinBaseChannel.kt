@@ -9,7 +9,7 @@ interface CoinBaseChannel {
 
 interface CoinBaseChannelTime : CoinBaseChannel {
     val time: String
-    val dateTime: Date
+    val date_time: Date
         get() = cbTimeToDate(time)
 }
 
@@ -34,6 +34,11 @@ data class Ticker(
     val last_size: String,
     val best_bid: String,
     val best_ask: String,
+    val open_24h: String,
+    val volume_24h: String,
+    val low_24h: String,
+    val high_24h: String,
+    val volume_30d: String,
 ) : CoinBaseChannelTime
 
 @Serializable
