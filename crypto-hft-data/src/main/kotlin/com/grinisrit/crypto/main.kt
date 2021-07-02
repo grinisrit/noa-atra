@@ -21,10 +21,10 @@ fun main() {
     // the instruments "ETH-BTC" and "ETH-USD"
     // as in the example https://docs.pro.coinbase.com/#subscribe
 
+
     val coinBaseThread = CoinBaseThread(conf.coinbase, conf.zeromq)
 
     coinBaseThread.start()
-
 
     val mongoHeartbeat = Runnable {
         val receiver = MongoDBReceiver("heartbeat", conf.mongodb, conf.zeromq)
@@ -32,11 +32,13 @@ fun main() {
     }
     Thread(mongoHeartbeat).start()
 
+
     val mongoTicker = Runnable {
         val receiver = MongoDBReceiver("ticker", conf.mongodb, conf.zeromq)
         receiver.mongoConnect<Ticker>()
     }
     Thread(mongoTicker).start()
+
 
     val mongoSnapshot = Runnable {
         val receiver = MongoDBReceiver("snapshot", conf.mongodb, conf.zeromq)

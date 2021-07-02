@@ -7,12 +7,10 @@ import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.*
-import org.litote.kmongo.inc
 import org.zeromq.SocketType
 import org.zeromq.ZContext
 import java.io.File
 import java.lang.Exception
-import java.text.SimpleDateFormat
 import java.util.*
 
 const val incomingCheckDelay = 2000L
@@ -22,7 +20,7 @@ const val coinbaseReconnectDelay = 4000L
 
 class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() {
 
-    val calendar = Calendar.getInstance()
+    private val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
 
     var lastConnectionTime: Long = 0L
 
@@ -43,7 +41,6 @@ class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() 
                     val delta = currentTime - lastConnectionTime
 
                     delay(coinbaseReconnectDelay - delta)
-
 
                     lastConnectionTime = calendar.timeInMillis
                     info().collect {
@@ -81,7 +78,8 @@ class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() 
 
             for (frame in incoming) {
                 frame as? Frame.Text ?: continue
-                emit(frame.readText())
+                val dateTime = cbFormat(calendar.time)
+                emit("${frame.readText()}///<>///$dateTime")
             }
 
 

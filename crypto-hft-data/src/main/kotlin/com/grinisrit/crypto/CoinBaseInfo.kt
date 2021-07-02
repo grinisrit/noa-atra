@@ -3,11 +3,11 @@ package com.grinisrit.crypto
 import kotlinx.serialization.Serializable
 import java.util.*
 
-interface CoinBaseChannel {
+interface CoinBaseInfo {
     val type: String
 }
 
-interface CoinBaseChannelTime : CoinBaseChannel {
+interface CoinBaseInfoTime : CoinBaseInfo {
     val time: String
     val date_time: Date
         get() = cbTimeToDate(time)
@@ -20,7 +20,7 @@ data class Heartbeat(
     val last_trade_id: Long,
     val product_id: String,
     override val time: String,
-) : CoinBaseChannelTime
+) : CoinBaseInfoTime
 
 @Serializable
 data class Ticker(
@@ -39,7 +39,7 @@ data class Ticker(
     val low_24h: String,
     val high_24h: String,
     val volume_30d: String,
-) : CoinBaseChannelTime
+) : CoinBaseInfoTime
 
 @Serializable
 data class Snapshot(
@@ -47,7 +47,7 @@ data class Snapshot(
     val product_id: String,
     val bids: List<List<String>>,
     val asks: List<List<String>>,
-) : CoinBaseChannel
+) : CoinBaseInfo
 
 @Serializable
 data class L2Update(
@@ -55,4 +55,4 @@ data class L2Update(
     val product_id: String,
     override val time: String,
     val changes: List<List<String>>,
-) : CoinBaseChannelTime
+) : CoinBaseInfoTime
