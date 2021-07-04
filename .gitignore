@@ -40,3 +40,5 @@ dist/
 # User data
 data/
 *.pt
+
+log.txt

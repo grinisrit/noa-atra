@@ -38,7 +38,7 @@ class MongoDBReceiver(val channelName: String, mongoDB: MongoDB, zeroMQ: ZeroMQ)
         socketSUB.subscribe("{\"type\":\"$channelName\"")
 
         val client = KMongo.createClient(mongoDBAddress)
-        val database = client.getDatabase("coinbase")
+        val database = client.getDatabase("coinbase0407")
         val col = database.getCollection<MongoCBInfo<T>>(channelName)
 
         runBlocking {

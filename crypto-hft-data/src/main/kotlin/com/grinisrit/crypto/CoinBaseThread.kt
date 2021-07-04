@@ -23,7 +23,8 @@ const val coinbaseReconnectDelay = 4000L
 
 class CoinBaseThread(private val coinbase: Coinbase, zeroMQ: ZeroMQ) : Thread() {
 
-    private val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+    private val calendar: Calendar
+    get() = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
 
     var lastConnectionTime: Long = 0L
 
