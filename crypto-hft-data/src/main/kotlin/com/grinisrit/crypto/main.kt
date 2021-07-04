@@ -21,13 +21,36 @@ fun main() {
     // the instruments "ETH-BTC" and "ETH-USD"
     // as in the example https://docs.pro.coinbase.com/#subscribe
 
+
     val coinBaseThread = CoinBaseThread(conf.coinbase, conf.zeromq)
 
     coinBaseThread.start()
 
-    val mongoDBThread = MongoDBThread(conf.mongodb, conf.zeromq)
+    val mongoHeartbeat = Runnable {
+        val receiver = MongoDBReceiver("heartbeat", conf.mongodb, conf.zeromq)
+        receiver.mongoConnect<Heartbeat>()
+    }
+    Thread(mongoHeartbeat).start()
 
-    mongoDBThread.start()
+
+    val mongoTicker = Runnable {
+        val receiver = MongoDBReceiver("ticker", conf.mongodb, conf.zeromq)
+        receiver.mongoConnect<Ticker>()
+    }
+    Thread(mongoTicker).start()
+
+
+    val mongoSnapshot = Runnable {
+        val receiver = MongoDBReceiver("snapshot", conf.mongodb, conf.zeromq)
+        receiver.mongoConnect<Snapshot>()
+    }
+    Thread(mongoSnapshot).start()
+
+    val mongoL2Update = Runnable {
+        val receiver = MongoDBReceiver("l2update", conf.mongodb, conf.zeromq)
+        receiver.mongoConnect<L2Update>()
+    }
+    Thread(mongoL2Update).start()
 
 
     //TODO: set up a pub/sub broker using kotlinx.coroutines.flow and jeromq
