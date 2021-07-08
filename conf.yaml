@@ -7,5 +7,5 @@ zeromq:
   address: localhost
   port: 5897
 coinbase:
-  address: ws-feed.pro.coinbase.com
+  address: wss://ws-feed.pro.coinbase.com
   status: on

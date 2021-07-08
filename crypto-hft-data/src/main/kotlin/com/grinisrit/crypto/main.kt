@@ -1,5 +1,7 @@
 package com.grinisrit.crypto
 
+import com.grinisrit.crypto.coinbase.CoinbaseMongoDBClient
+import com.grinisrit.crypto.coinbase.CoinbaseWebsocketClient
 import org.zeromq.SocketType
 import org.zeromq.ZContext
 import java.io.File
@@ -7,6 +9,7 @@ import java.io.File
 
 //TODO: provide path to conf.yaml as command line argument
 fun main() {
+
 
     // plug, TODO: remove
     val confPath = "conf.yaml"
@@ -25,18 +28,22 @@ fun main() {
     val zeroMQAddress = "tcp://${conf.zeromq.address}:${conf.zeromq.port}"
     socket.bind(zeroMQAddress)
 
-    val coinBaseThread = CoinbaseWebsocketClient(
+    val client = CoinbaseWebsocketClient(
         conf.coinbase.address,
         socket,
-        File("coinbase/request.txt").readText()
+        File("platforms/coinbase/request.txt").readText()
     )
 
-    coinBaseThread.start()
+    client.start()
 
 
-    val mongoCoinbaseClient = CoinbaseMongoClient(conf.mongodb, conf.zeromq)
+    val mongoCoinbaseClient = CoinbaseMongoDBClient(conf.mongodb, conf.zeromq)
 
     mongoCoinbaseClient.start()
+
+
+
+
 
 
 

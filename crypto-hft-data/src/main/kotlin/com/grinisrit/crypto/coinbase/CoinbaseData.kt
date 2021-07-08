@@ -1,13 +1,11 @@
-package com.grinisrit.crypto
+package com.grinisrit.crypto.coinbase
 
 import com.beust.klaxon.TypeAdapter
 import com.beust.klaxon.TypeFor
+import com.grinisrit.crypto.ChannelData
 import kotlinx.serialization.Serializable
 import java.time.Instant
-import java.util.*
 import kotlin.reflect.KClass
-
-interface ChannelData
 
 @TypeFor(field = "type", adapter = CoinBaseDataTypeAdapter::class)
 interface CoinbaseData : ChannelData {

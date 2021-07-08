@@ -1,6 +1,7 @@
-package com.grinisrit.crypto
+package com.grinisrit.crypto.common
 
 import com.beust.klaxon.Klaxon
+import com.grinisrit.crypto.ChannelData
 import java.time.Instant
 
 // TODO() mb refactor

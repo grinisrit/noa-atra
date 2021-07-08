@@ -3,6 +3,7 @@ package com.grinisrit.crypto
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.grinisrit.crypto.coinbase.Ticker
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -17,10 +18,8 @@ import space.kscience.plotly.server.close
 import space.kscience.plotly.server.pushUpdates
 import space.kscience.plotly.server.serve
 import space.kscience.plotly.server.show
-import java.util.concurrent.BlockingQueue
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.LinkedTransferQueue
 
 fun getMessage() = flow {
     val channelName = "ticker"

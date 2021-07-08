@@ -1,0 +1,7 @@
+    {
+    "jsonrpc": "2.0",
+     "method": "public/subscribe",
+     "id": 42,
+     "params": {
+        "channels": ["ticker.BTC-PERPETUAL.100ms"]}
+    }

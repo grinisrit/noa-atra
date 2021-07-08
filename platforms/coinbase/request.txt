@@ -2,8 +2,8 @@
     "type": "subscribe",
     "product_ids": [
         "ETH-BTC",
-        "BTC-USD",
-        "ETH-USD"
+        "BTC-USDT",
+        "ETH-USDT"
     ],
     "channels": [
         "level2",

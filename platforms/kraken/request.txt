@@ -1,0 +1,10 @@
+{
+  "event": "subscribe",
+  "pair": [
+    "XBT/USD",
+    "XBT/EUR"
+  ],
+  "subscription": {
+    "name": "ticker"
+  }
+}

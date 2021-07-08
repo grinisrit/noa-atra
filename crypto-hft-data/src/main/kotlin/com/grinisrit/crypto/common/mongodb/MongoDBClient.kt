@@ -1,5 +1,9 @@
-package com.grinisrit.crypto
+package com.grinisrit.crypto.common.mongodb
 
+import com.grinisrit.crypto.MongoDB
+import com.grinisrit.crypto.ZeroMQ
+import com.grinisrit.crypto.coinbase.CoinbaseData
+import com.grinisrit.crypto.common.DataTransport
 import com.mongodb.client.MongoDatabase
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -11,7 +15,7 @@ import org.zeromq.ZContext
 import org.zeromq.ZMQ
 
 
-abstract class MongoClient(val platformName: String, mongoDB: MongoDB, zeroMQ: ZeroMQ) : Thread() {
+abstract class MongoDBClient(val platformName: String, mongoDB: MongoDB, zeroMQ: ZeroMQ) : Thread() {
 
     val mongoDBAddress = "mongodb://${mongoDB.address}:${mongoDB.port}"
 
@@ -40,12 +44,4 @@ abstract class MongoClient(val platformName: String, mongoDB: MongoDB, zeroMQ: Z
         }
     }
 
-}
-
-class CoinbaseMongoClient(mongoDB: MongoDB, zeroMQ: ZeroMQ) : MongoClient("coinbase", mongoDB, zeroMQ) {
-    override fun handleData(data: String, database: MongoDatabase) {
-        val dataTime = DataTransport.fromDataString<CoinbaseData>(data)
-        val col = database.getCollection<DataTransport.DataTime<CoinbaseData>>(dataTime.data.type)
-        col.insertOne(dataTime)
-    }
 }
