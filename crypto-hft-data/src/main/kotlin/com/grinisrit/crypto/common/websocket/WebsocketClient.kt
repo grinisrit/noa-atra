@@ -76,8 +76,7 @@ abstract class WebsocketClient(
         client.wss(urlString = address) {
             this.receiveData().collect { emit(it) }
         }
-
         client.close()
-
     }
 }
+

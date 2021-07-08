@@ -10,5 +10,4 @@ interface Platform
 @Serializable
 data class Coinbase(
     val address: String,
-    val status: String,
 ) : Platform

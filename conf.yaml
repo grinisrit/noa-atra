@@ -2,10 +2,8 @@ version: 0.0.1
 mongodb:
   address: localhost
   port: 27017
-  status: on
 zeromq:
   address: localhost
   port: 5897
 coinbase:
   address: wss://ws-feed.pro.coinbase.com
-  status: on
