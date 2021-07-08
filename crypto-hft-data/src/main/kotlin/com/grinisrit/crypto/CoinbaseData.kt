@@ -1,16 +1,33 @@
 package com.grinisrit.crypto
 
+import com.beust.klaxon.TypeAdapter
+import com.beust.klaxon.TypeFor
 import kotlinx.serialization.Serializable
+import java.time.Instant
 import java.util.*
+import kotlin.reflect.KClass
 
-interface CoinBaseInfo {
+interface ChannelData
+
+@TypeFor(field = "type", adapter = CoinBaseDataTypeAdapter::class)
+interface CoinbaseData : ChannelData {
     val type: String
 }
 
-interface CoinBaseInfoTime : CoinBaseInfo {
+class CoinBaseDataTypeAdapter: TypeAdapter<CoinbaseData> {
+    override fun classFor(type: Any): KClass<out CoinbaseData> = when(type as String) {
+        "heartbeat" -> Heartbeat::class
+        "ticker" -> Ticker::class
+        "snapshot" -> Snapshot::class
+        "l2update" -> L2Update::class
+        else -> throw IllegalArgumentException("Unknown type: $type")
+    }
+}
+
+interface CoinbaseDataTime : CoinbaseData {
     val time: String
-    val date_time: Date
-        get() = cbTimeToDate(time)
+    val datetime: Instant
+        get() = Instant.parse(time)
 }
 
 @Serializable
@@ -20,7 +37,7 @@ data class Heartbeat(
     val last_trade_id: Long,
     val product_id: String,
     override val time: String,
-) : CoinBaseInfoTime
+) : CoinbaseDataTime
 
 @Serializable
 data class Ticker(
@@ -39,7 +56,7 @@ data class Ticker(
     val low_24h: String,
     val high_24h: String,
     val volume_30d: String,
-) : CoinBaseInfoTime
+) : CoinbaseDataTime
 
 @Serializable
 data class Snapshot(
@@ -47,7 +64,7 @@ data class Snapshot(
     val product_id: String,
     val bids: List<List<String>>,
     val asks: List<List<String>>,
-) : CoinBaseInfo
+) : CoinbaseData
 
 @Serializable
 data class L2Update(
@@ -55,4 +72,4 @@ data class L2Update(
     val product_id: String,
     override val time: String,
     val changes: List<List<String>>,
-) : CoinBaseInfoTime
+) : CoinbaseDataTime

@@ -17,12 +17,6 @@ data class ZeroMQ(
 )
 
 @Serializable
-data class Coinbase(
-    val address: String,
-    val status: String,
-)
-
-@Serializable
 data class ConfYAMl(
     val version: String,
     val mongodb: MongoDB,

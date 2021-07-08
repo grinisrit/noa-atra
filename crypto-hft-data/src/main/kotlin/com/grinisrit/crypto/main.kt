@@ -1,5 +1,7 @@
 package com.grinisrit.crypto
 
+import org.zeromq.SocketType
+import org.zeromq.ZContext
 import java.io.File
 
 
@@ -11,8 +13,6 @@ fun main() {
 
     val conf = parseConf(File(confPath).readText())
 
-    //println(conf)
-
     //TODO: connect to MongoDB
 
 
@@ -20,37 +20,26 @@ fun main() {
     // heartbeat, level2 and ticker channels for
     // the instruments "ETH-BTC" and "ETH-USD"
     // as in the example https://docs.pro.coinbase.com/#subscribe
+    val context = ZContext()
+    val socket = context.createSocket(SocketType.PUB)
+    val zeroMQAddress = "tcp://${conf.zeromq.address}:${conf.zeromq.port}"
+    socket.bind(zeroMQAddress)
 
-
-    val coinBaseThread = CoinBaseThread(conf.coinbase, conf.zeromq)
+    val coinBaseThread = CoinbaseWebsocketClient(
+        conf.coinbase.address,
+        socket,
+        File("coinbase/request.txt").readText()
+    )
 
     coinBaseThread.start()
 
-    val mongoHeartbeat = Runnable {
-        val receiver = MongoDBReceiver("heartbeat", conf.mongodb, conf.zeromq)
-        receiver.mongoConnect<Heartbeat>()
-    }
-    Thread(mongoHeartbeat).start()
+
+    val mongoCoinbaseClient = CoinbaseMongoClient(conf.mongodb, conf.zeromq)
+
+    mongoCoinbaseClient.start()
 
 
-    val mongoTicker = Runnable {
-        val receiver = MongoDBReceiver("ticker", conf.mongodb, conf.zeromq)
-        receiver.mongoConnect<Ticker>()
-    }
-    Thread(mongoTicker).start()
 
-
-    val mongoSnapshot = Runnable {
-        val receiver = MongoDBReceiver("snapshot", conf.mongodb, conf.zeromq)
-        receiver.mongoConnect<Snapshot>()
-    }
-    Thread(mongoSnapshot).start()
-
-    val mongoL2Update = Runnable {
-        val receiver = MongoDBReceiver("l2update", conf.mongodb, conf.zeromq)
-        receiver.mongoConnect<L2Update>()
-    }
-    Thread(mongoL2Update).start()
 
 
     //TODO: set up a pub/sub broker using kotlinx.coroutines.flow and jeromq

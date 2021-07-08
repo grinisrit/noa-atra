@@ -14,6 +14,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 dependencies {
+    implementation(project(":crypto-hft-data"))
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("org.zeromq:jeromq:0.5.0")
@@ -25,9 +27,5 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("io.ktor:ktor-client-websockets:1.6.0")
     implementation("io.ktor:ktor-client-java:1.6.0")
-    implementation("io.ktor:ktor-client-apache:1.6.0")
-    implementation("io.ktor:ktor-client-cio:1.6.0")
     implementation("space.kscience:plotlykt-server:0.4.2")
-
-    implementation("com.beust:klaxon:5.5")
 }

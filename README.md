@@ -38,6 +38,9 @@ for the pairs:
 Once you've collected a bit of data you can run the analysis with
 the models we provide in [crypto-hft-analytics](crypto-hft-analytics). 
 
+The module [crypto-hft-visual](crypto-hft-visual) 
+provides the visualisation apps.
+
 We are very grateful to contributions from:
 * [Roland Grinis, GrinisRIT ltd.](https://github.com/grinisrit)
 * [Andrei Kislitsin](https://github.com/AndreiKingsley)
