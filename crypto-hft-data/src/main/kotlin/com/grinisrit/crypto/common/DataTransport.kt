@@ -2,6 +2,8 @@ package com.grinisrit.crypto.common
 
 import com.beust.klaxon.Klaxon
 import com.grinisrit.crypto.ChannelData
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import java.time.Instant
 
 // TODO() mb refactor
@@ -34,6 +36,14 @@ object DataTransport {
         return DataTime(
             Instant.parse(receivingDateTimeString),
             Klaxon().parse<T>(dataJSON)!! // TODO() refactor
+        )
+    }
+
+    inline fun <reified T : ChannelData> fromDataString(dataString: String, serializer: JsonContentPolymorphicSerializer<T>): DataTime<T> {
+        val (_, receivingDateTimeString, dataJSON) = dataString.split(internalDelimiter)
+        return DataTime(
+            Instant.parse(receivingDateTimeString),
+            Json.decodeFromString(serializer, dataJSON)
         )
     }
 }

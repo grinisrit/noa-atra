@@ -2,8 +2,17 @@ version: 0.0.1
 mongodb:
   address: localhost
   port: 27017
-zeromq:
-  address: localhost
-  port: 5897
-coinbase:
-  address: wss://ws-feed.pro.coinbase.com
+  status: on
+platforms:
+  coinbase:
+    websocket_address: wss://ws-feed.pro.coinbase.com
+    zeromq_address: tcp://localhost:5897
+    status: on
+  deribit:
+    websocket_address: wss://deribit.com/ws/api/v2
+    zeromq_address: tcp://localhost:5898
+    status: on
+  binance:
+    websocket_address: wss://stream.binance.com:9443/ws
+    zeromq_address: tcp://localhost:5899
+    status: on

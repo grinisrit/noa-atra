@@ -1,16 +1,16 @@
 package com.grinisrit.crypto.common.websocket
 
-import com.grinisrit.crypto.common.DataTransport
+import com.grinisrit.crypto.Platform
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
-import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import org.zeromq.ZMQ
+import org.zeromq.SocketType
+import org.zeromq.ZContext
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -18,12 +18,10 @@ import java.time.Instant
 
 
 abstract class WebsocketClient(
-    protected val platformName: String,
-    private val address: String,
-    private val zeroMQPubSocket: ZMQ.Socket,
+    protected val platform: Platform,
     private val backendReconnectTimeout: Long = 5000L,
-    private val incomingCheckDelay: Long = 2000L,
-    logFilePath: String = "platforms/$platformName/log.txt"
+    private val socketTimeoutMillis: Long = 2000L,
+    logFilePath: String = "platforms/${platform.platformName}/log.txt"
 ) : Thread() {
 
     var lastConnectionTimeMilli: Long = 0L
@@ -35,6 +33,10 @@ abstract class WebsocketClient(
     }
 
     override fun run() {
+
+        val context = ZContext()
+        val socket = context.createSocket(SocketType.PUB)
+        socket.bind(platform.zeromq_address)
 
         runBlocking {
             while (true) {
@@ -50,7 +52,7 @@ abstract class WebsocketClient(
                     lastConnectionTimeMilli = Instant.now().toEpochMilli()
 
                     dataFlow().collect {
-                        zeroMQPubSocket.send(it)
+                        socket.send(it)
                     }
 
                 } catch (e: Throwable) {
@@ -65,15 +67,15 @@ abstract class WebsocketClient(
     abstract fun DefaultClientWebSocketSession.receiveData(): Flow<String>
 
     private fun dataFlow() = flow {
-
+        // TODO()
         val client = HttpClient(CIO) {
             install(WebSockets)
             install(HttpTimeout) {
-                socketTimeoutMillis = incomingCheckDelay
+    //            socketTimeoutMillis = this@WebsocketClient.socketTimeoutMillis
             }
         }
 
-        client.wss(urlString = address) {
+        client.wss(urlString = platform.websocket_address) {
             this.receiveData().collect { emit(it) }
         }
         client.close()

@@ -1,8 +1,12 @@
 {
   "method": "SUBSCRIBE",
   "params": [
-    "btcusdt@aggTrade",
-    "btcusdt@depth"
+    "ethusdt@trade",
+    "ethbtc@trade",
+    "btcusdt@trade",
+    "btcusdt@depth5@100ms",
+    "ethbtc@depth5@100ms",
+    "ethusdt@depth5@100ms"
   ],
   "id": 1
 }
