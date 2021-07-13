@@ -2,7 +2,7 @@ package com.grinisrit.crypto.coinbase
 
 import com.beust.klaxon.TypeAdapter
 import com.beust.klaxon.TypeFor
-import com.grinisrit.crypto.ChannelData
+import com.grinisrit.crypto.common.ChannelData
 import kotlinx.serialization.Serializable
 import java.time.Instant
 import kotlin.reflect.KClass

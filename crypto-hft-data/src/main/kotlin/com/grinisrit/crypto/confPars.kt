@@ -7,20 +7,13 @@ import kotlinx.serialization.Serializable
 data class MongoDB(
     val address: String,
     val port: String,
+    val status: String,
 )
-
-@Serializable
-data class ZeroMQ(
-    val address: String,
-    val port: String,
-)
-
 @Serializable
 data class ConfYAMl(
     val version: String,
     val mongodb: MongoDB,
-    val zeromq: ZeroMQ,
-    val coinbase: Coinbase,
+    val platforms: Platforms,
 )
 
 fun parseConf(input: String): ConfYAMl {
