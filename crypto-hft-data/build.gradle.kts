@@ -1,6 +1,11 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization") version "1.5.20"
+    application
+}
+
+application {
+    mainClass.set("com.grinisrit.crypto.MainKt")
 }
 
 repositories {

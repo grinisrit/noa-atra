@@ -24,7 +24,7 @@ open class SeveralRequestWebsocketClient(
         loggerFile.log("Connected successfully")
 
         for (request in requests){
-            loggerFile.log("Sending request: $request")
+            loggerFile.log("Sending request:\n$request")
             send(Frame.Text(request))
             val subResponse = incoming.receive()
             subResponse as? Frame.Text ?: throw Error(subResponse.toString()) // TODO
@@ -34,6 +34,7 @@ open class SeveralRequestWebsocketClient(
 
         for (frame in incoming) {
             frame as? Frame.Text ?: throw Error(frame.toString()) // TODO
+            //loggerFile.log(frame.readText())
             emit(DataTransport.dataStringOf(platform.platformName, Instant.now(), frame.readText()))
         }
         

@@ -9,7 +9,7 @@ import org.litote.kmongo.getCollection
 
 class BinanceMongoDBClient(platform: BinancePlatform, mongoDB: MongoDB) : MongoDBClient(platform, mongoDB) {
     override fun handleData(data: String, database: MongoDatabase) {
-        val dataTime = DataTransport.fromDataString<BinanceData>(data, BinanceDataSerializer)
+        val dataTime = DataTransport.fromDataString(data, BinanceDataSerializer)
         val col = database.getCollection<DataTransport.DataTime<BinanceData>>(dataTime.data.type)
         col.insertOne(dataTime)
     }

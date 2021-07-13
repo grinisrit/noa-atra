@@ -1,14 +1,19 @@
 package com.grinisrit.crypto
 
-import com.google.gson.*
+import com.grinisrit.crypto.binance.BinanceMongoDBClient
+import com.grinisrit.crypto.binance.BinanceWebsocketClient
+import com.grinisrit.crypto.coinbase.CoinbaseMongoDBClient
+import com.grinisrit.crypto.coinbase.CoinbaseWebsocketClient
+import com.grinisrit.crypto.deribit.DeribitMongoDBClient
+import com.grinisrit.crypto.deribit.DeribitWebsocketClient
 import com.grinisrit.crypto.kraken.KrakenMongoDBClient
 import com.grinisrit.crypto.kraken.KrakenWebsocketClient
-import io.ktor.utils.io.*
 import java.io.File
 
 
+
 //TODO: provide path to conf.yaml as command line argument
-fun main() {
+fun main(args: Array<String>) {
 
 
 
@@ -19,12 +24,33 @@ fun main() {
 
     val conf = parseConf(File(confPath).readText())
 
-    println(conf)
+
+    //println(conf)
+
+    conf.platforms.coinbase?.let {
+        val websocketClient = CoinbaseWebsocketClient(
+            it,
+            File("platforms/coinbase/request.txt").readText() // TODO()
+        )
+
+        websocketClient.start()
+
+        val mongoDBClient = CoinbaseMongoDBClient(
+            it,
+            conf.mongodb
+        )
+
+        mongoDBClient.start()
+
+    }
 
    conf.platforms.kraken?.let {
        val websocketClient = KrakenWebsocketClient(
            it,
-           File("platforms/kraken/request.txt").readText() // TODO()
+           listOf(
+               File("platforms/kraken/request_book.txt").readText(),
+               File("platforms/kraken/request_trade.txt").readText(),
+           )// TODO()
        )
 
        websocketClient.start()
@@ -40,7 +66,7 @@ fun main() {
    }
 
 
-    /*
+
     conf.platforms.binance?.let {
         val websocketClient = BinanceWebsocketClient(
             it,
@@ -62,25 +88,21 @@ fun main() {
 
 
 
+
     conf.platforms.deribit?.let {
         val websocketClient = DeribitWebsocketClient(
             it,
             File("platforms/deribit/request.txt").readText() // TODO()
         )
 
-        websocketClient.start() */
-/*
-        val mongoDBClient = BinanceMongoDBClient(
+        websocketClient.start()
+
+        val mongoDBClient = DeribitMongoDBClient(
             it,
             conf.mongodb
         )
 
-
-
-
-
         mongoDBClient.start()
-
 
     }
 
@@ -92,5 +114,5 @@ fun main() {
 
     println("Fetching data from crypto exchanges")
 
-    */
+
 }

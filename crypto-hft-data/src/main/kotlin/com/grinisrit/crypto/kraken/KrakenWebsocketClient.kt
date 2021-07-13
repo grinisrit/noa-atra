@@ -1,15 +1,15 @@
 package com.grinisrit.crypto.kraken
 
 import com.grinisrit.crypto.KrakenPlatform
-import com.grinisrit.crypto.common.websocket.SingleRequestWebsocketClient
+import com.grinisrit.crypto.common.websocket.SeveralRequestWebsocketClient
 
 
 class KrakenWebsocketClient(
     platform: KrakenPlatform,
-    request: String
-) : SingleRequestWebsocketClient(
+    requests: List<String>
+) : SeveralRequestWebsocketClient(
     platform,
-    request,
+    requests,
     backendReconnectTimeout = 5000L,
     socketTimeoutMillis = 2000L
 )

@@ -13,7 +13,7 @@ class KrakenMongoDBClient(platform: KrakenPlatform, mongoDB: MongoDB) : MongoDBC
         if (dataTime.data.channelName == "event") {
             return
         }
-        val col = database.getCollection<DataTransport.DataTime<KrakenData>>(dataTime.data.channelName)
+        val col = database.getCollection<DataTransport.DataTime<KrakenData>>(dataTime.data.type)
         col.insertOne(dataTime)
     }
 }
