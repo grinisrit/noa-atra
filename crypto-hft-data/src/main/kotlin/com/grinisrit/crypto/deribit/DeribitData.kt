@@ -1,8 +1,7 @@
 package com.grinisrit.crypto.deribit
 
-import com.grinisrit.crypto.ChannelData
+import com.grinisrit.crypto.common.ChannelData
 import kotlinx.serialization.Serializable
-import java.time.temporal.TemporalAmount
 
 interface DeribitData : ChannelData {
     val type: String

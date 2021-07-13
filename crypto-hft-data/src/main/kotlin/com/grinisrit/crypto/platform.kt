@@ -38,9 +38,18 @@ data class DeribitPlatform(
 }
 
 @Serializable
+data class KrakenPlatform(
+    override val websocket_address: String,
+    override val zeromq_address: String,
+    override val status: String,
+) : Platform {
+    override val platformName = "kraken"
+}
+
+@Serializable
 data class Platforms(
     val coinbase: CoinbasePlatform?,
-//    val kraken: Platform?,
+    val kraken: KrakenPlatform?,
     val binance: BinancePlatform?,
     val deribit: DeribitPlatform?,
 )

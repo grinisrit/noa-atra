@@ -5,6 +5,6 @@
     "XBT/EUR"
   ],
   "subscription": {
-    "name": "ticker"
+    "name": "trade"
   }
 }

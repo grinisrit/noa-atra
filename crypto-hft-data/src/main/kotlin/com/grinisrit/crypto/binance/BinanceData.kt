@@ -1,6 +1,6 @@
 package com.grinisrit.crypto.binance
 
-import com.grinisrit.crypto.ChannelData
+import com.grinisrit.crypto.common.ChannelData
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 

@@ -1,7 +1,6 @@
 package com.grinisrit.crypto.common
 
 import com.beust.klaxon.Klaxon
-import com.grinisrit.crypto.ChannelData
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import java.time.Instant
@@ -11,7 +10,7 @@ object DataTransport {
 
     const val internalDateTimeFormat = "yyyy-MM-dd'T'hh:mm:ss.SSSSSS'Z'"
     const val internalDelimiter = "/**/"
- //   const val internalDataFormat = "$internalDelimiter(.+)$internalDelimiter(.+)$internalDelimiter(.+)$internalDelimiter"
+    //   const val internalDataFormat = "$internalDelimiter(.+)$internalDelimiter(.+)$internalDelimiter(.+)$internalDelimiter"
 
     data class DataTime<T : ChannelData>(
         val receiving_datetime: Instant,
@@ -39,11 +38,25 @@ object DataTransport {
         )
     }
 
-    inline fun <reified T : ChannelData> fromDataString(dataString: String, serializer: JsonContentPolymorphicSerializer<T>): DataTime<T> {
+    fun <T : ChannelData> fromDataString(
+        dataString: String,
+        serializer: JsonContentPolymorphicSerializer<T>
+    ): DataTime<T> {
         val (_, receivingDateTimeString, dataJSON) = dataString.split(internalDelimiter)
         return DataTime(
             Instant.parse(receivingDateTimeString),
             Json.decodeFromString(serializer, dataJSON)
+        )
+    }
+
+    fun <T : ChannelData> fromDataString(
+        dataString: String,
+        parser: CustomJsonParser<T>,
+    ): DataTime<T> {
+        val (_, receivingDateTimeString, dataJSON) = dataString.split(internalDelimiter)
+        return DataTime(
+            Instant.parse(receivingDateTimeString),
+            parser.parse(dataJSON)
         )
     }
 }

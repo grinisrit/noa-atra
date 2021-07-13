@@ -16,3 +16,7 @@ platforms:
     websocket_address: wss://stream.binance.com:9443/ws
     zeromq_address: tcp://localhost:5899
     status: on
+  kraken:
+    websocket_address: wss://ws.kraken.com
+    zeromq_address: tcp://localhost:5900
+    status: on

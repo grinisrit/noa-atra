@@ -9,33 +9,8 @@ import java.time.Instant
 
 open class SingleRequestWebsocketClient(
     platform: Platform,
-    private val request: String,
+    request: String,
     backendReconnectTimeout: Long = 5000L,
     socketTimeoutMillis: Long = 2000L,
     logFilePath: String = "platforms/${platform.platformName}/log.txt"
-): WebsocketClient(
-    platform,
-    backendReconnectTimeout,
-    socketTimeoutMillis,
-    logFilePath
-) {
-    // TODO() make this function better
-    override fun DefaultClientWebSocketSession.receiveData() = flow {
-        loggerFile.log("Connected successfully")
-
-        loggerFile.log("Sending request: $request")
-        send(Frame.Text(request))
-
-        val subResponse = incoming.receive()
-        subResponse as? Frame.Text ?: throw Exception("Invalid response")
-        loggerFile.log("Request sent. Server response: ${subResponse.readText()}")
-
-        for (frame in incoming) {
-            frame as? Frame.Text ?: throw Error(frame.toString()) // TODO
-         //   loggerFile.log(frame.readText())
-            emit(DataTransport.dataStringOf(platform.platformName, Instant.now(), frame.readText()))
-        }
-
-        println("wtf")
-    }
-}
+) : SeveralRequestWebsocketClient(platform, listOf(request), backendReconnectTimeout, socketTimeoutMillis, logFilePath)
