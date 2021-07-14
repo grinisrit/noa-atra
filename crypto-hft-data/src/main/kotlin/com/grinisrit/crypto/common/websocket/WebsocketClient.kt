@@ -19,7 +19,7 @@ import java.time.Instant
 
 abstract class WebsocketClient(
     protected val platform: Platform,
-    private val backendReconnectTimeout: Long = 5000L,
+    private val reconnectTimeoutMillis: Long = 5000L,
     private val socketTimeoutMillis: Long = 2000L,
     logFilePath: String = "platforms/${platform.platformName}/log.txt"
 ) : Thread() {
@@ -47,7 +47,7 @@ abstract class WebsocketClient(
 
                     val timeFromLastConnectionMilli = currentTimeMilli - lastConnectionTimeMilli
 
-                    delay(backendReconnectTimeout - timeFromLastConnectionMilli)
+                    delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)
 
                     lastConnectionTimeMilli = Instant.now().toEpochMilli()
 
@@ -66,19 +66,19 @@ abstract class WebsocketClient(
 
     abstract fun DefaultClientWebSocketSession.receiveData(): Flow<String>
 
-    private fun dataFlow() = flow {
+    open fun dataFlow() = flow {
         // TODO()
         val client = HttpClient(CIO) {
             install(WebSockets)
             install(HttpTimeout) {
-    //            socketTimeoutMillis = this@WebsocketClient.socketTimeoutMillis
+                socketTimeoutMillis = this@WebsocketClient.socketTimeoutMillis
             }
         }
 
         client.wss(urlString = platform.websocket_address) {
             this.receiveData().collect { emit(it) }
         }
-        client.close()
+
     }
 }
 

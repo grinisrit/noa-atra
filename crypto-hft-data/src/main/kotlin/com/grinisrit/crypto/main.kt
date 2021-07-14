@@ -8,22 +8,20 @@ import com.grinisrit.crypto.deribit.DeribitMongoDBClient
 import com.grinisrit.crypto.deribit.DeribitWebsocketClient
 import com.grinisrit.crypto.kraken.KrakenMongoDBClient
 import com.grinisrit.crypto.kraken.KrakenWebsocketClient
+import io.ktor.client.*
+import io.ktor.client.request.*
+import kotlinx.coroutines.runBlocking
+import org.apache.http.HttpResponse
 import java.io.File
-
 
 
 //TODO: provide path to conf.yaml as command line argument
 fun main(args: Array<String>) {
 
-
-
-
-
     // plug, TODO: remove
     val confPath = "conf.yaml"
 
     val conf = parseConf(File(confPath).readText())
-
 
     //println(conf)
 
@@ -44,28 +42,25 @@ fun main(args: Array<String>) {
 
     }
 
-   conf.platforms.kraken?.let {
-       val websocketClient = KrakenWebsocketClient(
-           it,
-           listOf(
-               File("platforms/kraken/request_book.txt").readText(),
-               File("platforms/kraken/request_trade.txt").readText(),
-           )// TODO()
-       )
+    conf.platforms.kraken?.let {
+        val websocketClient = KrakenWebsocketClient(
+            it,
+            listOf(
+                File("platforms/kraken/request_book.txt").readText(),
+                File("platforms/kraken/request_trade.txt").readText(),
+            )// TODO()
+        )
 
-       websocketClient.start()
+        websocketClient.start()
 
-       val mongoDBClient = KrakenMongoDBClient(
-           it,
-           conf.mongodb
-       )
+        val mongoDBClient = KrakenMongoDBClient(
+            it,
+            conf.mongodb
+        )
 
-       mongoDBClient.start()
+        mongoDBClient.start()
 
-
-   }
-
-
+    }
 
     conf.platforms.binance?.let {
         val websocketClient = BinanceWebsocketClient(
@@ -82,12 +77,7 @@ fun main(args: Array<String>) {
 
         mongoDBClient.start()
 
-
     }
-
-
-
-
 
     conf.platforms.deribit?.let {
         val websocketClient = DeribitWebsocketClient(
@@ -106,13 +96,6 @@ fun main(args: Array<String>) {
 
     }
 
-
-
-
-
-
-
     println("Fetching data from crypto exchanges")
-
 
 }
