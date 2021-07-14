@@ -8,7 +8,8 @@ within the [KMath](https://github.com/mipt-npm/kmath) library.
 ## Installation 
 
 
-To use `NOA`, you will need first to build & publish the [kmath-noa](https://github.com/grinisrit/kmath/tree/feature/noa/kmath-noa) 
+To use `NOA`, you will need first to build & publish the 
+[kmath-noa](https://github.com/mipt-npm/kmath/tree/feature/noa/kmath-noa) 
 module locally.
 
 For data storage, you have to install 
