@@ -19,6 +19,8 @@ open class SeveralRequestWebsocketClient(
     socketTimeoutMillis,
     logFilePath
 ) {
+    protected fun dataStringOf(data: String) =
+        DataTransport.dataStringOf(platform.platformName, Instant.now(), data)
     // TODO() make this function better
     override fun DefaultClientWebSocketSession.receiveData() = flow {
         loggerFile.log("Connected successfully")
@@ -35,7 +37,7 @@ open class SeveralRequestWebsocketClient(
         for (frame in incoming) {
             frame as? Frame.Text ?: throw Error(frame.toString()) // TODO
             //loggerFile.log(frame.readText())
-            emit(DataTransport.dataStringOf(platform.platformName, Instant.now(), frame.readText()))
+            emit(dataStringOf(frame.readText()))
         }
         
     }

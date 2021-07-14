@@ -9,12 +9,12 @@ interface BinanceData : ChannelData {
 }
 
 @Serializable
-data class PartialBookDepth(
+data class Snapshot(
     val lastUpdateId: Long,
     val bids: List<List<String>>,
     val asks: List<List<String>>,
 ) : BinanceData {
-    override val type = "partialBookDepth"
+    override val type = "snapshot"
 }
 
 @Serializable
@@ -34,10 +34,24 @@ data class Trade(
     override val type = "trade"
 }
 
+@Serializable
+data class BookUpdate(
+    @SerialName("e") val eventType: String,
+    @SerialName("E") val eventTime: Long,
+    @SerialName("s") val symbol: String,
+    @SerialName("U") val firstUpdateId: Long,
+    @SerialName("u") val finalUpdateId: Long,
+    @SerialName("b") val bids: List<List<String>>,
+    @SerialName("a") val asks: List<List<String>>,
+) : BinanceData {
+    override val type = "update"
+}
+
 // TODO()
 object BinanceDataSerializer : JsonContentPolymorphicSerializer<BinanceData>(BinanceData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
-        "lastUpdateId" in element.jsonObject -> PartialBookDepth.serializer()
+        "lastUpdateId" in element.jsonObject -> Snapshot.serializer()
+        "U" in element.jsonObject -> BookUpdate.serializer()
         else -> Trade.serializer()
     }
 }

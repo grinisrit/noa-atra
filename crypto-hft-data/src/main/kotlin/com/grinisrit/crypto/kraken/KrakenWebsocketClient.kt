@@ -3,7 +3,7 @@ package com.grinisrit.crypto.kraken
 import com.grinisrit.crypto.KrakenPlatform
 import com.grinisrit.crypto.common.websocket.SeveralRequestWebsocketClient
 
-
+// TODO log
 class KrakenWebsocketClient(
     platform: KrakenPlatform,
     requests: List<String>

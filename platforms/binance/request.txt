@@ -4,9 +4,9 @@
     "ethusdt@trade",
     "ethbtc@trade",
     "btcusdt@trade",
-    "btcusdt@depth5@100ms",
-    "ethbtc@depth5@100ms",
-    "ethusdt@depth5@100ms"
+    "btcusdt@depth@100ms",
+    "ethbtc@depth@100ms",
+    "ethusdt@depth@100ms"
   ],
   "id": 1
 }

@@ -1,5 +1,6 @@
 package com.grinisrit.crypto
 
+import ch.qos.logback.classic.LoggerContext
 import com.grinisrit.crypto.binance.BinanceMongoDBClient
 import com.grinisrit.crypto.binance.BinanceWebsocketClient
 import com.grinisrit.crypto.coinbase.CoinbaseMongoDBClient
@@ -8,22 +9,19 @@ import com.grinisrit.crypto.deribit.DeribitMongoDBClient
 import com.grinisrit.crypto.deribit.DeribitWebsocketClient
 import com.grinisrit.crypto.kraken.KrakenMongoDBClient
 import com.grinisrit.crypto.kraken.KrakenWebsocketClient
+import org.slf4j.LoggerFactory
 import java.io.File
-
 
 
 //TODO: provide path to conf.yaml as command line argument
 fun main(args: Array<String>) {
 
-
-
-
+    (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level = ch.qos.logback.classic.Level.ERROR
 
     // plug, TODO: remove
     val confPath = "conf.yaml"
 
     val conf = parseConf(File(confPath).readText())
-
 
     //println(conf)
 
@@ -44,28 +42,25 @@ fun main(args: Array<String>) {
 
     }
 
-   conf.platforms.kraken?.let {
-       val websocketClient = KrakenWebsocketClient(
-           it,
-           listOf(
-               File("platforms/kraken/request_book.txt").readText(),
-               File("platforms/kraken/request_trade.txt").readText(),
-           )// TODO()
-       )
+    conf.platforms.kraken?.let {
+        val websocketClient = KrakenWebsocketClient(
+            it,
+            listOf(
+                File("platforms/kraken/request_book.txt").readText(),
+                File("platforms/kraken/request_trade.txt").readText(),
+            )// TODO()
+        )
 
-       websocketClient.start()
+        websocketClient.start()
 
-       val mongoDBClient = KrakenMongoDBClient(
-           it,
-           conf.mongodb
-       )
+        val mongoDBClient = KrakenMongoDBClient(
+            it,
+            conf.mongodb
+        )
 
-       mongoDBClient.start()
+        mongoDBClient.start()
 
-
-   }
-
-
+    }
 
     conf.platforms.binance?.let {
         val websocketClient = BinanceWebsocketClient(
@@ -82,12 +77,7 @@ fun main(args: Array<String>) {
 
         mongoDBClient.start()
 
-
     }
-
-
-
-
 
     conf.platforms.deribit?.let {
         val websocketClient = DeribitWebsocketClient(
@@ -106,13 +96,6 @@ fun main(args: Array<String>) {
 
     }
 
-
-
-
-
-
-
     println("Fetching data from crypto exchanges")
-
 
 }
