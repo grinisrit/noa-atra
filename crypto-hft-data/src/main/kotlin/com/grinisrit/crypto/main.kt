@@ -1,5 +1,6 @@
 package com.grinisrit.crypto
 
+import ch.qos.logback.classic.LoggerContext
 import com.grinisrit.crypto.binance.BinanceMongoDBClient
 import com.grinisrit.crypto.binance.BinanceWebsocketClient
 import com.grinisrit.crypto.coinbase.CoinbaseMongoDBClient
@@ -8,15 +9,14 @@ import com.grinisrit.crypto.deribit.DeribitMongoDBClient
 import com.grinisrit.crypto.deribit.DeribitWebsocketClient
 import com.grinisrit.crypto.kraken.KrakenMongoDBClient
 import com.grinisrit.crypto.kraken.KrakenWebsocketClient
-import io.ktor.client.*
-import io.ktor.client.request.*
-import kotlinx.coroutines.runBlocking
-import org.apache.http.HttpResponse
+import org.slf4j.LoggerFactory
 import java.io.File
 
 
 //TODO: provide path to conf.yaml as command line argument
 fun main(args: Array<String>) {
+
+    (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level = ch.qos.logback.classic.Level.ERROR
 
     // plug, TODO: remove
     val confPath = "conf.yaml"
