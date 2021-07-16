@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MongoDB(
     val address: String,
-    val port: String,
     val status: String,
 )
 @Serializable

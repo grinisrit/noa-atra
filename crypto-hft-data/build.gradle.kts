@@ -18,6 +18,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.2")
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("org.zeromq:jeromq:0.5.0")
@@ -31,5 +33,4 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:1.6.0")
 
     implementation("com.google.code.gson:gson:2.8.7")
-    implementation("com.beust:klaxon:5.5")
 }

@@ -14,7 +14,7 @@ import org.zeromq.ZMQ
 
 abstract class MongoDBClient(val platform: Platform, mongoDB: MongoDB) : Thread() {
 
-    private val mongoDBAddress = "mongodb://${mongoDB.address}:${mongoDB.port}"
+    private val mongoDBAddress = mongoDB.address
 
     private fun subscriptionFlow(socketSUB: ZMQ.Socket) = flow {
         while (true) {

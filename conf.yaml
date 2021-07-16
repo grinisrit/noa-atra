@@ -1,22 +1,35 @@
 version: 0.0.1
 mongodb:
-  address: localhost
-  port: 27017
+  address: mongodb://localhost:27017
   status: on
 platforms:
   coinbase:
     websocket_address: wss://ws-feed.pro.coinbase.com
     zeromq_address: tcp://localhost:5897
     status: on
-  deribit:
-    websocket_address: wss://deribit.com/ws/api/v2
-    zeromq_address: tcp://localhost:5898
-    status: on
+    symbols:
+      - ETH-BTC
+      - BTC-USDT
+      - ETH-USDT
   binance:
     websocket_address: wss://stream.binance.com:9443/ws
     zeromq_address: tcp://localhost:5899
     status: on
+    symbols:
+      - ethusdt
+      - ethbtc
+      - btcusdt
+  deribit:
+    websocket_address: wss://deribit.com/ws/api/v2
+    zeromq_address: tcp://localhost:5898
+    status: on
+    symbols:
+      - ETH-PERPETUAL
+      - BTC-PERPETUAL
   kraken:
     websocket_address: wss://ws.kraken.com
     zeromq_address: tcp://localhost:5900
     status: on
+    symbols:
+      - ETH/USD
+      - ETH/EUR

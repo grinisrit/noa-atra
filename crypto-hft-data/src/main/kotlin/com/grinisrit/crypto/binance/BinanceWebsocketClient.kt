@@ -1,6 +1,7 @@
 package com.grinisrit.crypto.binance
 
 import com.grinisrit.crypto.BinancePlatform
+import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.websocket.SingleRequestWebsocketClient
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*

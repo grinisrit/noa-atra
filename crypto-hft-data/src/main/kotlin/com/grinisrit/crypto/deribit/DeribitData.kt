@@ -19,7 +19,10 @@ data class TradeData(
     val instrument_name: String,
     val index_price: Double,
     val direction: String,
-    val amount: Double
+    val amount: Double,
+    val liquidation: String? = null,
+    val iv: Double? = null,
+    val block_trade_id: String? = null,
 )
 
 @Serializable
@@ -38,13 +41,13 @@ data class Trades(
 }
 
 @Serializable
-data class UpdateData(
+data class OrderData(
     val price: Double,
     val amount: Double,
 )
 
-object UpdateDataSerializer :
-    JsonTransformingSerializer<UpdateData>(UpdateData.serializer()) {
+object OrderDataSerializer :
+    JsonTransformingSerializer<OrderData>(OrderData.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return element.jsonArray.let {
             buildJsonObject {
@@ -60,8 +63,8 @@ data class BookData(
     val timestamp: Long,
     val instrument_name: String,
     val change_id: Long,
-    val bids: List<@Serializable(with = UpdateDataSerializer::class) UpdateData>,
-    val asks: List<@Serializable(with = UpdateDataSerializer::class) UpdateData>
+    val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
+    val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>
 )
 
 @Serializable

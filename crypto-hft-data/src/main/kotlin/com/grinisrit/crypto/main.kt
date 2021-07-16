@@ -1,101 +1,125 @@
 package com.grinisrit.crypto
 
+import kotlinx.cli.*
 import ch.qos.logback.classic.LoggerContext
-import com.grinisrit.crypto.binance.BinanceMongoDBClient
-import com.grinisrit.crypto.binance.BinanceWebsocketClient
-import com.grinisrit.crypto.coinbase.CoinbaseMongoDBClient
-import com.grinisrit.crypto.coinbase.CoinbaseWebsocketClient
-import com.grinisrit.crypto.deribit.DeribitMongoDBClient
-import com.grinisrit.crypto.deribit.DeribitWebsocketClient
-import com.grinisrit.crypto.kraken.KrakenMongoDBClient
-import com.grinisrit.crypto.kraken.KrakenWebsocketClient
-import org.slf4j.LoggerFactory
+
+import com.grinisrit.crypto.binance.*
+import com.grinisrit.crypto.coinbase.*
+import com.grinisrit.crypto.deribit.*
+import com.grinisrit.crypto.kraken.*
+
 import java.io.File
+import org.slf4j.LoggerFactory
 
 
-//TODO: provide path to conf.yaml as command line argument
 fun main(args: Array<String>) {
 
-    (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level = ch.qos.logback.classic.Level.ERROR
+    val cliParser = ArgParser("data")
 
-    // plug, TODO: remove
-    val confPath = "conf.yaml"
+    val configPathArg by cliParser.argument(ArgType.String, description = "Path to .yaml config file").optional()
 
-    val conf = parseConf(File(confPath).readText())
+    cliParser.parse(args)
 
-    //println(conf)
+    val configPath = configPathArg ?: "conf.yaml"
 
-    conf.platforms.coinbase?.let {
-        val websocketClient = CoinbaseWebsocketClient(
-            it,
-            File("platforms/coinbase/request.txt").readText() // TODO()
-        )
+    val config = parseConf(File(configPath).readText())
 
-        websocketClient.start()
+    // TODO something better
+    (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level =
+        ch.qos.logback.classic.Level.ERROR
 
-        val mongoDBClient = CoinbaseMongoDBClient(
-            it,
-            conf.mongodb
-        )
+    val mongoIsOn = config.mongodb.status == "on"
 
-        mongoDBClient.start()
+    with(config.platforms.binance) {
+        if (isOn) {
 
+            val request = BinanceWebsocketRequestBuilder.buildRequest(symbols).first()
+
+            val websocketClient = BinanceWebsocketClient(
+                this,
+                request
+            )
+
+            websocketClient.start()
+
+            if (mongoIsOn){
+                val mongoDBClient = BinanceMongoDBClient(
+                    this,
+                    config.mongodb
+                )
+                mongoDBClient.start()
+            }
+
+        }
     }
 
-    conf.platforms.kraken?.let {
-        val websocketClient = KrakenWebsocketClient(
-            it,
-            listOf(
-                File("platforms/kraken/request_book.txt").readText(),
-                File("platforms/kraken/request_trade.txt").readText(),
-            )// TODO()
-        )
+    with(config.platforms.coinbase) {
+        if (isOn) {
 
-        websocketClient.start()
+            val request = CoinbaseWebsocketRequestBuilder.buildRequest(symbols).first()
 
-        val mongoDBClient = KrakenMongoDBClient(
-            it,
-            conf.mongodb
-        )
+            val websocketClient = CoinbaseWebsocketClient(
+                this,
+                request
+            )
 
-        mongoDBClient.start()
+            websocketClient.start()
 
+            if (mongoIsOn) {
+                val mongoDBClient = CoinbaseMongoDBClient(
+                    this,
+                    config.mongodb
+                )
+                mongoDBClient.start()
+            }
+
+        }
     }
 
-    conf.platforms.binance?.let {
-        val websocketClient = BinanceWebsocketClient(
-            it,
-            File("platforms/binance/request.txt").readText() // TODO()
-        )
+    with(config.platforms.deribit) {
+        if (isOn) {
 
-        websocketClient.start()
+            val request = DeribitWebsocketRequestBuilder.buildRequest(symbols).first()
 
-        val mongoDBClient = BinanceMongoDBClient(
-            it,
-            conf.mongodb
-        )
+            val websocketClient = DeribitWebsocketClient(
+                this,
+                request
+            )
 
-        mongoDBClient.start()
+            websocketClient.start()
 
+            if (mongoIsOn) {
+                val mongoDBClient = DeribitMongoDBClient(
+                    this,
+                    config.mongodb
+                )
+                mongoDBClient.start()
+            }
+
+        }
     }
 
-    conf.platforms.deribit?.let {
-        val websocketClient = DeribitWebsocketClient(
-            it,
-            File("platforms/deribit/request.txt").readText() // TODO()
-        )
+    with(config.platforms.kraken) {
+        if (isOn) {
 
-        websocketClient.start()
+            val requests = KrakenWebsocketRequestBuilder.buildRequest(symbols)
 
-        val mongoDBClient = DeribitMongoDBClient(
-            it,
-            conf.mongodb
-        )
+            val websocketClient = KrakenWebsocketClient(
+                this,
+                requests
+            )
 
-        mongoDBClient.start()
+            websocketClient.start()
 
+            if (mongoIsOn) {
+                val mongoDBClient = KrakenMongoDBClient(
+                    this,
+                    config.mongodb
+                )
+                mongoDBClient.start()
+            }
+
+        }
     }
-
-    println("Fetching data from crypto exchanges")
 
 }

@@ -9,10 +9,28 @@ interface BinanceData : ChannelData {
 }
 
 @Serializable
+data class OrderData(
+    val price: String,
+    val amount: String,
+)
+
+object OrderDataSerializer :
+    JsonTransformingSerializer<OrderData>(OrderData.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        return element.jsonArray.let {
+            buildJsonObject {
+                put("price", it[0])
+                put("amount", it[1])
+            }
+        }
+    }
+}
+
+@Serializable
 data class Snapshot(
     val lastUpdateId: Long,
-    val bids: List<List<String>>,
-    val asks: List<List<String>>,
+    val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
+    val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
 ) : BinanceData {
     override val type = "snapshot"
 }

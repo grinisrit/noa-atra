@@ -3,7 +3,10 @@ package com.grinisrit.crypto
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.grinisrit.crypto.binance.BinanceDataSerializer
+import com.grinisrit.crypto.binance.Trade
 import com.grinisrit.crypto.coinbase.Ticker
+import com.grinisrit.crypto.common.DataTransport
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -22,11 +25,9 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.LinkedBlockingQueue
 
 fun getMessage() = flow {
-    val channelName = "ticker"
-    val zeroMQAddress = ""
     val context = ZContext()
     val socketSUB = context.createSocket(SocketType.SUB)
-    socketSUB.connect("tcp://localhost:5897")
+    socketSUB.connect("tcp://localhost:5899")
     socketSUB.subscribe("")
     while (true) {
         val data = socketSUB.recvStr()
@@ -34,14 +35,15 @@ fun getMessage() = flow {
     }
 }
 
-val mapper = jacksonObjectMapper()
-val zeroMQPattern = "(.+)///<>///(.+)".toRegex()
 
 fun getNumbers() = flow {
     getMessage().collect {
-        val (infoJson, dateTimeString) = zeroMQPattern.find(it)!!.destructured
-        val cbInfo: Ticker = mapper.readValue(infoJson)
-        emit(cbInfo.price.toDouble())
+        val dataTime = DataTransport.fromDataString(it, BinanceDataSerializer)
+        with(dataTime.data) {
+            if (this is Trade && (this as Trade).symbol == "BTCUSDT"){
+                emit((this as Trade).price.toDouble())
+            }
+        }
     }
 
 }

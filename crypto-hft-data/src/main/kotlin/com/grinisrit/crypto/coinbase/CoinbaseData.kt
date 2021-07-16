@@ -1,25 +1,12 @@
 package com.grinisrit.crypto.coinbase
 
-import com.beust.klaxon.TypeAdapter
-import com.beust.klaxon.TypeFor
 import com.grinisrit.crypto.common.ChannelData
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.*
 import java.time.Instant
-import kotlin.reflect.KClass
 
-@TypeFor(field = "type", adapter = CoinBaseDataTypeAdapter::class)
 interface CoinbaseData : ChannelData {
     val type: String
-}
-
-class CoinBaseDataTypeAdapter: TypeAdapter<CoinbaseData> {
-    override fun classFor(type: Any): KClass<out CoinbaseData> = when(type as String) {
-        "heartbeat" -> Heartbeat::class
-        "ticker" -> Ticker::class
-        "snapshot" -> Snapshot::class
-        "l2update" -> L2Update::class
-        else -> throw IllegalArgumentException("Unknown type: $type")
-    }
 }
 
 interface CoinbaseDataTime : CoinbaseData {
@@ -57,11 +44,49 @@ data class Ticker(
 ) : CoinbaseDataTime
 
 @Serializable
+data class OrderData(
+    val price: String,
+    val amount: String,
+)
+
+object OrderDataSerializer :
+    JsonTransformingSerializer<OrderData>(OrderData.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        return element.jsonArray.let {
+            buildJsonObject {
+                put("price", it[0])
+                put("amount", it[1])
+            }
+        }
+    }
+}
+
+@Serializable
+data class OrderUpdateData(
+    val side: String,
+    val price: String,
+    val amount: String,
+)
+
+object OrderUpdateDataSerializer :
+    JsonTransformingSerializer<OrderUpdateData>(OrderUpdateData.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        return element.jsonArray.let {
+            buildJsonObject {
+                put("side", it[0])
+                put("price", it[1])
+                put("amount", it[2])
+            }
+        }
+    }
+}
+
+@Serializable
 data class Snapshot(
     override val type: String,
     val product_id: String,
-    val bids: List<List<String>>,
-    val asks: List<List<String>>,
+    val bids: List<@Serializable(with = OrderDataSerializer::class)OrderData>,
+    val asks: List<@Serializable(with = OrderDataSerializer::class)OrderData>,
 ) : CoinbaseData
 
 @Serializable
@@ -69,5 +94,24 @@ data class L2Update(
     override val type: String,
     val product_id: String,
     override val time: String,
-    val changes: List<List<String>>,
+    val changes: List<@Serializable(with = OrderUpdateDataSerializer::class) OrderUpdateData>,
 ) : CoinbaseDataTime
+
+/*
+@Serializable
+data class Event(
+    override val type: String,
+): CoinbaseData
+
+ */
+
+// TODO()
+object CoinbaseDataSerializer : JsonContentPolymorphicSerializer<CoinbaseData>(CoinbaseData::class) {
+    override fun selectDeserializer(element: JsonElement) = when (element.jsonObject["type"].toString()) {
+        "\"ticker\"" -> Ticker.serializer()
+        "\"snapshot\"" -> Snapshot.serializer()
+        "\"l2update\"" -> L2Update.serializer()
+        "\"heartbeat\"" -> Heartbeat.serializer()
+        else -> throw Error(element.toString())
+    }
+}
