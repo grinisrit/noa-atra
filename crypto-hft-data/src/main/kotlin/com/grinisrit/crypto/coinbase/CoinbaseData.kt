@@ -97,13 +97,12 @@ data class L2Update(
     val changes: List<@Serializable(with = OrderUpdateDataSerializer::class) OrderUpdateData>,
 ) : CoinbaseDataTime
 
-/*
+
 @Serializable
 data class Event(
     override val type: String,
 ): CoinbaseData
 
- */
 
 // TODO()
 object CoinbaseDataSerializer : JsonContentPolymorphicSerializer<CoinbaseData>(CoinbaseData::class) {
@@ -111,7 +110,7 @@ object CoinbaseDataSerializer : JsonContentPolymorphicSerializer<CoinbaseData>(C
         "\"ticker\"" -> Ticker.serializer()
         "\"snapshot\"" -> Snapshot.serializer()
         "\"l2update\"" -> L2Update.serializer()
-        "\"heartbeat\"" -> Heartbeat.serializer()
-        else -> throw Error(element.toString())
+     //   "\"heartbeat\"" -> Heartbeat.serializer()
+        else -> Event.serializer()
     }
 }

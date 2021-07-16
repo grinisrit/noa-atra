@@ -10,6 +10,9 @@ import org.litote.kmongo.getCollection
 class DeribitMongoDBClient(platform: DeribitPlatform, mongoDB: MongoDB) : MongoDBClient(platform, mongoDB) {
     override fun handleData(data: String, database: MongoDatabase) {
         val dataTime = DataTransport.fromDataString(data, DeribitDataSerializer)
+        if (dataTime.data is Event){
+            return
+        }
         val col = database.getCollection<DataTransport.DataTime<DeribitData>>(dataTime.data.type)
         col.insertOne(dataTime)
     }

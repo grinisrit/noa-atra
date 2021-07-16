@@ -10,7 +10,7 @@ import org.litote.kmongo.getCollection
 class CoinbaseMongoDBClient(platform: CoinbasePlatform, mongoDB: MongoDB) : MongoDBClient(platform, mongoDB) {
     override fun handleData(data: String, database: MongoDatabase) {
         val dataTime = DataTransport.fromDataString(data, CoinbaseDataSerializer)
-        if (dataTime.data.type == "heartbeat"){
+        if (dataTime.data is Event){
             return
         }
         val col = database.getCollection<DataTransport.DataTime<CoinbaseData>>(dataTime.data.type)

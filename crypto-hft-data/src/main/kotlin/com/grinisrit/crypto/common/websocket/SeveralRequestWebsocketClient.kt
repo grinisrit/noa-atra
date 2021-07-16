@@ -28,15 +28,18 @@ open class SeveralRequestWebsocketClient(
         for (request in requests){
             loggerFile.log("Sending request:\n$request")
             send(Frame.Text(request))
+            /*
             val subResponse = incoming.receive()
             subResponse as? Frame.Text ?: throw Error(subResponse.toString()) // TODO
             loggerFile.log("Request sent. Server response: ${subResponse.readText()}") // TODO() better response
+
+             */
         }
 
 
         for (frame in incoming) {
             frame as? Frame.Text ?: throw Error(frame.toString()) // TODO
-            loggerFile.log(frame.readText())
+            //loggerFile.log(frame.readText())
             emit(dataStringOf(frame.readText()))
         }
         

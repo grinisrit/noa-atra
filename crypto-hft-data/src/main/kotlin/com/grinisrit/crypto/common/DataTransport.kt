@@ -33,7 +33,7 @@ object DataTransport {
         return DataTime(
             Instant.parse(receivingDateTimeString),
             Json {
-              //  encodeDefaults = true
+                encodeDefaults = true
                 ignoreUnknownKeys = true
             }.decodeFromString(serializer, dataJSON)
         )

@@ -82,9 +82,15 @@ data class Book(
     override val type = "book"
 }
 
+@Serializable
+data class Event(
+    override val type: String = "event"
+) : DeribitData
+
 //TODO()
 object DeribitDataSerializer : JsonContentPolymorphicSerializer<DeribitData>(DeribitData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
+        "params" !in element.jsonObject -> Event.serializer()
         element.jsonObject["params"]!!.jsonObject["channel"]!!.toString().startsWith("\"book.") -> Book.serializer()
         else -> Trades.serializer()
     }
