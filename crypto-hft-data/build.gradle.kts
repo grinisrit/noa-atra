@@ -26,11 +26,11 @@ dependencies {
     implementation("com.charleskorn.kaml:kaml:0.34.0")
     implementation("org.litote.kmongo:kmongo:4.2.8")
 
+
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("io.ktor:ktor-client-websockets:1.6.0")
-    implementation("io.ktor:ktor-client-java:1.6.0")
-    implementation("io.ktor:ktor-client-apache:1.6.0")
+    // implementation("io.ktor:ktor-client-java:1.6.0")
+    // implementation("io.ktor:ktor-client-apache:1.6.0")
     implementation("io.ktor:ktor-client-cio:1.6.0")
 
-    implementation("com.google.code.gson:gson:2.8.7")
 }

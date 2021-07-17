@@ -7,13 +7,16 @@ import com.grinisrit.crypto.common.mongodb.MongoDBClient
 import com.mongodb.client.MongoDatabase
 import org.litote.kmongo.getCollection
 
+
 class KrakenMongoDBClient(platform: KrakenPlatform, mongoDB: MongoDB) : MongoDBClient(platform, mongoDB) {
     override fun handleData(data: String, database: MongoDatabase) {
-        val dataTime = DataTransport.fromDataString(data, KrakenJsonParser())
-        if (dataTime.data.channelName == "event") {
+        val dataTime = DataTransport.fromDataString(data, KrakenDataSerializer)
+        if (dataTime.data.type == "event") {
             return
         }
         val col = database.getCollection<DataTransport.DataTime<KrakenData>>(dataTime.data.type)
         col.insertOne(dataTime)
     }
+
+
 }

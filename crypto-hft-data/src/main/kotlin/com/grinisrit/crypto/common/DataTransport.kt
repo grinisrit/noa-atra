@@ -39,14 +39,4 @@ object DataTransport {
         )
     }
 
-    fun <T : ChannelData> fromDataString(
-        dataString: String,
-        parser: CustomJsonParser<T>,
-    ): DataTime<T> {
-        val (_, receivingDateTimeString, dataJSON) = dataString.split(internalDelimiter)
-        return DataTime(
-            Instant.parse(receivingDateTimeString),
-            parser.parse(dataJSON)
-        )
-    }
 }

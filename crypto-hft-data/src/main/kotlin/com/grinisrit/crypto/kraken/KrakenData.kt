@@ -1,22 +1,21 @@
 package com.grinisrit.crypto.kraken
 
-import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
+
 import com.grinisrit.crypto.common.ChannelData
-import com.grinisrit.crypto.common.CustomJsonParser
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.*
 
 interface KrakenData : ChannelData {
-    val channelName: String
     val type: String
 }
 
+@Serializable
 class Event : KrakenData {
-    override val channelName: String = "event"
     override val type: String = "event"
 }
 
+@Serializable
 data class TradeData(
     val price: String,
     val volume: String,
@@ -26,169 +25,198 @@ data class TradeData(
     val misc: String,
 )
 
+object TradeDataSerializer :
+    JsonTransformingSerializer<TradeData>(TradeData.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        return element.jsonArray.let {
+            buildJsonObject {
+                put("price", it[0])
+                put("volume", it[1])
+                put("time", it[2])
+                put("side", it[3])
+                put("orderType", it[4])
+                put("misc", it[5])
+            }
+        }
+    }
+}
+
+@Serializable
 data class Trade(
     val channelId: Int,
-    val tradeData: List<TradeData>,
-    override val channelName: String,
+    val tradeData: List<@Serializable(with = TradeDataSerializer::class) TradeData>,
+    val channelName: String,
     val pair: String,
 ) : KrakenData {
     override val type: String = "trade"
 }
 
+object TradeSerializer :
+    JsonTransformingSerializer<Trade>(Trade.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        return element.jsonArray.let {
+            buildJsonObject {
+                put("channelId", it[0].toString().toInt())
+                put("tradeData", it[1])
+                put("channelName", it[2])
+                put("pair", it[3])
+            }
+        }
+    }
+}
+
+@Serializable
 data class OrderData(
     val price: String,
     val volume: String,
     val timestamp: String,
 )
 
+object OrderDataSerializer :
+    JsonTransformingSerializer<OrderData>(OrderData.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        return element.jsonArray.let {
+            buildJsonObject {
+                put("price", it[0])
+                put("volume", it[1])
+                put("timestamp", it[2])
+            }
+        }
+    }
+}
+
+@Serializable
 data class BookSnapshotData(
-    val asks: List<OrderData>,
-    val bids: List<OrderData>,
+    @SerialName("as") val asks: List<@Serializable(with = OrderDataSerializer::class)OrderData>,
+    @SerialName("bs") val bids: List<@Serializable(with = OrderDataSerializer::class)OrderData>,
 )
 
+@Serializable
 data class BookSnapshot(
     val channelId: Int,
     val bookData: BookSnapshotData,
-    override val channelName: String,
+    val channelName: String,
     val pair: String,
 ) : KrakenData {
     override val type: String = "snapshot"
 }
 
+object BookSnapshotSerializer :
+    JsonTransformingSerializer<BookSnapshot>(BookSnapshot.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        return element.jsonArray.let {
+            buildJsonObject {
+                put("channelId", it[0].toString().toInt())
+                put("bookData", it[1])
+                put("channelName", it[2])
+                put("pair", it[3])
+            }
+        }
+    }
+}
+
+@Serializable
 data class UpdateData(
     val price: String,
     val volume: String,
     val timestamp: String,
-    val updateType: String?,
+    val updateType: String? = null,
 )
 
-data class UpdateAction(
-    val updateData: List<UpdateData>,
-    val bookChecksum: String?,
+object UpdateDataSerializer :
+    JsonTransformingSerializer<UpdateData>(UpdateData.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        return element.jsonArray.let {
+            buildJsonObject {
+                put("price", it[0])
+                put("volume", it[1])
+                put("timestamp", it[2])
+                if (it.size > 3) {
+                    put("updateType", it[3])
+                }
+            }
+        }
+    }
+}
+
+@Serializable
+data class AsksUpdate(
+    val a: List<@Serializable(with = UpdateDataSerializer::class)UpdateData>,
+    val c: String?,
 )
 
+@Serializable
+data class BidsUpdate(
+    val b: List<@Serializable(with = UpdateDataSerializer::class)UpdateData>,
+    val c: String?,
+)
+
+@Serializable
 data class BookUpdate(
     val channelId: Int,
-    val askUpdate: UpdateAction?,
-    val bidUpdate: UpdateAction?,
-    override val channelName: String,
+    val asksUpdate: AsksUpdate? = null,
+    val bidsUpdate: BidsUpdate? = null,
+    val channelName: String,
     val pair: String,
 ) : KrakenData {
     override val type: String = "update"
 }
 
-class KrakenJsonParser : CustomJsonParser<KrakenData> {
-    private fun parseTradeData(dataArray: JsonArray): TradeData =
-        TradeData(
-            dataArray[0].asString,
-            dataArray[1].asString,
-            dataArray[2].asString,
-            dataArray[3].asString,
-            dataArray[4].asString,
-            dataArray[5].asString,
-        )
+object BookUpdateSerializer :
+    JsonTransformingSerializer<BookUpdate>(BookUpdate.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
 
-    private fun parseTrade(dataArray: JsonArray): Trade =
-        Trade(
-            dataArray[0].asInt,
-            dataArray[1].asJsonArray.map { parseTradeData(it.asJsonArray) },
-            dataArray[2].asString,
-            dataArray[3].asString,
-        )
-
-    private fun parseOrderData(dataArray: JsonArray): OrderData =
-        OrderData(
-            dataArray[0].asString,
-            dataArray[1].asString,
-            dataArray[2].asString,
-        )
-
-    private fun parseBookSnapshot(dataArray: JsonArray): BookSnapshot =
-        BookSnapshot(
-            dataArray[0].asInt,
-            BookSnapshotData(
-                dataArray[1].asJsonObject["as"].asJsonArray.map { parseOrderData(it.asJsonArray) },
-                dataArray[1].asJsonObject["as"].asJsonArray.map { parseOrderData(it.asJsonArray) }
-            ),
-            dataArray[2].asString,
-            dataArray[3].asString,
-        )
-
-    private fun parseUpdateData(dataArray: JsonArray): UpdateData =
-        UpdateData(
-            dataArray[0].asString,
-            dataArray[1].asString,
-            dataArray[2].asString,
-            (if (dataArray.size() > 3) {
-                dataArray[3].asString
+        return element.jsonArray.let {
+            val firstUpdateAction = it[1]
+            val secondUpdateAction = if (it.size > 4) {
+                it[2]
             } else {
                 null
-            }),
-        )
-
-    private fun parseUpdateAction(dataObject: JsonObject, symbol: String): UpdateAction? =
-        if (symbol in dataObject.keySet()) {
-            UpdateAction(
-                dataObject[symbol].asJsonArray.map { parseUpdateData(it.asJsonArray) },
-                (if ("c" in  dataObject.keySet()) {
-                    dataObject["c"].asString
-                } else {
-                    null
-                })
-            )
-        } else {
-            null
-        }
-
-    private fun parseBookUpdate(dataArray: JsonArray): BookUpdate {
-
-        val firstUpdateAction = dataArray[1].asJsonObject
-        val secondUpdateAction = if (dataArray.size() > 4) {
-            dataArray[2].asJsonObject
-        } else {
-            null
-        }
-
-        val a = parseUpdateAction(firstUpdateAction, "a")
-        val b = if (a == null) {
-            parseUpdateAction(firstUpdateAction, "b")
-        } else if (secondUpdateAction!= null) {
-            parseUpdateAction(secondUpdateAction, "b")
-        } else {
-            null
-        }
-
-        return BookUpdate(
-            dataArray[0].asInt,
-            a,
-            b,
-            dataArray[dataArray.size() - 2].asString,
-            dataArray.last().asString,
-        )
-    }
-
-    override fun parse(jsonString: String): KrakenData {
-        val obj = Gson().fromJson(jsonString, JsonElement::class.java)
-        if (obj.isJsonObject) {
-            return Event()
-        }
-        val dataArray = obj.asJsonArray
-        val channelName = dataArray[dataArray.size() - 2]
-        return if (channelName.asString == "trade") {
-            parseTrade(dataArray)
-        } else if (channelName.asString.startsWith("book")) {
-            val dataObject = dataArray[1].asJsonObject
-            if ("as" in dataObject.keySet()) {
-                parseBookSnapshot(dataArray)
-            } else {
-                parseBookUpdate(dataArray)
             }
-        } else {
-            //TODO()
-            Event()
+
+            val asksUpdate = if ("a" in firstUpdateAction.jsonObject.keys) {
+                firstUpdateAction
+            } else {
+                null
+            }
+
+            val bidsUpdate = if (asksUpdate == null) {
+                firstUpdateAction
+            } else {
+                secondUpdateAction
+            }
+
+            buildJsonObject {
+                put("channelId", it[0].toString().toInt())
+                if (asksUpdate != null) {
+                    put("asksUpdate", asksUpdate)
+                }
+                if (bidsUpdate != null) {
+                    put("bidsUpdate", bidsUpdate)
+                }
+                put("channelName", it[it.size - 2])
+                put("pair", it.last())
+            }
         }
     }
 }
 
 
+object KrakenDataSerializer : JsonContentPolymorphicSerializer<KrakenData>(KrakenData::class) {
+    override fun selectDeserializer(element: JsonElement) = when {
+        element is JsonObject -> Event.serializer()
+        else -> with(element.jsonArray[element.jsonArray.size - 2].toString()) {
+            when {
+                this == "\"trade\"" -> TradeSerializer
+                this.startsWith("\"book") -> with(element.jsonArray[1].jsonObject) {
+                    when {
+                        "as" in this.keys -> BookSnapshotSerializer
+                        else -> BookUpdateSerializer
+                    }
+                }
+                else -> Event.serializer()
+            }
+        }
+    }
+}
 
