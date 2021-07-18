@@ -30,7 +30,6 @@ class BasicLoopActor(
                     coroutineScope.launch {
                             if(!messageQueue.isClosedForSend) messageQueue.send(true)
                     }
-                    continue
                 } catch (e: Throwable) {
                     println("Operation failed")
                 }
