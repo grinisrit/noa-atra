@@ -32,4 +32,6 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.8.7")
     implementation("com.beust:klaxon:5.5")
+
+    testImplementation(kotlin("test"))
 }
