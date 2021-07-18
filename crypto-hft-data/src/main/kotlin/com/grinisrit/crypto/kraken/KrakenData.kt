@@ -142,13 +142,13 @@ object UpdateDataSerializer :
 @Serializable
 data class AsksUpdate(
     val a: List<@Serializable(with = UpdateDataSerializer::class)UpdateData>,
-    val c: String?,
+    val c: String? = null,
 )
 
 @Serializable
 data class BidsUpdate(
     val b: List<@Serializable(with = UpdateDataSerializer::class)UpdateData>,
-    val c: String?,
+    val c: String? = null,
 )
 
 @Serializable
