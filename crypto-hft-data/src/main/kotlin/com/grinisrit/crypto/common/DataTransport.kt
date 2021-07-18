@@ -25,6 +25,10 @@ object DataTransport {
         }
     }
 
+    fun getPlatformName(dataString: String): String {
+        return dataString.split(internalDelimiter).first()
+    }
+
     fun <T : ChannelData> fromDataString(
         dataString: String,
         serializer: JsonContentPolymorphicSerializer<T>

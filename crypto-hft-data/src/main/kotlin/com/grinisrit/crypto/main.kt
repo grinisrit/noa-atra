@@ -5,11 +5,17 @@ import ch.qos.logback.classic.LoggerContext
 
 import com.grinisrit.crypto.binance.*
 import com.grinisrit.crypto.coinbase.*
+import com.grinisrit.crypto.common.getPubSocket
+import com.grinisrit.crypto.common.getSubSocket
+import com.grinisrit.crypto.common.mongodb.MongoDBClient
 import com.grinisrit.crypto.deribit.*
 import com.grinisrit.crypto.kraken.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 import java.io.File
 import org.slf4j.LoggerFactory
+import kotlin.concurrent.thread
 
 
 fun main(args: Array<String>) {
@@ -28,8 +34,28 @@ fun main(args: Array<String>) {
     (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level =
         ch.qos.logback.classic.Level.ERROR
 
+    val subSocket = getSubSocket(config.zeromq)
+
+    val pubSocket = getPubSocket(config.zeromq)
+
     val mongoIsOn = config.mongodb.status == "on"
 
+
+    val client = MongoDBClient(subSocket, config.mongodb).apply {
+        platformNameToHandler.putAll(
+            mapOf(
+                "binance" to BinanceMongoDBHandler,
+                "coinbase" to CoinbaseMongoDBHandler,
+                "deribit" to DeribitMongoDBHandler,
+                "kraken" to KrakenMongoDBHandler,
+            )
+        )
+    }
+
+
+   client.start()
+
+runBlocking {
     with(config.platforms.binance) {
         if (isOn) {
 
@@ -37,17 +63,11 @@ fun main(args: Array<String>) {
 
             val websocketClient = BinanceWebsocketClient(
                 this,
+                pubSocket,
                 request
             )
-
-            websocketClient.start()
-
-            if (mongoIsOn){
-                val mongoDBClient = BinanceMongoDBClient(
-                    this,
-                    config.mongodb
-                )
-                mongoDBClient.start()
+            launch {
+                websocketClient.run()
             }
 
         }
@@ -60,17 +80,12 @@ fun main(args: Array<String>) {
 
             val websocketClient = CoinbaseWebsocketClient(
                 this,
+                pubSocket,
                 request
             )
 
-            websocketClient.start()
-
-            if (mongoIsOn) {
-                val mongoDBClient = CoinbaseMongoDBClient(
-                    this,
-                    config.mongodb
-                )
-                mongoDBClient.start()
+            launch {
+                websocketClient.run()
             }
 
         }
@@ -83,18 +98,14 @@ fun main(args: Array<String>) {
 
             val websocketClient = DeribitWebsocketClient(
                 this,
+                pubSocket,
                 request
             )
 
-            websocketClient.start()
-
-            if (mongoIsOn) {
-                val mongoDBClient = DeribitMongoDBClient(
-                    this,
-                    config.mongodb
-                )
-                mongoDBClient.start()
+            launch {
+                websocketClient.run()
             }
+
 
         }
     }
@@ -106,20 +117,16 @@ fun main(args: Array<String>) {
 
             val websocketClient = KrakenWebsocketClient(
                 this,
+                pubSocket,
                 requests
             )
+        launch {
+            websocketClient.run()
+        }
 
-            websocketClient.start()
 
-            if (mongoIsOn) {
-                val mongoDBClient = KrakenMongoDBClient(
-                    this,
-                    config.mongodb
-                )
-                mongoDBClient.start()
-            }
 
         }
     }
-
+}
 }

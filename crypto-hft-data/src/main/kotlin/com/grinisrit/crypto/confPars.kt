@@ -8,9 +8,16 @@ data class MongoDB(
     val address: String,
     val status: String,
 )
+
+@Serializable
+data class ZeroMQ(
+    val address: String,
+)
+
 @Serializable
 data class ConfYAMl(
     val version: String,
+    val zeromq: ZeroMQ,
     val mongodb: MongoDB,
     val platforms: Platforms,
 )

@@ -2,41 +2,39 @@ package com.grinisrit.crypto.common.mongodb
 
 import com.grinisrit.crypto.MongoDB
 import com.grinisrit.crypto.Platform
+import com.grinisrit.crypto.common.DataTransport
 import com.mongodb.client.MongoDatabase
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import org.litote.kmongo.KMongo
 import org.zeromq.SocketType
 import org.zeromq.ZContext
 import org.zeromq.ZMQ
 
 
-abstract class MongoDBClient(val platform: Platform, mongoDB: MongoDB) : Thread() {
+class MongoDBClient(private val socketSUB: ZMQ.Socket, mongoDB: MongoDB): Thread() {
 
-    private val mongoDBAddress = mongoDB.address
+    val client = KMongo.createClient(mongoDB.address)
 
-    private fun subscriptionFlow(socketSUB: ZMQ.Socket) = flow {
+    private fun subscriptionFlow() = flow {
+        socketSUB.subscribe("")
         while (true) {
-            val data = socketSUB.recvStr()
+            val data = socketSUB.recvStr() ?: continue
             emit(data)
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    abstract fun handleData(data: String, database: MongoDatabase)
+    val platformNameToHandler: MutableMap<String, MongoDBHandler> = mutableMapOf()
 
     override fun run() {
-        val context = ZContext()
-        val socketSUB = context.createSocket(SocketType.SUB)
-        socketSUB.connect(platform.zeromq_address)
-        socketSUB.subscribe(platform.platformName)
+            subscriptionFlow().onEach {
+                    val platformName = DataTransport.getPlatformName(it)
+                    val database = client.getDatabase(platformName)
+                    platformNameToHandler[platformName]?.handleData(it, database)
+                        ?: throw Error("Unknown platform $platformName")
 
-        val client = KMongo.createClient(mongoDBAddress)
-        val database = client.getDatabase(platform.platformName)
+            }.launchIn(GlobalScope)
 
-        runBlocking {
-            subscriptionFlow(socketSUB).collect { handleData(it, database) }
-        }
     }
 
 }

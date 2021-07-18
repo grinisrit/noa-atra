@@ -8,23 +8,27 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.collect
-import org.apache.http.HttpResponse
+import org.zeromq.ZMQ
 
 class BinanceWebsocketClient(
     platform: BinancePlatform,
+    socket : ZMQ.Socket,
     request: String
 ) : SingleRequestWebsocketClient(
     platform,
+    socket,
     request,
 ) {
-    override fun dataFlow() = flow {
-
+    override suspend fun dataFlow() = flow {
+/*
         // TODO() remove hardcode and logging
         HttpClient().use {
             emit(dataStringOf(it.get("https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=1000")))
             emit(dataStringOf(it.get("https://api.binance.com/api/v3/depth?symbol=ETHUSDT&limit=1000")))
             emit(dataStringOf(it.get("https://api.binance.com/api/v3/depth?symbol=ETHBTC&limit=1000")))
         }
+
+ */
 
         super.dataFlow().collect { emit(it) }
     }

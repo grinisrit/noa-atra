@@ -1,6 +1,7 @@
 package com.grinisrit.crypto.common.websocket
 
 import com.grinisrit.crypto.Platform
+import com.grinisrit.crypto.ZeroMQ
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import org.zeromq.SocketType
 import org.zeromq.ZContext
+import org.zeromq.ZMQ
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -19,10 +21,11 @@ import java.time.Instant
 
 abstract class WebsocketClient(
     protected val platform: Platform,
+    private val socket: ZMQ.Socket,
     private val reconnectTimeoutMillis: Long = 5000L,
     private val socketTimeoutMillis: Long = 2000L,
     logFilePath: String = "platforms/${platform.platformName}/log.txt"
-) : Thread() {
+)  {
 
     var lastConnectionTimeMilli: Long = 0L
 
@@ -32,41 +35,38 @@ abstract class WebsocketClient(
         this.println("${Instant.now()}; $logText")
     }
 
-    override fun run() {
+    suspend fun run() {
 
-        val context = ZContext()
-        val socket = context.createSocket(SocketType.PUB)
-        socket.bind(platform.zeromq_address)
 
-        runBlocking {
             while (true) {
-                try {
+               try {
                     val instant = Instant.now()
                     val currentTimeMilli = instant.toEpochMilli()
                     loggerFile.log("Trying to connect...")
 
                     val timeFromLastConnectionMilli = currentTimeMilli - lastConnectionTimeMilli
 
-                    delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)
+                 //   delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)
 
                     lastConnectionTimeMilli = Instant.now().toEpochMilli()
+
 
                     dataFlow().collect {
                         socket.send(it)
                     }
 
                 } catch (e: Throwable) {
-                    loggerFile.log("Catch $e")
-                }
+                   loggerFile.log("Catch $e")
+               }
 
             }
-        }
+
 
     }
 
-    abstract fun DefaultClientWebSocketSession.receiveData(): Flow<String>
+    abstract suspend fun DefaultClientWebSocketSession.receiveData(): Flow<String>
 
-    open fun dataFlow() = flow {
+    open suspend fun dataFlow() = flow {
         // TODO()
         val client = HttpClient(CIO) {
             install(WebSockets)

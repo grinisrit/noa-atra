@@ -1,13 +1,11 @@
 package com.grinisrit.crypto.deribit
 
-import com.grinisrit.crypto.DeribitPlatform
-import com.grinisrit.crypto.MongoDB
 import com.grinisrit.crypto.common.DataTransport
-import com.grinisrit.crypto.common.mongodb.MongoDBClient
+import com.grinisrit.crypto.common.mongodb.MongoDBHandler
 import com.mongodb.client.MongoDatabase
 import org.litote.kmongo.getCollection
 
-class DeribitMongoDBClient(platform: DeribitPlatform, mongoDB: MongoDB) : MongoDBClient(platform, mongoDB) {
+object DeribitMongoDBHandler : MongoDBHandler {
     override fun handleData(data: String, database: MongoDatabase) {
         val dataTime = DataTransport.fromDataString(data, DeribitDataSerializer)
         if (dataTime.data is Event){
