@@ -10,8 +10,8 @@ interface BinanceData : ChannelData {
 
 @Serializable
 data class OrderData(
-    val price: String,
-    val amount: String,
+    val price: Double,
+    val amount: Double,
 )
 
 object OrderDataSerializer :
@@ -41,8 +41,8 @@ data class Trade(
     @SerialName("E") val eventTime: Long,
     @SerialName("s") val symbol: String,
     @SerialName("t") val tradeID: Long,
-    @SerialName("p") val price: String,
-    @SerialName("q") val quantity: String,
+    @SerialName("p") val price: Double,
+    @SerialName("q") val quantity: Double,
     @SerialName("b") val buyerOrderID: Long,
     @SerialName("a") val sellerOrderID: Long,
     @SerialName("T") val tradeTime: Long,
@@ -59,8 +59,8 @@ data class BookUpdate(
     @SerialName("s") val symbol: String,
     @SerialName("U") val firstUpdateId: Long,
     @SerialName("u") val finalUpdateId: Long,
-    @SerialName("b") val bids: List<List<String>>,
-    @SerialName("a") val asks: List<List<String>>,
+    @SerialName("b") val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
+    @SerialName("a") val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
 ) : BinanceData {
     override val type = "update"
 }
@@ -73,7 +73,7 @@ data class Event(
 // TODO()
 object BinanceDataSerializer : JsonContentPolymorphicSerializer<BinanceData>(BinanceData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
-        "lastUpdateId" in element.jsonObject -> Snapshot.serializer()
+      //  "lastUpdateId" in element.jsonObject -> Snapshot.serializer()
         "U" in element.jsonObject -> BookUpdate.serializer()
         "t" in element.jsonObject -> Trade.serializer()
         else -> Event.serializer()

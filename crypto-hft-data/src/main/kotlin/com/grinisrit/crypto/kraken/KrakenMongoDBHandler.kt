@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.kraken
 
+import com.grinisrit.crypto.common.DataTime
 import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.mongodb.MongoDBHandler
 import com.mongodb.client.MongoDatabase
@@ -12,7 +13,7 @@ object KrakenMongoDBHandler : MongoDBHandler {
         if (dataTime.data.type == "event") {
             return
         }
-        val col = database.getCollection<DataTransport.DataTime<KrakenData>>(dataTime.data.type)
+        val col = database.getCollection<DataTime<KrakenData>>(dataTime.data.type)
         col.insertOne(dataTime)
     }
 

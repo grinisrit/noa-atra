@@ -12,6 +12,6 @@ class DeribitWebsocketClient(
     platform,
     socket,
     request,
-    backendReconnectTimeout = 10000L,
-    socketTimeoutMillis = 40000L// TODO()!!!!
+    backendReconnectTimeout = 10000L, // TODO
+    socketTimeoutMillis = 5000L
 )

@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.deribit
 
+import com.grinisrit.crypto.common.DataTime
 import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.mongodb.MongoDBHandler
 import com.mongodb.client.MongoDatabase
@@ -11,7 +12,7 @@ object DeribitMongoDBHandler : MongoDBHandler {
         if (dataTime.data is Event){
             return
         }
-        val col = database.getCollection<DataTransport.DataTime<DeribitData>>(dataTime.data.type)
+        val col = database.getCollection<DataTime<DeribitData>>(dataTime.data.type)
         col.insertOne(dataTime)
     }
 }

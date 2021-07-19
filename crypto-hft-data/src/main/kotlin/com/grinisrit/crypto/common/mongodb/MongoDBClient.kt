@@ -12,29 +12,20 @@ import org.zeromq.ZContext
 import org.zeromq.ZMQ
 
 
-class MongoDBClient(private val socketSUB: ZMQ.Socket, mongoDB: MongoDB): Thread() {
+class MongoDBClient(private val socketSUB: ZMQ.Socket, mongoDB: MongoDB) {
 
     val client = KMongo.createClient(mongoDB.address)
 
-    private fun subscriptionFlow() = flow {
-        socketSUB.subscribe("")
-        while (true) {
-            val data = socketSUB.recvStr() ?: continue
-            emit(data)
-        }
-    }.flowOn(Dispatchers.IO)
-
     val platformNameToHandler: MutableMap<String, MongoDBHandler> = mutableMapOf()
 
-    override fun run() {
-            subscriptionFlow().onEach {
-                    val platformName = DataTransport.getPlatformName(it)
-                    val database = client.getDatabase(platformName)
-                    platformNameToHandler[platformName]?.handleData(it, database)
-                        ?: throw Error("Unknown platform $platformName")
-
-            }.launchIn(GlobalScope)
-
+    fun run() {
+        while (true) {
+            val data = socketSUB.recvStr() ?: continue
+          //  println(data)
+            val platformName = DataTransport.getPlatformName(data)
+            val database = client.getDatabase(platformName)
+            platformNameToHandler[platformName]?.handleData(data, database)
+        }
     }
 
 }

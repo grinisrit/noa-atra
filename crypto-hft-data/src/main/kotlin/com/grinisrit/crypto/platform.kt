@@ -1,14 +1,16 @@
 package com.grinisrit.crypto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// TODO checks mb
 interface Platform {
-    val platformName: String
-    val websocket_address: String
-    val zeromq_address: String
+
+    @SerialName("websocket_address")
+    val websocketAddress: String
     val status: String
     val symbols: List<String>
+
+    val platformName: String
 
     val isOn: Boolean
         get() = status == "on"
@@ -16,8 +18,8 @@ interface Platform {
 
 @Serializable
 data class CoinbasePlatform(
-    override val websocket_address: String,
-    override val zeromq_address: String,
+    @SerialName("websocket_address")
+    override val websocketAddress: String,
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
@@ -26,8 +28,8 @@ data class CoinbasePlatform(
 
 @Serializable
 data class BinancePlatform(
-    override val websocket_address: String,
-    override val zeromq_address: String,
+    @SerialName("websocket_address")
+    override val websocketAddress: String,
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
@@ -36,8 +38,8 @@ data class BinancePlatform(
 
 @Serializable
 data class DeribitPlatform(
-    override val websocket_address: String,
-    override val zeromq_address: String,
+    @SerialName("websocket_address")
+    override val websocketAddress: String,
     override val status: String,
     override val symbols: List<String>
 ) : Platform {
@@ -46,8 +48,8 @@ data class DeribitPlatform(
 
 @Serializable
 data class KrakenPlatform(
-    override val websocket_address: String,
-    override val zeromq_address: String,
+    @SerialName("websocket_address")
+    override val websocketAddress: String,
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {

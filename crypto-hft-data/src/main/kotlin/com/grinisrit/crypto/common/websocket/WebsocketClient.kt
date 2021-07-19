@@ -1,7 +1,6 @@
 package com.grinisrit.crypto.common.websocket
 
 import com.grinisrit.crypto.Platform
-import com.grinisrit.crypto.ZeroMQ
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
@@ -10,8 +9,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import org.zeromq.SocketType
-import org.zeromq.ZContext
 import org.zeromq.ZMQ
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
@@ -35,8 +32,8 @@ abstract class WebsocketClient(
         this.println("${Instant.now()}; $logText")
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun run() {
-
 
             while (true) {
                try {
@@ -46,7 +43,8 @@ abstract class WebsocketClient(
 
                     val timeFromLastConnectionMilli = currentTimeMilli - lastConnectionTimeMilli
 
-                 //   delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)
+                   // TODO()!!!
+                    GlobalScope.launch { delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)}.join()
 
                     lastConnectionTimeMilli = Instant.now().toEpochMilli()
 
@@ -75,7 +73,7 @@ abstract class WebsocketClient(
             }
         }
 
-        client.wss(urlString = platform.websocket_address) {
+        client.wss(urlString = platform.websocketAddress) {
             this.receiveData().collect { emit(it) }
         }
 

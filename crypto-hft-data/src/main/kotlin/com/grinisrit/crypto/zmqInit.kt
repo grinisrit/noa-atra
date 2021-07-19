@@ -9,6 +9,9 @@ fun getPubSocket(zmq: ZeroMQ): ZMQ.Socket{
     return ZContext().createSocket(SocketType.PUB).apply { bind(zmq.address) }
 }
 
-fun getSubSocket(zmq: ZeroMQ): ZMQ.Socket{
-    return ZContext().createSocket(SocketType.SUB).apply { connect(zmq.address) }
+fun getSubSocket(zmq: ZeroMQ, topic: String = ""): ZMQ.Socket{
+    return ZContext().createSocket(SocketType.SUB).apply {
+        connect(zmq.address)
+        subscribe(topic)
+    }
 }

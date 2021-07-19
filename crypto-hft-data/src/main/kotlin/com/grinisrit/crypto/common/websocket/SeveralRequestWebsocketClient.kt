@@ -43,7 +43,7 @@ open class SeveralRequestWebsocketClient(
 
         for (frame in incoming) {
             frame as? Frame.Text ?: throw Error(frame.toString()) // TODO
-           // println("active")
+         //   loggerFile.log(frame.readText())
             emit(dataStringOf(frame.readText()))
         }
         

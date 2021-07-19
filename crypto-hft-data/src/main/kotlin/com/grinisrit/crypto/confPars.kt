@@ -7,7 +7,10 @@ import kotlinx.serialization.Serializable
 data class MongoDB(
     val address: String,
     val status: String,
-)
+) {
+    val isOn: Boolean
+        get() = status == "on"
+}
 
 @Serializable
 data class ZeroMQ(

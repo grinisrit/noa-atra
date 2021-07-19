@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.common
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import java.time.Instant
@@ -9,11 +10,6 @@ object DataTransport {
 
     private const val internalDelimiter = "/**/"
 
-    data class DataTime<T : ChannelData>(
-        val receiving_datetime: Instant,
-        val data: T,
-    )
-
     fun dataStringOf(platformName: String, receivingDateTime: Instant, dataJSON: String): String {
         return buildString {
             append(platformName)
@@ -21,7 +17,6 @@ object DataTransport {
             append(receivingDateTime.toString())
             append(internalDelimiter)
             append(dataJSON)
-            append(internalDelimiter)
         }
     }
 
@@ -29,17 +24,22 @@ object DataTransport {
         return dataString.split(internalDelimiter).first()
     }
 
+    fun <T : ChannelData> decodeJsonData(
+        jsonData: String,
+        serializer: KSerializer<T>
+    ) = Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+    }.decodeFromString(serializer, jsonData)
+
     fun <T : ChannelData> fromDataString(
         dataString: String,
-        serializer: JsonContentPolymorphicSerializer<T>
+        serializer: KSerializer<T>
     ): DataTime<T> {
-        val (_, receivingDateTimeString, dataJSON) = dataString.split(internalDelimiter)
+        val (_, receivingDateTimeString, jsonData) = dataString.split(internalDelimiter)
         return DataTime(
             Instant.parse(receivingDateTimeString),
-            Json {
-                encodeDefaults = true
-                ignoreUnknownKeys = true
-            }.decodeFromString(serializer, dataJSON)
+            decodeJsonData(jsonData, serializer)
         )
     }
 
