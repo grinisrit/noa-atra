@@ -8,7 +8,8 @@ within the [KMath](https://github.com/mipt-npm/kmath) library.
 ## Installation 
 
 
-To use `NOA`, you will need first to build & publish the [kmath-noa](https://github.com/grinisrit/kmath/tree/feature/noa/kmath-noa) 
+To use `NOA`, you will need first to build & publish the 
+[kmath-noa](https://github.com/mipt-npm/kmath/tree/feature/noa/kmath-noa) 
 module locally.
 
 For data storage, you have to install 
@@ -27,6 +28,7 @@ We get the LOB data feed from the following exchange:
 
 * [Coinbase](https://docs.pro.coinbase.com/#websocket-feed)
 * [Kraken](https://docs.kraken.com/websockets/#message-book/)
+* [BitStamp](https://www.bitstamp.net/websocket/v2/) 
 * [Binance](https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md)
 * [Deribit](https://docs.deribit.com/?python#subscriptions)
 

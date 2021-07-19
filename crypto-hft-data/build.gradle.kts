@@ -29,8 +29,8 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("io.ktor:ktor-client-websockets:1.6.0")
-    // implementation("io.ktor:ktor-client-java:1.6.0")
-    // implementation("io.ktor:ktor-client-apache:1.6.0")
     implementation("io.ktor:ktor-client-cio:1.6.0")
+
+    testImplementation(kotlin("test"))
 
 }
