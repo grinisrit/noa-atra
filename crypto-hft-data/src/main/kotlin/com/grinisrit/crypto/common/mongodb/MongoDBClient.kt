@@ -18,8 +18,8 @@ class MongoDBClient(private val socketSUB: ZMQ.Socket, mongoDB: MongoDB) {
 
     val platformNameToHandler: MutableMap<String, MongoDBHandler> = mutableMapOf()
 
-    fun run() {
-        while (true) {
+    fun run(coroutineScope: CoroutineScope?) {
+        while (coroutineScope?.isActive != false) {
             val data = socketSUB.recvStr() ?: continue
           //  println(data)
             val platformName = DataTransport.getPlatformName(data)

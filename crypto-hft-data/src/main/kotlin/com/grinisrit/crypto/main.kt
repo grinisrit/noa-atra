@@ -57,7 +57,7 @@ fun main(args: Array<String>) {
                 }
 
                 launch (newSingleThreadContext("MongoWorker")) {
-                    client.run()
+                    client.run(this)
                 }
             }
         }
