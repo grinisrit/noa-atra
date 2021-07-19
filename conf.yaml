@@ -13,6 +13,7 @@ platforms:
       - BTC-USDT
       - ETH-USDT
   binance:
+    api_address: https://api.binance.com/api/v3
     websocket_address: wss://stream.binance.com:9443/ws
     status: on
     symbols:

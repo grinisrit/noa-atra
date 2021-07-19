@@ -32,8 +32,8 @@ fun main(args: Array<String>) {
     val config = parseConf(File(configPath).readText())
 
     // TODO something better
- //   (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level =
-   //     ch.qos.logback.classic.Level.ERROR
+    (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level =
+        ch.qos.logback.classic.Level.ERROR
 
 
     val pubSocket = getPubSocket(config.zeromq)
@@ -62,8 +62,6 @@ fun main(args: Array<String>) {
             }
         }
 
-
-
         with(config.platforms.binance) {
             if (isOn) {
 
@@ -80,9 +78,9 @@ fun main(args: Array<String>) {
 
 
                 val apiClient = BinanceAPIClient(this, getSubSocket(config.zeromq, "binance"))
-                launch {
-                   delay(2000)
-                    apiClient.run()
+                launch(newSingleThreadContext("api")) {
+                    delay(2000)
+                    apiClient.run(this)
                 }
 
 

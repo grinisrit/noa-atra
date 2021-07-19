@@ -13,14 +13,11 @@ import io.ktor.client.features.*
 import io.ktor.client.features.get
 import io.ktor.client.request.*
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.newSingleThreadContext
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.*
 import org.zeromq.ZMQ
@@ -37,20 +34,12 @@ class BinanceAPIClient(
 
     private val symbolToLastUpdateId: MutableMap<String, Long> = mutableMapOf()
 
-    @OptIn(ObsoleteCoroutinesApi::class)
-    private fun subscriptionFlow() = flow {
-        while (true) {
-            val data = socket.recvStr() ?: continue
-            emit(data)
-        }
-    }.flowOn(newSingleThreadContext("BinanceAPIZeroMQSub"))
-
     private suspend fun getSnapshot(symbol: String) {
 
-        // todo reconnect
         val snapshot: String = HttpClient().use {
-            it.get("https://api.binance.com/api/v3/depth?symbol=$symbol&limit=1000") // TODO
+            it.get("${platform.apiAddress}/depth?symbol=$symbol&limit=1000") // TODO
         }
+
         col.insertOne(
             DataTime(
                 Instant.now(),
@@ -68,13 +57,21 @@ class BinanceAPIClient(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun run() {
-        subscriptionFlow().onEach {
-            val dataTime = DataTransport.fromDataString(it, BinanceDataSerializer)
-            println(dataTime.data.type)
-            (dataTime.data as? BookUpdate)?.let { bookUpdate ->
-                handleBookUpdate(bookUpdate)
+    fun run(scope: CoroutineScope) =
+        scope.launch {
+            while (true) {
+                val dataString = socket.recvStr() ?: continue
+                val dataTime = DataTransport.fromDataString(dataString, BinanceDataSerializer)
+                (dataTime.data as? BookUpdate)?.let { bookUpdate ->
+                    try {
+                        handleBookUpdate(bookUpdate)
+                    } catch (e: Throwable) {
+                        println(e)
+                        delay(5000)
+                        // TODO log
+                    }
+                }
             }
-        }.launchIn(GlobalScope) // TODO
-    }
+        }
+
 }

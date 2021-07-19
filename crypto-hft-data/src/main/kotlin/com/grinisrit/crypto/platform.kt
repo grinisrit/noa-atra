@@ -28,6 +28,8 @@ data class CoinbasePlatform(
 
 @Serializable
 data class BinancePlatform(
+    @SerialName("api_address")
+    val apiAddress: String,
     @SerialName("websocket_address")
     override val websocketAddress: String,
     override val status: String,
