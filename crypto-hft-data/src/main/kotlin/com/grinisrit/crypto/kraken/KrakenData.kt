@@ -17,9 +17,9 @@ class Event : KrakenData {
 
 @Serializable
 data class TradeData(
-    val price: String,
-    val volume: String,
-    val time: String,
+    val price: Double,
+    val volume: Double,
+    val time: Double,
     val side: String,
     val orderType: String,
     val misc: String,
@@ -67,9 +67,9 @@ object TradeSerializer :
 
 @Serializable
 data class OrderData(
-    val price: String,
-    val volume: String,
-    val timestamp: String,
+    val price: Double,
+    val volume: Double,
+    val timestamp: Double,
 )
 
 object OrderDataSerializer :
@@ -117,8 +117,8 @@ object BookSnapshotSerializer :
 
 @Serializable
 data class UpdateData(
-    val price: String,
-    val volume: String,
+    val price: Double,
+    val volume: Double,
     val timestamp: String,
     val updateType: String? = null,
 )

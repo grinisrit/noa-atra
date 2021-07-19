@@ -31,22 +31,22 @@ data class Ticker(
     val sequence: Long,
     override val time: String,
     val product_id: String,
-    val price: String,
+    val price: Double,
     val side: String,
-    val last_size: String,
-    val best_bid: String,
-    val best_ask: String,
-    val open_24h: String,
-    val volume_24h: String,
-    val low_24h: String,
-    val high_24h: String,
-    val volume_30d: String,
+    val last_size: Double,
+    val best_bid: Double,
+    val best_ask: Double,
+    val open_24h: Double,
+    val volume_24h: Double,
+    val low_24h: Double,
+    val high_24h: Double,
+    val volume_30d: Double,
 ) : CoinbaseDataTime
 
 @Serializable
 data class OrderData(
-    val price: String,
-    val amount: String,
+    val price: Double,
+    val amount: Double,
 )
 
 object OrderDataSerializer :
@@ -64,8 +64,8 @@ object OrderDataSerializer :
 @Serializable
 data class OrderUpdateData(
     val side: String,
-    val price: String,
-    val amount: String,
+    val price: Double,
+    val amount: Double,
 )
 
 object OrderUpdateDataSerializer :
