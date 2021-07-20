@@ -21,7 +21,7 @@ abstract class WebsocketClient(
     private val socket: ZMQ.Socket,
     private val reconnectTimeoutMillis: Long = 5000L,
     private val socketTimeoutMillis: Long = 2000L,
-    logFilePath: String = "platforms/${platform.platformName}/log.txt"
+    logFilePath: String = "platforms/${platform.name}/log.txt"
 )  {
 
     var lastConnectionTimeMilli: Long = 0L

@@ -1,7 +1,6 @@
 package com.grinisrit.crypto.common.websocket
 
 import com.grinisrit.crypto.Platform
-import com.grinisrit.crypto.ZeroMQ
 import com.grinisrit.crypto.common.DataTransport
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
@@ -15,7 +14,7 @@ open class SeveralRequestWebsocketClient(
     private val requests: List<String>,
     backendReconnectTimeout: Long = 5000L,
     socketTimeoutMillis: Long = 2000L,
-    logFilePath: String = "platforms/${platform.platformName}/log.txt"
+    logFilePath: String = "platforms/${platform.name}/log.txt"
 ): WebsocketClient(
     platform,
     socket,
@@ -24,7 +23,7 @@ open class SeveralRequestWebsocketClient(
     logFilePath
 ) {
     protected fun dataStringOf(data: String) =
-        DataTransport.dataStringOf(platform.platformName, Instant.now(), data)
+        DataTransport.dataStringOf(platform.name, Instant.now(), data)
     // TODO() make this function better
     override suspend fun DefaultClientWebSocketSession.receiveData() = flow {
         loggerFile.log("Connected successfully")
@@ -43,7 +42,7 @@ open class SeveralRequestWebsocketClient(
 
         for (frame in incoming) {
             frame as? Frame.Text ?: throw Error(frame.toString()) // TODO
-         //   loggerFile.log(frame.readText())
+           // loggerFile.log(frame.readText())
             emit(dataStringOf(frame.readText()))
         }
         

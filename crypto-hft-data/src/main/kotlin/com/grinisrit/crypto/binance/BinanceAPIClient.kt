@@ -3,21 +3,9 @@ package com.grinisrit.crypto.binance
 import com.grinisrit.crypto.BinancePlatform
 import com.grinisrit.crypto.common.DataTime
 import com.grinisrit.crypto.common.DataTransport
-import com.grinisrit.crypto.kraken.UpdateData
 import io.ktor.client.*
-import io.ktor.client.*
-import io.ktor.client.features.*
-import io.ktor.client.features.get
 import io.ktor.client.request.*
-import io.ktor.client.features.*
-import io.ktor.client.features.get
-import io.ktor.client.request.*
-import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.*
 import org.zeromq.ZMQ
@@ -29,7 +17,7 @@ class BinanceAPIClient(
     val socket: ZMQ.Socket
 ) {
 
-    private val col = KMongo.createClient().getDatabase(platform.platformName)
+    private val col = KMongo.createClient().getDatabase(platform.name)
         .getCollection<DataTime<Snapshot>>("snapshot")
 
     private val symbolToLastUpdateId: MutableMap<String, Long> = mutableMapOf()

@@ -10,7 +10,7 @@ interface Platform {
     val status: String
     val symbols: List<String>
 
-    val platformName: String
+    val name: String
 
     val isOn: Boolean
         get() = status == "on"
@@ -23,7 +23,7 @@ data class CoinbasePlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val platformName = "coinbase"
+    override val name = "coinbase"
 }
 
 @Serializable
@@ -35,7 +35,7 @@ data class BinancePlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val platformName = "binance"
+    override val name = "binance"
 }
 
 @Serializable
@@ -45,7 +45,7 @@ data class DeribitPlatform(
     override val status: String,
     override val symbols: List<String>
 ) : Platform {
-    override val platformName = "deribit"
+    override val name = "deribit"
 }
 
 @Serializable
@@ -55,7 +55,17 @@ data class KrakenPlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val platformName = "kraken"
+    override val name = "kraken"
+}
+
+@Serializable
+data class BitstampPlatform(
+    @SerialName("websocket_address")
+    override val websocketAddress: String,
+    override val status: String,
+    override val symbols: List<String>,
+) : Platform {
+    override val name = "bitstamp"
 }
 
 @Serializable
@@ -64,4 +74,5 @@ data class Platforms(
     val kraken: KrakenPlatform,
     val binance: BinancePlatform,
     val deribit: DeribitPlatform,
+    val bitstamp: BitstampPlatform,
 )
