@@ -60,8 +60,8 @@ fun main(args: Array<String>) {
                     )
                 }
 
-                launch (newSingleThreadContext("MongoWorker")) {
-                    client.run()
+                launch (Dispatchers.IO) {
+                    client.run(this)
                 }
             }
         }
@@ -82,7 +82,7 @@ fun main(args: Array<String>) {
 
 
                 val apiClient = BinanceAPIClient(this, getSubSocket(config.zeromq, "binance"))
-                launch(newSingleThreadContext("api")) {
+                launch(Dispatchers.IO) {
                     delay(2000)
                     apiClient.run(this)
                 }
