@@ -41,7 +41,7 @@ fun getNumbers() = flow {
         val dataTime = DataTransport.fromDataString(it, BinanceDataSerializer)
         with(dataTime.data) {
             if (this is Trade && symbol == "BTCUSDT"){
-                emit(Pair(dataTime.receiving_datetime, price))
+                emit(Pair(Instant.ofEpochMilli(tradeTime), price))
             }
         }
     }
@@ -84,6 +84,7 @@ fun main() {
 
 
     GlobalScope.launch {
+        println(Thread.currentThread())
         while (isActive) {
             sinTrace {
                 x.set(y.takeLast(500).map { it.first.toString() })
@@ -94,6 +95,7 @@ fun main() {
 
 
     GlobalScope.launch {
+        println(Thread.currentThread())
         getNumbers().collect {
             y.add(it)
         }

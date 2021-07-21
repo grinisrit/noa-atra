@@ -1,19 +1,24 @@
 package com.grinisrit.crypto.binance
 
-import com.grinisrit.crypto.common.DataTime
+import com.grinisrit.crypto.PlatformName
 import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.mongodb.MongoDBHandler
-import com.mongodb.client.MongoDatabase
-import org.litote.kmongo.getCollection
+import com.mongodb.client.MongoClient
 
-object BinanceMongoDBHandler : MongoDBHandler {
-    override fun handleData(data: String, database: MongoDatabase) {
+
+class BinanceMongoDBHandler(client: MongoClient) : MongoDBHandler(
+    client,
+    PlatformName.BINANCE,
+    listOf("trade", "update")
+) {
+
+    override fun handleData(data: String) {
         val dataTime = DataTransport.fromDataString(data, BinanceDataSerializer)
-        if (dataTime.data is Event){
+        if (dataTime.data is Event) {
             return
         }
-        val col = database.getCollection<DataTime<BinanceData>>(dataTime.data.type)
-        col.insertOne(dataTime)
+        val col = nameToCollection[dataTime.data.type]
+        col?.insertOne(dataTime)
     }
 
 }

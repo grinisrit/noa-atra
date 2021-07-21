@@ -1,18 +1,21 @@
 package com.grinisrit.crypto.deribit
 
-import com.grinisrit.crypto.common.DataTime
+import com.grinisrit.crypto.PlatformName
 import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.mongodb.MongoDBHandler
-import com.mongodb.client.MongoDatabase
-import org.litote.kmongo.getCollection
+import com.mongodb.client.MongoClient
 
-object DeribitMongoDBHandler : MongoDBHandler {
-    override fun handleData(data: String, database: MongoDatabase) {
+class DeribitMongoDBHandler(client: MongoClient) : MongoDBHandler(
+    client,
+    PlatformName.DERIBIT,
+    listOf("book", "trades")
+){
+    override fun handleData(data: String) {
         val dataTime = DataTransport.fromDataString(data, DeribitDataSerializer)
-        if (dataTime.data is Event){
+        if (dataTime.data is Event) {
             return
         }
-        val col = database.getCollection<DataTime<DeribitData>>(dataTime.data.type)
-        col.insertOne(dataTime)
+        val col = nameToCollection[dataTime.data.type]
+        col?.insertOne(dataTime)
     }
 }
