@@ -1,10 +1,8 @@
 package com.grinisrit.crypto.bitstamp
 
-import com.grinisrit.crypto.binance.BinanceData
 import com.grinisrit.crypto.common.ChannelData
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
-import java.sql.Timestamp
 
 interface BitstampData : ChannelData {
     val type: String
@@ -31,10 +29,17 @@ object OrderDataSerializer :
 }
 
 @Serializable
-data class OrderBook(
-    val channel: String,
+data class OrderBookData(
+    val microtimestamp: String,
+    val timestamp: String,
     val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
     val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
+)
+
+@Serializable
+data class OrderBook(
+    val data: OrderBookData,
+    val channel: String,
     val event: String,
 ) : BitstampData {
     override val type = "order_book"
@@ -71,8 +76,10 @@ data class Event(
 
 // TODO()
 object BitstampDataSerializer : JsonContentPolymorphicSerializer<BitstampData>(BitstampData::class) {
-    override fun selectDeserializer(element: JsonElement) = when {
-      //  "lastUpdateId" in element.jsonObject -> Snapshot.serializer()
-        else -> Event.serializer()
-    }
+    override fun selectDeserializer(element: JsonElement) =
+        when (element.jsonObject["event"]!!.jsonPrimitive.content) {
+            "trade" -> Trade.serializer()
+            "data" -> OrderBook.serializer()
+            else -> Event.serializer()
+        }
 }

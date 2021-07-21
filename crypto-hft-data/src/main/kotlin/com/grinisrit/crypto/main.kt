@@ -4,7 +4,9 @@ import kotlinx.cli.*
 import ch.qos.logback.classic.LoggerContext
 
 import com.grinisrit.crypto.binance.*
+import com.grinisrit.crypto.bitstamp.BitstampMongoDBHandler
 import com.grinisrit.crypto.bitstamp.BitstampWebsocketClient
+import com.grinisrit.crypto.bitstamp.BitstampWebsocketRequestBuilder
 import com.grinisrit.crypto.coinbase.*
 import com.grinisrit.crypto.common.getPubSocket
 import com.grinisrit.crypto.common.getSubSocket
@@ -53,6 +55,7 @@ fun main(args: Array<String>) {
                             "coinbase" to CoinbaseMongoDBHandler,
                             "deribit" to DeribitMongoDBHandler,
                             "kraken" to KrakenMongoDBHandler,
+                            "bitstamp" to BitstampMongoDBHandler,
                         )
                     )
                 }
@@ -148,14 +151,7 @@ fun main(args: Array<String>) {
         with(config.platforms.bitstamp) {
             if (isOn) {
 
-                val requests = listOf(
-                    "{\n" +
-                            "    \"event\": \"bts:subscribe\",\n" +
-                            "    \"data\": {\n" +
-                            "        \"channel\": \"detail_order_book_ethbtc\"\n" +
-                            "    }\n" +
-                            "}"
-                )
+                val requests = BitstampWebsocketRequestBuilder.buildRequest(symbols)
 
                 val websocketClient = BitstampWebsocketClient(
                     this,

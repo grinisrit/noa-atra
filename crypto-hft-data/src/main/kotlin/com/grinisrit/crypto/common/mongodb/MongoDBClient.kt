@@ -21,10 +21,14 @@ class MongoDBClient(private val socketSUB: ZMQ.Socket, mongoDB: MongoDB) {
     fun run() {
         while (true) {
             val data = socketSUB.recvStr() ?: continue
-          //  println(data)
             val platformName = DataTransport.getPlatformName(data)
             val database = client.getDatabase(platformName)
-            platformNameToHandler[platformName]?.handleData(data, database)
+            try {
+                platformNameToHandler[platformName]?.handleData(data, database)
+            } catch (e: Throwable) {
+                // todo log
+                println(e)
+            }
         }
     }
 
