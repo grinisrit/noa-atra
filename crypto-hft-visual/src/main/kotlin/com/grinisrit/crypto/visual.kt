@@ -3,8 +3,7 @@ package com.grinisrit.crypto
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.grinisrit.crypto.binance.BinanceDataSerializer
-import com.grinisrit.crypto.binance.Trade
+import com.grinisrit.crypto.binance.*
 import com.grinisrit.crypto.coinbase.Ticker
 import com.grinisrit.crypto.common.DataTransport
 import kotlinx.coroutines.*
@@ -21,14 +20,15 @@ import space.kscience.plotly.server.close
 import space.kscience.plotly.server.pushUpdates
 import space.kscience.plotly.server.serve
 import space.kscience.plotly.server.show
+import java.time.Instant
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.LinkedBlockingQueue
 
 fun getMessage() = flow {
     val context = ZContext()
     val socketSUB = context.createSocket(SocketType.SUB)
-    socketSUB.connect("tcp://localhost:5899")
-    socketSUB.subscribe("")
+    socketSUB.connect("tcp://localhost:5897")
+    socketSUB.subscribe("binance")
     while (true) {
         val data = socketSUB.recvStr()
         emit(data)
@@ -40,8 +40,8 @@ fun getNumbers() = flow {
     getMessage().collect {
         val dataTime = DataTransport.fromDataString(it, BinanceDataSerializer)
         with(dataTime.data) {
-            if (this is Trade && (this as Trade).symbol == "BTCUSDT"){
-                emit((this as Trade).price.toDouble())
+            if (this is Trade && symbol == "BTCUSDT"){
+                emit(Pair(dataTime.receiving_datetime, price))
             }
         }
     }
@@ -52,7 +52,7 @@ fun getNumbers() = flow {
 fun main() {
 
     val sinTrace = Trace() {
-        name = "BTC"
+        name = "BTC to USDT"
         line.dash = Dash.dot
     }
 
@@ -65,9 +65,9 @@ fun main() {
             plot(renderer = plotly) {
                 traces(sinTrace)
                 layout {
-                    title = "По чём биткоин"
-                    xaxis.title = "Времени нету но вы держитесь"
-                    yaxis.title = "Баксы"
+                    title = "BTC-USDT live trades"
+                    xaxis.title = "Time, UTC"
+                    yaxis.title = "Price, USDT"
                 }
             }
         }
@@ -78,14 +78,17 @@ fun main() {
     server.show()
 
 
-    val y = CopyOnWriteArrayList<Double>()
+    val y = CopyOnWriteArrayList<Pair<Instant, Double>>()
 
     val yQueue = LinkedBlockingQueue<Double>()
 
 
     GlobalScope.launch {
         while (isActive) {
-            sinTrace.y.numbers = y.takeLast(100)
+            sinTrace {
+                x.set(y.takeLast(500).map { it.first.toString() })
+            }
+            sinTrace.y.numbers = y.takeLast(500).map { it.second }
         }
     }
 

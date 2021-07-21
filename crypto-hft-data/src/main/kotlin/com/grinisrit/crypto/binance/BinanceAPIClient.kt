@@ -31,7 +31,10 @@ class BinanceAPIClient(
         col.insertOne(
             DataTime(
                 Instant.now(),
-                DataTransport.decodeJsonData(snapshot, Snapshot.serializer())
+                Snapshot(
+                    DataTransport.decodeJsonData(snapshot, SnapshotData.serializer()),
+                    symbol
+                )
             )
         )
     }

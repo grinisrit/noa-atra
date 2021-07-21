@@ -24,7 +24,7 @@ object DataTransport {
         return dataString.split(internalDelimiter).first()
     }
 
-    fun <T : ChannelData> decodeJsonData(
+    fun <T> decodeJsonData(
         jsonData: String,
         serializer: KSerializer<T>
     ) = Json {

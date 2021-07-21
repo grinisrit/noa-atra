@@ -27,10 +27,16 @@ object OrderDataSerializer :
 }
 
 @Serializable
-data class Snapshot(
+data class SnapshotData(
     val lastUpdateId: Long,
     val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
     val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
+)
+
+@Serializable
+data class Snapshot(
+    val snapshot: SnapshotData,
+    val symbol: String,
 ) : BinanceData {
     override val type = "snapshot"
 }
