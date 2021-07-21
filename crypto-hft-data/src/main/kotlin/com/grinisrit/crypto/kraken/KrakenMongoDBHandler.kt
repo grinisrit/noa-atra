@@ -1,21 +1,21 @@
 package com.grinisrit.crypto.kraken
 
-import com.grinisrit.crypto.common.DataTime
+import com.grinisrit.crypto.PlatformName
 import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.mongodb.MongoDBHandler
-import com.mongodb.client.MongoDatabase
-import org.litote.kmongo.getCollection
+import com.mongodb.client.MongoClient
 
-
-object KrakenMongoDBHandler : MongoDBHandler {
-    override fun handleData(data: String, database: MongoDatabase) {
+class KrakenMongoDBHandler(client: MongoClient) : MongoDBHandler(
+    client,
+    PlatformName.KRAKEN,
+    listOf("snapshot", "trade", "update")
+) {
+    override fun handleData(data: String) {
         val dataTime = DataTransport.fromDataString(data, KrakenDataSerializer)
-        if (dataTime.data.type == "event") {
+        if (dataTime.data is Event) {
             return
         }
-        val col = database.getCollection<DataTime<KrakenData>>(dataTime.data.type)
-        col.insertOne(dataTime)
+        val col = nameToCollection[dataTime.data.type]
+        col?.insertOne(dataTime)
     }
-
-
 }

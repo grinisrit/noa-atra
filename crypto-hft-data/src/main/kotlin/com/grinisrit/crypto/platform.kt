@@ -9,8 +9,10 @@ interface Platform {
     val websocketAddress: String
     val status: String
     val symbols: List<String>
+    val platformName: PlatformName
 
     val name: String
+        get() = platformName.toString()
 
     val isOn: Boolean
         get() = status == "on"
@@ -23,7 +25,7 @@ data class CoinbasePlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val name = "coinbase"
+    override val platformName: PlatformName = PlatformName.COINBASE
 }
 
 @Serializable
@@ -35,7 +37,7 @@ data class BinancePlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val name = "binance"
+    override val platformName: PlatformName = PlatformName.BINANCE
 }
 
 @Serializable
@@ -45,7 +47,7 @@ data class DeribitPlatform(
     override val status: String,
     override val symbols: List<String>
 ) : Platform {
-    override val name = "deribit"
+    override val platformName: PlatformName = PlatformName.DERIBIT
 }
 
 @Serializable
@@ -55,7 +57,7 @@ data class KrakenPlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val name = "kraken"
+    override val platformName: PlatformName = PlatformName.KRAKEN
 }
 
 @Serializable
@@ -65,7 +67,7 @@ data class BitstampPlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val name = "bitstamp"
+    override val platformName: PlatformName = PlatformName.BITSTAMP
 }
 
 @Serializable

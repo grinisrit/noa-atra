@@ -14,6 +14,7 @@ import com.grinisrit.crypto.common.mongodb.MongoDBClient
 import com.grinisrit.crypto.deribit.*
 import com.grinisrit.crypto.kraken.*
 import kotlinx.coroutines.*
+import org.litote.kmongo.KMongo
 
 import java.io.File
 import org.slf4j.LoggerFactory
@@ -48,19 +49,18 @@ fun main(args: Array<String>) {
 
         with(config.mongodb) {
             if (isOn) {
-                val client = MongoDBClient(subSocket, this).apply {
-                    platformNameToHandler.putAll(
-                        mapOf(
-                            "binance" to BinanceMongoDBHandler,
-                            "coinbase" to CoinbaseMongoDBHandler,
-                            "deribit" to DeribitMongoDBHandler,
-                            "kraken" to KrakenMongoDBHandler,
-                            "bitstamp" to BitstampMongoDBHandler,
-                        )
+                val kMongoClient = KMongo.createClient(address)
+                val client = MongoDBClient(subSocket).apply {
+                    addHandlers(
+                        BinanceMongoDBHandler(kMongoClient),
+                        CoinbaseMongoDBHandler(kMongoClient),
+                        DeribitMongoDBHandler(kMongoClient),
+                        KrakenMongoDBHandler(kMongoClient),
+                        BitstampMongoDBHandler(kMongoClient),
                     )
                 }
 
-                launch (Dispatchers.IO) {
+                GlobalScope.launch (Dispatchers.IO) {
                     client.run(this)
                 }
             }
