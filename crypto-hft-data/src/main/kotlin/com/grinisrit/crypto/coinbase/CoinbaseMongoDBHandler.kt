@@ -19,4 +19,3 @@ class CoinbaseMongoDBHandler(client: MongoClient) : MongoDBHandler(
         col?.insertOne(dataTime)
     }
 }
-

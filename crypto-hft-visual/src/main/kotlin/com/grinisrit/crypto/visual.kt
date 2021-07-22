@@ -1,17 +1,16 @@
 package com.grinisrit.crypto
 
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.grinisrit.crypto.binance.*
-import com.grinisrit.crypto.coinbase.Ticker
 import com.grinisrit.crypto.common.DataTransport
+import com.grinisrit.crypto.common.getSubSocket
+import com.grinisrit.crypto.common.zeromq.ZeroMQSubClient
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.optional
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
 import kotlinx.html.h1
-import org.zeromq.SocketType
-import org.zeromq.ZContext
 import space.kscience.dataforge.meta.invoke
 import space.kscience.plotly.Plotly
 import space.kscience.plotly.models.*
@@ -20,38 +19,32 @@ import space.kscience.plotly.server.close
 import space.kscience.plotly.server.pushUpdates
 import space.kscience.plotly.server.serve
 import space.kscience.plotly.server.show
+import java.io.File
 import java.time.Instant
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.LinkedBlockingQueue
 
-fun getMessage() = flow {
-    val context = ZContext()
-    val socketSUB = context.createSocket(SocketType.SUB)
-    socketSUB.connect("tcp://localhost:5897")
-    socketSUB.subscribe("binance")
-    while (true) {
-        val data = socketSUB.recvStr()
-        emit(data)
-    }
-}
+@OptIn(DelicateCoroutinesApi::class)
+fun main(args: Array<String>) {
 
+    val cliParser = ArgParser("data")
 
-fun getNumbers() = flow {
-    getMessage().collect {
-        val dataTime = DataTransport.fromDataString(it, BinanceDataSerializer)
-        with(dataTime.data) {
-            if (this is Trade && symbol == "BTCUSDT"){
-                emit(Pair(Instant.ofEpochMilli(tradeTime), price))
-            }
-        }
+    val configPathArg by cliParser.argument(ArgType.String, description = "Path to .yaml config file").optional()
+
+    cliParser.parse(args)
+
+    val configPath = configPathArg ?: "conf.yaml"
+
+    val config = parseConf(File(configPath).readText())
+
+    val subSocket = getSubSocket(config.zeromq, "binance")
+
+    val zeroMQSubClient = ZeroMQSubClient(subSocket)
+
+    GlobalScope.launch {
+        zeroMQSubClient.run()
     }
 
-}
-
-
-fun main() {
-
-    val sinTrace = Trace() {
+    val sinTrace = Trace {
         name = "BTC to USDT"
         line.dash = Dash.dot
     }
@@ -78,26 +71,28 @@ fun main() {
     server.show()
 
 
-    val y = CopyOnWriteArrayList<Pair<Instant, Double>>()
-
-    val yQueue = LinkedBlockingQueue<Double>()
-
+    val data = CopyOnWriteArrayList<Pair<Instant, Double>>()
 
     GlobalScope.launch {
         println(Thread.currentThread())
         while (isActive) {
             sinTrace {
-                x.set(y.takeLast(500).map { it.first.toString() })
+                x.set(data.takeLast(1000).map { it.first.toString() })
             }
-            sinTrace.y.numbers = y.takeLast(500).map { it.second }
+            sinTrace.y.numbers = data.takeLast(1000).map { it.second }
         }
     }
 
 
     GlobalScope.launch {
         println(Thread.currentThread())
-        getNumbers().collect {
-            y.add(it)
+        zeroMQSubClient.getData("binance").collect {
+            val dataTime = DataTransport.fromDataString(it, BinanceDataSerializer)
+            with(dataTime.data) {
+                if (this is Trade && symbol == "BTCUSDT"){
+                    data.add(Pair(Instant.ofEpochMilli(tradeTime), price))
+                }
+            }
         }
     }
 

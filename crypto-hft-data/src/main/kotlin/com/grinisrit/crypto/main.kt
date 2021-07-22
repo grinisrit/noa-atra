@@ -22,9 +22,11 @@ import java.io.File
 import org.slf4j.LoggerFactory
 
 
-@OptIn(ObsoleteCoroutinesApi::class)
+@OptIn(DelicateCoroutinesApi::class)
 fun main(args: Array<String>) {
 
+
+    // TODO arg parse fun
 
     val cliParser = ArgParser("data")
 
@@ -36,10 +38,9 @@ fun main(args: Array<String>) {
 
     val config = parseConf(File(configPath).readText())
 
-    // TODO something better
+    // TODO log better
     (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level =
         ch.qos.logback.classic.Level.ERROR
-
 
     val pubSocket = getPubSocket(config.zeromq)
 
