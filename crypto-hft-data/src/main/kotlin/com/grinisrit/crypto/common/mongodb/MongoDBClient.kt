@@ -1,15 +1,14 @@
 package com.grinisrit.crypto.common.mongodb
 
-import com.grinisrit.crypto.MongoDB
 import com.grinisrit.crypto.common.DataTransport
 import kotlinx.coroutines.*
-import org.litote.kmongo.KMongo
-import org.zeromq.ZMQ
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 
 
-class MongoDBClient(private val socketSUB: ZMQ.Socket) {
+class MongoDBClient(private val dataFlow: Flow<String>) {
 
-    val platformNameToHandler: MutableMap<String, MongoDBHandler> = mutableMapOf()
+    private val platformNameToHandler: MutableMap<String, MongoDBHandler> = mutableMapOf()
 
     fun addHandler(mongoDBHandler: MongoDBHandler){
         platformNameToHandler[mongoDBHandler.platformName.toString()] = mongoDBHandler
@@ -19,16 +18,15 @@ class MongoDBClient(private val socketSUB: ZMQ.Socket) {
         mongoDBHandlers.forEach { addHandler(it) }
     }
 
-    fun run(coroutineScope: CoroutineScope?) {
-        while (coroutineScope?.isActive != false) {
-            val data = socketSUB.recvStr() ?: continue
-            val platformName = DataTransport.getPlatformName(data)
+    suspend fun run() {
+        dataFlow.collect {
             try {
-                platformNameToHandler[platformName]?.handleData(data)
+                val platformName = DataTransport.getPlatformName(it)
+                platformNameToHandler[platformName]?.handleData(it)
             } catch (e: Throwable) {
-                // todo log
-                println(e)
+                println(e) // TODO log
             }
+
         }
     }
 

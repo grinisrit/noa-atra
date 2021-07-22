@@ -8,7 +8,7 @@ import com.mongodb.client.MongoClient
 class CoinbaseMongoDBHandler(client: MongoClient) : MongoDBHandler(
     client,
     PlatformName.COINBASE,
-    listOf("ticker", "l2update")
+    listOf("ticker", "l2update", "snapshot")
 ){
     override fun handleData(data: String) {
         val dataTime = DataTransport.fromDataString(data, CoinbaseDataSerializer)
@@ -19,4 +19,3 @@ class CoinbaseMongoDBHandler(client: MongoClient) : MongoDBHandler(
         col?.insertOne(dataTime)
     }
 }
-
