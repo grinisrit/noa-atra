@@ -10,7 +10,9 @@ import com.grinisrit.crypto.bitstamp.BitstampWebsocketRequestBuilder
 import com.grinisrit.crypto.coinbase.*
 import com.grinisrit.crypto.common.getPubSocket
 import com.grinisrit.crypto.common.getSubSocket
+import com.grinisrit.crypto.common.mongodb.DBService
 import com.grinisrit.crypto.common.mongodb.MongoDBClient
+import com.grinisrit.crypto.common.zeromq.ZeroMQSubClient
 import com.grinisrit.crypto.deribit.*
 import com.grinisrit.crypto.kraken.*
 import kotlinx.coroutines.*
@@ -18,7 +20,6 @@ import org.litote.kmongo.KMongo
 
 import java.io.File
 import org.slf4j.LoggerFactory
-import kotlin.concurrent.thread
 
 
 @OptIn(ObsoleteCoroutinesApi::class)
@@ -44,13 +45,28 @@ fun main(args: Array<String>) {
 
     val subSocket = getSubSocket(config.zeromq)
 
+    // TODO
+    val dbService = DBService()
+
 
     runBlocking {
 
         with(config.mongodb) {
             if (isOn) {
                 val kMongoClient = KMongo.createClient(address)
-                val client = MongoDBClient(subSocket).apply {
+
+                val zeroMQSubClient = ZeroMQSubClient(subSocket)
+                GlobalScope.launch {
+                    zeroMQSubClient.run()
+                }
+
+                // TODO() better
+                dbService.apply {
+                    mongoClient = kMongoClient
+                    this.zeroMQSubClient = zeroMQSubClient
+                }
+
+                val client = MongoDBClient(zeroMQSubClient.getData("")).apply {
                     addHandlers(
                         BinanceMongoDBHandler(kMongoClient),
                         CoinbaseMongoDBHandler(kMongoClient),
@@ -60,8 +76,8 @@ fun main(args: Array<String>) {
                     )
                 }
 
-                GlobalScope.launch (Dispatchers.IO) {
-                    client.run(this)
+                launch {
+                    client.run()
                 }
             }
         }
@@ -81,10 +97,15 @@ fun main(args: Array<String>) {
                 }
 
 
-                val apiClient = BinanceAPIClient(this, getSubSocket(config.zeromq, "binance"))
-                launch(Dispatchers.IO) {
+                val apiClient = BinanceAPIClient(
+                    this,
+                    dbService.zeroMQSubClient.getData(PlatformName.BINANCE.toString()),
+                    dbService.mongoClient
+                )
+
+                launch {
                     delay(2000)
-                    apiClient.run(this)
+                    apiClient.run()
                 }
 
 

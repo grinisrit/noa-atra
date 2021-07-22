@@ -3,21 +3,23 @@ package com.grinisrit.crypto.binance
 import com.grinisrit.crypto.BinancePlatform
 import com.grinisrit.crypto.common.DataTime
 import com.grinisrit.crypto.common.DataTransport
+import com.mongodb.client.MongoClient
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.*
-import org.litote.kmongo.KMongo
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import org.litote.kmongo.*
-import org.zeromq.ZMQ
 import java.time.Instant
 import kotlin.io.use
 
 class BinanceAPIClient(
     val platform: BinancePlatform,
-    val socket: ZMQ.Socket
+    val dataFlow: Flow<String>,
+    kMongoClient: MongoClient,
 ) {
 
-    private val col = KMongo.createClient().getDatabase(platform.name)
+    private val col = kMongoClient.getDatabase(platform.name)
         .getCollection<DataTime<Snapshot>>("snapshot")
 
     private val symbolToLastUpdateId: MutableMap<String, Long> = mutableMapOf()
@@ -47,22 +49,23 @@ class BinanceAPIClient(
         symbolToLastUpdateId[symbol] = bookUpdate.finalUpdateId
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    fun run(scope: CoroutineScope) =
-        scope.launch {
-            while (true) {
-                val dataString = socket.recvStr() ?: continue
-                val dataTime = DataTransport.fromDataString(dataString, BinanceDataSerializer)
-                (dataTime.data as? BookUpdate)?.let { bookUpdate ->
-                    try {
-                        handleBookUpdate(bookUpdate)
-                    } catch (e: Throwable) {
-                        println(e)
-                        delay(5000)
-                        // TODO log
-                    }
-                }
+    private suspend fun filterBinanceData(dataString: String) {
+        val dataTime = DataTransport.fromDataString(dataString, BinanceDataSerializer)
+        (dataTime.data as? BookUpdate)?.let { bookUpdate ->
+            try {
+                handleBookUpdate(bookUpdate)
+            } catch (e: Throwable) {
+                println(e)
+                delay(5000)
+                // TODO log
             }
         }
+    }
+
+    suspend fun run() {
+        dataFlow.collect {
+            filterBinanceData(it)
+        }
+    }
 
 }
