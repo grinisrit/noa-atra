@@ -26,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 @OptIn(DelicateCoroutinesApi::class)
 fun main(args: Array<String>) {
 
-    val cliParser = ArgParser("data")
+    val cliParser = ArgParser("visual")
 
     val configPathArg by cliParser.argument(ArgType.String, description = "Path to .yaml config file").optional()
 

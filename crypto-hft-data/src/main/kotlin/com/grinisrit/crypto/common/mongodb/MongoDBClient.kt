@@ -25,7 +25,6 @@ class MongoDBClient(private val dataFlow: Flow<String>) {
             } catch (e: Throwable) {
                 println(e) // TODO log
             }
-
         }
     }
 

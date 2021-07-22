@@ -4,9 +4,7 @@ import kotlinx.cli.*
 import ch.qos.logback.classic.LoggerContext
 
 import com.grinisrit.crypto.binance.*
-import com.grinisrit.crypto.bitstamp.BitstampMongoDBHandler
-import com.grinisrit.crypto.bitstamp.BitstampWebsocketClient
-import com.grinisrit.crypto.bitstamp.BitstampWebsocketRequestBuilder
+import com.grinisrit.crypto.bitstamp.*
 import com.grinisrit.crypto.coinbase.*
 import com.grinisrit.crypto.common.getPubSocket
 import com.grinisrit.crypto.common.getSubSocket
@@ -23,7 +21,6 @@ import java.io.File
 import org.slf4j.LoggerFactory
 
 
-@OptIn(DelicateCoroutinesApi::class)
 fun main(args: Array<String>) {
 
 
@@ -43,9 +40,12 @@ fun main(args: Array<String>) {
     (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level =
         ch.qos.logback.classic.Level.ERROR
 
+
+
     val pubSocket = getPubSocket(config.zeromq)
 
     val subSocket = getSubSocket(config.zeromq)
+
 
     // TODO
     val dbService = DBService()
@@ -58,7 +58,8 @@ fun main(args: Array<String>) {
                 val kMongoClient = KMongo.createClient(address).coroutine
 
                 val zeroMQSubClient = ZeroMQSubClient(subSocket)
-                GlobalScope.launch {
+
+                launch(Dispatchers.IO) {
                     zeroMQSubClient.run()
                 }
 
@@ -109,8 +110,6 @@ fun main(args: Array<String>) {
                     delay(2000)
                     apiClient.run()
                 }
-
-
 
 
             }

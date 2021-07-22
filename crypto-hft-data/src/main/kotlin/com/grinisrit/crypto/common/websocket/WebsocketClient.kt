@@ -32,7 +32,6 @@ abstract class WebsocketClient(
         this.println("${Instant.now()}; $logText")
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     suspend fun run() {
 
             while (true) {
@@ -43,11 +42,9 @@ abstract class WebsocketClient(
 
                     val timeFromLastConnectionMilli = currentTimeMilli - lastConnectionTimeMilli
 
-                   // TODO()!!!
-                    GlobalScope.launch { delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)}.join()
+                    delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)
 
                     lastConnectionTimeMilli = Instant.now().toEpochMilli()
-
 
                     dataFlow().collect {
                         socket.send(it)
@@ -64,7 +61,7 @@ abstract class WebsocketClient(
 
     abstract suspend fun DefaultClientWebSocketSession.receiveData(): Flow<String>
 
-    open suspend fun dataFlow() = flow {
+    suspend fun dataFlow() = flow {
         // TODO()
         val client = HttpClient(CIO) {
             install(WebSockets)
