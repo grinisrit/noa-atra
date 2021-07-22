@@ -5,6 +5,7 @@ import com.grinisrit.crypto.common.ChannelData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
+import java.time.Instant
 
 interface KrakenData : ChannelData {
     val type: String
@@ -23,7 +24,10 @@ data class TradeData(
     val side: String,
     val orderType: String,
     val misc: String,
-)
+) {
+    val datetime: Instant
+        get() = Instant.ofEpochMilli((time * 1000).toLong())
+}
 
 object TradeDataSerializer :
     JsonTransformingSerializer<TradeData>(TradeData.serializer()) {
@@ -70,7 +74,10 @@ data class OrderData(
     val price: Double,
     val volume: Double,
     val timestamp: Double,
-)
+) {
+    val datetime: Instant
+        get() = Instant.ofEpochMilli((timestamp * 1000).toLong())
+}
 
 object OrderDataSerializer :
     JsonTransformingSerializer<OrderData>(OrderData.serializer()) {

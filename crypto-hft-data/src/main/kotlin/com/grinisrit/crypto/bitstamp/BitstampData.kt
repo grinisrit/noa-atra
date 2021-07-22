@@ -3,9 +3,14 @@ package com.grinisrit.crypto.bitstamp
 import com.grinisrit.crypto.common.ChannelData
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
+import java.time.Instant
 
 interface BitstampData : ChannelData {
     val type: String
+}
+
+interface BitstampDataTime : BitstampData {
+    val datetime: Instant
 }
 
 @Serializable
@@ -30,8 +35,8 @@ object OrderDataSerializer :
 
 @Serializable
 data class OrderBookData(
-    val microtimestamp: String,
-    val timestamp: String,
+    val microtimestamp: Long,
+    val timestamp: Long,
     val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
     val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
 )
@@ -41,8 +46,11 @@ data class OrderBook(
     val data: OrderBookData,
     val channel: String,
     val event: String,
-) : BitstampData {
+) : BitstampDataTime {
     override val type = "order_book"
+
+    override val datetime: Instant
+        get() = Instant.ofEpochMilli(data.microtimestamp / 1000)
 }
 
 @Serializable
@@ -53,8 +61,8 @@ data class TradeData(
     val price_str: String,
     val buy_order_id: Long,
     val id: Long,
-    val microtimestamp: String,
-    val timestamp: String,
+    val microtimestamp: Long,
+    val timestamp: Long,
     val sell_order_id: Long,
     val type: Int,
 )
@@ -64,8 +72,11 @@ data class Trade(
     val channel: String,
     val data: TradeData,
     val event: String,
-) : BitstampData {
+) : BitstampDataTime {
     override val type = "trade"
+
+    override val datetime: Instant
+        get() = Instant.ofEpochMilli(data.microtimestamp / 1000)
 }
 
 @Serializable

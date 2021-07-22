@@ -3,6 +3,7 @@ package com.grinisrit.crypto.deribit
 import com.grinisrit.crypto.common.ChannelData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
+import java.time.Instant
 
 interface DeribitData : ChannelData {
     val type: String
@@ -23,7 +24,10 @@ data class TradeData(
     val liquidation: String? = null,
     val iv: Double? = null,
     val block_trade_id: String? = null,
-)
+) {
+    val datetime: Instant
+        get() = Instant.ofEpochMilli(timestamp)
+}
 
 @Serializable
 data class TradesParameters(
@@ -65,7 +69,10 @@ data class BookData(
     val change_id: Long,
     val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
     val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>
-)
+) {
+    val datetime: Instant
+        get() = Instant.ofEpochMilli(timestamp)
+}
 
 @Serializable
 data class BookParameters(

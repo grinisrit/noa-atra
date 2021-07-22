@@ -16,17 +16,7 @@ interface CoinbaseDataTime : CoinbaseData {
 }
 
 @Serializable
-data class Heartbeat(
-    override val type: String,
-    val sequence: Long,
-    val last_trade_id: Long,
-    val product_id: String,
-    override val time: String,
-) : CoinbaseDataTime
-
-@Serializable
 data class Ticker(
-    override val type: String,
     val trade_id: Long,
     val sequence: Long,
     override val time: String,
@@ -41,7 +31,9 @@ data class Ticker(
     val low_24h: Double,
     val high_24h: Double,
     val volume_30d: Double,
-) : CoinbaseDataTime
+) : CoinbaseDataTime {
+    override val type: String = "ticker"
+}
 
 @Serializable
 data class OrderData(
@@ -83,26 +75,26 @@ object OrderUpdateDataSerializer :
 
 @Serializable
 data class Snapshot(
-    override val type: String,
     val product_id: String,
-    val bids: List<@Serializable(with = OrderDataSerializer::class)OrderData>,
-    val asks: List<@Serializable(with = OrderDataSerializer::class)OrderData>,
-) : CoinbaseData
+    val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
+    val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
+) : CoinbaseData {
+    override val type: String = "snapshot"
+}
 
 @Serializable
 data class L2Update(
-    override val type: String,
     val product_id: String,
     override val time: String,
     val changes: List<@Serializable(with = OrderUpdateDataSerializer::class) OrderUpdateData>,
-) : CoinbaseDataTime
-
+) : CoinbaseDataTime {
+    override val type: String = "l2update"
+}
 
 @Serializable
-data class Event(
-    override val type: String,
-): CoinbaseData
-
+class Event : CoinbaseData {
+    override val type: String = "event"
+}
 
 // TODO()
 object CoinbaseDataSerializer : JsonContentPolymorphicSerializer<CoinbaseData>(CoinbaseData::class) {
@@ -110,7 +102,6 @@ object CoinbaseDataSerializer : JsonContentPolymorphicSerializer<CoinbaseData>(C
         "\"ticker\"" -> Ticker.serializer()
         "\"snapshot\"" -> Snapshot.serializer()
         "\"l2update\"" -> L2Update.serializer()
-     //   "\"heartbeat\"" -> Heartbeat.serializer()
         else -> Event.serializer()
     }
 }

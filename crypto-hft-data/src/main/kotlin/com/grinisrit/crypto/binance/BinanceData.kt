@@ -3,9 +3,14 @@ package com.grinisrit.crypto.binance
 import com.grinisrit.crypto.common.ChannelData
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
+import java.time.Instant
 
 interface BinanceData : ChannelData {
     val type: String
+}
+
+interface BinanceDataTime : BinanceData {
+    val datetime: Instant
 }
 
 @Serializable
@@ -54,8 +59,11 @@ data class Trade(
     @SerialName("T") val tradeTime: Long,
     @SerialName("m") val isMarketMaker: Boolean,
     @SerialName("M") val ignore: Boolean,
-) : BinanceData {
+) : BinanceDataTime {
     override val type = "trade"
+
+    override val datetime: Instant
+        get() = Instant.ofEpochMilli(tradeTime)
 }
 
 @Serializable
@@ -67,8 +75,11 @@ data class BookUpdate(
     @SerialName("u") val finalUpdateId: Long,
     @SerialName("b") val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
     @SerialName("a") val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
-) : BinanceData {
+) : BinanceDataTime {
     override val type = "update"
+
+    override val datetime: Instant
+        get() = Instant.ofEpochMilli(eventTime)
 }
 
 @Serializable

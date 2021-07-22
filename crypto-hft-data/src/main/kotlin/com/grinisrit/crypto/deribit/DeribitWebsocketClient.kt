@@ -6,12 +6,12 @@ import org.zeromq.ZMQ
 
 class DeribitWebsocketClient(
     platform: DeribitPlatform,
-    socket : ZMQ.Socket,
+    socket: ZMQ.Socket,
     request: String
 ) : SingleRequestWebsocketClient(
     platform,
     socket,
     request,
-    backendReconnectTimeout = 10000L, // TODO
+    backendReconnectTimeout = 1000L,
     socketTimeoutMillis = 5000L
 )
