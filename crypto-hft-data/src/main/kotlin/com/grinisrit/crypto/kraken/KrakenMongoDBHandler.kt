@@ -3,14 +3,14 @@ package com.grinisrit.crypto.kraken
 import com.grinisrit.crypto.PlatformName
 import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.mongodb.MongoDBHandler
-import com.mongodb.client.MongoClient
+import org.litote.kmongo.coroutine.CoroutineClient
 
-class KrakenMongoDBHandler(client: MongoClient) : MongoDBHandler(
+class KrakenMongoDBHandler(client: CoroutineClient) : MongoDBHandler(
     client,
     PlatformName.KRAKEN,
     listOf("snapshot", "trade", "update")
 ) {
-    override fun handleData(data: String) {
+    override suspend fun handleData(data: String) {
         val dataTime = DataTransport.fromDataString(data, KrakenDataSerializer)
         if (dataTime.data is Event) {
             return

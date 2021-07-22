@@ -2,11 +2,11 @@ package com.grinisrit.crypto.common.mongodb
 
 import com.grinisrit.crypto.*
 import com.grinisrit.crypto.common.*
-import com.mongodb.client.*
-import org.litote.kmongo.getCollection
+import org.litote.kmongo.coroutine.CoroutineClient
+
 
 abstract class MongoDBHandler(
-    val client: MongoClient,
+    val client: CoroutineClient,
     val platformName: PlatformName,
     databaseNames: List<String>,
 ) {
@@ -16,5 +16,5 @@ abstract class MongoDBHandler(
         database.getCollection<DataTime<ChannelData>>(it)
     }
 
-    abstract fun handleData(data: String)
+    abstract suspend fun handleData(data: String)
 }

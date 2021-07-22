@@ -3,16 +3,16 @@ package com.grinisrit.crypto.bitstamp
 import com.grinisrit.crypto.PlatformName
 import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.mongodb.MongoDBHandler
-import com.mongodb.client.MongoClient
+import org.litote.kmongo.coroutine.CoroutineClient
 
 
-class BitstampMongoDBHandler(client: MongoClient) : MongoDBHandler(
+class BitstampMongoDBHandler(client: CoroutineClient) : MongoDBHandler(
     client,
     PlatformName.BITSTAMP,
     listOf("order_book", "trade")
 ) {
 
-    override fun handleData(data: String) {
+    override suspend fun handleData(data: String) {
         val dataTime = DataTransport.fromDataString(data, BitstampDataSerializer)
         if (dataTime.data is Event) {
             return

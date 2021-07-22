@@ -3,16 +3,16 @@ package com.grinisrit.crypto.binance
 import com.grinisrit.crypto.PlatformName
 import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.mongodb.MongoDBHandler
-import com.mongodb.client.MongoClient
+import org.litote.kmongo.coroutine.CoroutineClient
 
 
-class BinanceMongoDBHandler(client: MongoClient) : MongoDBHandler(
+class BinanceMongoDBHandler(client: CoroutineClient) : MongoDBHandler(
     client,
     PlatformName.BINANCE,
     listOf("trade", "update")
 ) {
 
-    override fun handleData(data: String) {
+    override suspend fun handleData(data: String) {
         val dataTime = DataTransport.fromDataString(data, BinanceDataSerializer)
         if (dataTime.data is Event) {
             return

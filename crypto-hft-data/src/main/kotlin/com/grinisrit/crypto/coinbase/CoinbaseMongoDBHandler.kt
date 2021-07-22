@@ -3,14 +3,14 @@ package com.grinisrit.crypto.coinbase
 import com.grinisrit.crypto.PlatformName
 import com.grinisrit.crypto.common.DataTransport
 import com.grinisrit.crypto.common.mongodb.MongoDBHandler
-import com.mongodb.client.MongoClient
+import org.litote.kmongo.coroutine.CoroutineClient
 
-class CoinbaseMongoDBHandler(client: MongoClient) : MongoDBHandler(
+class CoinbaseMongoDBHandler(client: CoroutineClient) : MongoDBHandler(
     client,
     PlatformName.COINBASE,
     listOf("ticker", "l2update", "snapshot")
 ){
-    override fun handleData(data: String) {
+    override suspend fun handleData(data: String) {
         val dataTime = DataTransport.fromDataString(data, CoinbaseDataSerializer)
         if (dataTime.data is Event) {
             return

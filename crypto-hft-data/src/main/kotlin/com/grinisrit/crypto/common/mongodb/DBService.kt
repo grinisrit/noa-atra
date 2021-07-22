@@ -1,10 +1,10 @@
 package com.grinisrit.crypto.common.mongodb
 
 import com.grinisrit.crypto.common.zeromq.ZeroMQSubClient
-import com.mongodb.client.MongoClient
+import org.litote.kmongo.coroutine.CoroutineClient
 
 // TODO
 class DBService {
-    lateinit var mongoClient: MongoClient
+    lateinit var mongoClient: CoroutineClient
     lateinit var zeroMQSubClient: ZeroMQSubClient
 }

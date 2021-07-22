@@ -16,7 +16,8 @@ import com.grinisrit.crypto.common.zeromq.ZeroMQSubClient
 import com.grinisrit.crypto.deribit.*
 import com.grinisrit.crypto.kraken.*
 import kotlinx.coroutines.*
-import org.litote.kmongo.KMongo
+import org.litote.kmongo.coroutine.*
+import org.litote.kmongo.reactivestreams.KMongo
 
 import java.io.File
 import org.slf4j.LoggerFactory
@@ -54,7 +55,7 @@ fun main(args: Array<String>) {
 
         with(config.mongodb) {
             if (isOn) {
-                val kMongoClient = KMongo.createClient(address)
+                val kMongoClient = KMongo.createClient(address).coroutine
 
                 val zeroMQSubClient = ZeroMQSubClient(subSocket)
                 GlobalScope.launch {

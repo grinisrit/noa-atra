@@ -9,14 +9,14 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import org.litote.kmongo.*
+import org.litote.kmongo.coroutine.CoroutineClient
 import java.time.Instant
 import kotlin.io.use
 
 class BinanceAPIClient(
     val platform: BinancePlatform,
     val dataFlow: Flow<String>,
-    kMongoClient: MongoClient,
+    kMongoClient: CoroutineClient,
 ) {
 
     private val col = kMongoClient.getDatabase(platform.name)
