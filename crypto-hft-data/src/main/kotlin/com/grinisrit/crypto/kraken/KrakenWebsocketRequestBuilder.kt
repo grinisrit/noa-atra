@@ -10,7 +10,8 @@ object KrakenWebsocketRequestBuilder : RequestBuilder {
 
     @Serializable
     data class Subscription(
-        val name: String,
+        val depth: Int,
+        val name: String
     )
 
     @Serializable
@@ -30,7 +31,7 @@ object KrakenWebsocketRequestBuilder : RequestBuilder {
             KrakenWebsocketRequest(
                 "subscribe",
                 symbols,
-                Subscription(it),
+                Subscription(100, it),
             )
         }
 
