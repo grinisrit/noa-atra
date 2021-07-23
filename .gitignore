@@ -38,5 +38,5 @@ dist/
 .DS_Store
 
 # User data
-data/
+data*/
 *.pt
