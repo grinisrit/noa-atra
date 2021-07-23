@@ -92,5 +92,4 @@ object BitstampDataSerializer : JsonContentPolymorphicSerializer<BitstampData>(B
             "data" -> OrderBook.serializer()
             else -> Event.serializer()
         }
-
 }
