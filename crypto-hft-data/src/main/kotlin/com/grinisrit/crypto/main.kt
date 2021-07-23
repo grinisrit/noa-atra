@@ -28,8 +28,6 @@ internal val logger = KotlinLogging.logger {}
 fun main(args: Array<String>) {
 
 
-    // TODO arg parse fun
-
     val cliParser = ArgParser("data")
 
     val configPathArg by cliParser.argument(ArgType.String, description = "Path to .yaml config file").optional()
@@ -40,12 +38,13 @@ fun main(args: Array<String>) {
 
     val config = parseConf(File(configPath).readText())
 
+    // TODO Andrei: zmq context should be created only once
     val pubSocket = getPubSocket(config.zeromq)
 
     val subSocket = getSubSocket(config.zeromq)
 
 
-    // TODO
+    // TODO Andrei: no lateinit vars
     val dbService = DBService()
 
 

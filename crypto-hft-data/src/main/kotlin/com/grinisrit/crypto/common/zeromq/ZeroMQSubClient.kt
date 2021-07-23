@@ -12,6 +12,7 @@ class ZeroMQSubClient(
 
     fun getData(topic: String) = commonDataFlow.filter { it.startsWith(topic) }
 
+    // TODO Andrei: this function should get topics and context and return the flow
     suspend fun run() {
         for (message in subSocket.recvStrStream()) {
             commonDataFlow.emit(message)
