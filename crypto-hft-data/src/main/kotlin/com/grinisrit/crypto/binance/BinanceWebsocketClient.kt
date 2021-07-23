@@ -12,5 +12,4 @@ class BinanceWebsocketClient(
     platform,
     socket,
     request,
-    //TODO() time
 )

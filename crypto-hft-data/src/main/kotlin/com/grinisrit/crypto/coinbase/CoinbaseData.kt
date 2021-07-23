@@ -96,12 +96,16 @@ class Event : CoinbaseData {
     override val type: String = "event"
 }
 
-// TODO()
 object CoinbaseDataSerializer : JsonContentPolymorphicSerializer<CoinbaseData>(CoinbaseData::class) {
-    override fun selectDeserializer(element: JsonElement) = when (element.jsonObject["type"].toString()) {
-        "\"ticker\"" -> Ticker.serializer()
-        "\"snapshot\"" -> Snapshot.serializer()
-        "\"l2update\"" -> L2Update.serializer()
-        else -> Event.serializer()
-    }
+    override fun selectDeserializer(element: JsonElement) =
+        when {
+            element !is JsonObject -> Event.serializer()
+            element.jsonObject["type"] !is JsonPrimitive -> Event.serializer()
+            else -> when (element.jsonObject["type"]?.jsonPrimitive?.content) {
+                "ticker" -> Ticker.serializer()
+                "snapshot" -> Snapshot.serializer()
+                "l2update" -> L2Update.serializer()
+                else -> Event.serializer()
+            }
+        }
 }

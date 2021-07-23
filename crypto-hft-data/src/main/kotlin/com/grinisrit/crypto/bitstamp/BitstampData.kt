@@ -85,7 +85,6 @@ data class Event(
 ) : BitstampData
 
 
-// TODO()
 object BitstampDataSerializer : JsonContentPolymorphicSerializer<BitstampData>(BitstampData::class) {
     override fun selectDeserializer(element: JsonElement) =
         when (element.jsonObject["event"]!!.jsonPrimitive.content) {
@@ -93,4 +92,5 @@ object BitstampDataSerializer : JsonContentPolymorphicSerializer<BitstampData>(B
             "data" -> OrderBook.serializer()
             else -> Event.serializer()
         }
+
 }

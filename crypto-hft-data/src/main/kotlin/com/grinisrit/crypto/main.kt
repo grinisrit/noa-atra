@@ -43,7 +43,6 @@ fun main(args: Array<String>) {
     val subSocket = zmqContext.getSubSocket(config.zeromq)
 
 
-
     runBlocking {
 
         with(config.mongodb) {

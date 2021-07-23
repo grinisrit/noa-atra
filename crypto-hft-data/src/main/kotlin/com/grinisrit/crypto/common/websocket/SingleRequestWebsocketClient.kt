@@ -10,6 +10,9 @@ open class SingleRequestWebsocketClient(
     backendReconnectTimeout: Long = 5000L,
     socketTimeoutMillis: Long = 2000L
 ) : SeveralRequestWebsocketClient(
-    platform, socket, listOf(request), backendReconnectTimeout,
+    platform,
+    socket,
+    listOf(request),
+    backendReconnectTimeout,
     socketTimeoutMillis
 )
