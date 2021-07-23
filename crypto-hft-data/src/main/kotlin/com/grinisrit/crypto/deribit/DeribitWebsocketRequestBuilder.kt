@@ -21,7 +21,7 @@ object DeribitWebsocketRequestBuilder : RequestBuilder {
     )
 
     private val channels = listOf(
-        "book" to "100.20.100ms",
+        "book" to "none.20.100ms",
         "trades" to "raw",
     )
 
