@@ -7,7 +7,7 @@ zeromq:
 platforms:
   coinbase:
     websocket_address: wss://ws-feed.pro.coinbase.com
-    status: off
+    status: on
     symbols:
       - ETH-BTC
       - BTC-USD
@@ -15,7 +15,7 @@ platforms:
   binance:
     api_address: https://api.binance.com/api/v3
     websocket_address: wss://stream.binance.com:9443/ws
-    status: off
+    status: on
     symbols:
       - ethusdt
       - ethbtc
@@ -35,7 +35,7 @@ platforms:
       - XBT/USD
   bitstamp:
     websocket_address: wss://ws.bitstamp.net
-    status: off
+    status: on
     symbols:
       - ethbtc
       - btcusd
