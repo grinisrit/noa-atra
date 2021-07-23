@@ -28,13 +28,14 @@ platforms:
       - BTC-PERPETUAL
   kraken:
     websocket_address: wss://ws.kraken.com
-    status: off
+    status: on
     symbols:
       - ETH/USD
-      - ETH/EUR
+      - ETH/XBT
+      - XBT/USD
   bitstamp:
     websocket_address: wss://ws.bitstamp.net
-    status: on
+    status: off
     symbols:
       - ethbtc
       - btcusd
