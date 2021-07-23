@@ -1,7 +1,6 @@
 package com.grinisrit.crypto
 
 import kotlinx.cli.*
-import ch.qos.logback.classic.LoggerContext
 
 import com.grinisrit.crypto.binance.*
 import com.grinisrit.crypto.bitstamp.*
@@ -18,7 +17,12 @@ import org.litote.kmongo.coroutine.*
 import org.litote.kmongo.reactivestreams.KMongo
 
 import java.io.File
-import org.slf4j.LoggerFactory
+import mu.KotlinLogging
+
+// TODO Andrei: the logger level must be configuralble from conf.yaml
+// and write more informative logging messages and with 0.5s frequency approx.
+// SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder". - get rid of that
+internal val logger = KotlinLogging.logger {}
 
 
 fun main(args: Array<String>) {
@@ -35,12 +39,6 @@ fun main(args: Array<String>) {
     val configPath = configPathArg ?: "conf.yaml"
 
     val config = parseConf(File(configPath).readText())
-
-    // TODO log better
-    (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level =
-        ch.qos.logback.classic.Level.ERROR
-
-
 
     val pubSocket = getPubSocket(config.zeromq)
 

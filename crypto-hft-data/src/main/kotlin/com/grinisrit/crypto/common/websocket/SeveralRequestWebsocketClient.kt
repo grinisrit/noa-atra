@@ -2,6 +2,7 @@ package com.grinisrit.crypto.common.websocket
 
 import com.grinisrit.crypto.Platform
 import com.grinisrit.crypto.common.DataTransport
+import com.grinisrit.crypto.logger
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.flow.flow
@@ -13,23 +14,22 @@ open class SeveralRequestWebsocketClient(
     socket: ZMQ.Socket,
     private val requests: List<String>,
     backendReconnectTimeout: Long = 5000L,
-    socketTimeoutMillis: Long = 2000L,
-    logFilePath: String = "platforms/${platform.name}/log.txt"
+    socketTimeoutMillis: Long = 2000L
 ): WebsocketClient(
     platform,
     socket,
     backendReconnectTimeout,
-    socketTimeoutMillis,
-    logFilePath
+    socketTimeoutMillis
 ) {
     protected fun dataStringOf(data: String) =
         DataTransport.dataStringOf(platform.name, Instant.now(), data)
     // TODO() make this function better
     override suspend fun DefaultClientWebSocketSession.receiveData() = flow {
-        loggerFile.log("Connected successfully")
+        // TODO Andrei: more informative log messages
+        logger.debug { "${platform.name} connected successfully" }
 
         for (request in requests){
-            loggerFile.log("Sending request:\n$request")
+            logger.debug {"Sending request:\n$request"}
             send(Frame.Text(request))
             /*
             val subResponse = incoming.receive()

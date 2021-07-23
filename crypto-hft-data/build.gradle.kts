@@ -28,7 +28,7 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-coroutine:4.2.8")
 
 
-    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("io.github.microutils:kotlin-logging:1.12.5")
     implementation("io.ktor:ktor-client-websockets:1.6.0")
     implementation("io.ktor:ktor-client-cio:1.6.0")
 

@@ -5,9 +5,11 @@ import org.zeromq.ZMQ
 
 open class SingleRequestWebsocketClient(
     platform: Platform,
-    socket : ZMQ.Socket,
+    socket: ZMQ.Socket,
     request: String,
     backendReconnectTimeout: Long = 5000L,
-    socketTimeoutMillis: Long = 2000L,
-    logFilePath: String = "platforms/${platform.name}/log.txt"
-) : SeveralRequestWebsocketClient(platform, socket, listOf(request), backendReconnectTimeout, socketTimeoutMillis, logFilePath)
+    socketTimeoutMillis: Long = 2000L
+) : SeveralRequestWebsocketClient(
+    platform, socket, listOf(request), backendReconnectTimeout,
+    socketTimeoutMillis
+)
