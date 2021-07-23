@@ -31,7 +31,8 @@ platforms:
     status: on
     symbols:
       - ETH/USD
-      - ETH/EUR
+      - ETH/XBT
+      - XBT/USD
   bitstamp:
     websocket_address: wss://ws.bitstamp.net
     status: on
