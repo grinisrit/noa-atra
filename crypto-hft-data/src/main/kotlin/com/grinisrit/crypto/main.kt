@@ -7,7 +7,6 @@ import com.grinisrit.crypto.bitstamp.*
 import com.grinisrit.crypto.coinbase.*
 import com.grinisrit.crypto.common.getPubSocket
 import com.grinisrit.crypto.common.getSubSocket
-import com.grinisrit.crypto.common.mongodb.DBService
 import com.grinisrit.crypto.common.mongodb.MongoDBClient
 import com.grinisrit.crypto.common.zeromq.ZeroMQSubClient
 import com.grinisrit.crypto.deribit.*
@@ -18,15 +17,13 @@ import org.litote.kmongo.reactivestreams.KMongo
 
 import java.io.File
 import mu.KotlinLogging
+import org.zeromq.ZContext
 
-// TODO Andrei: the logger level must be configuralble from conf.yaml
-// and write more informative logging messages and with 0.5s frequency approx.
-// SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder". - get rid of that
-internal val logger = KotlinLogging.logger {}
+
+internal val logger = KotlinLogging.logger { }
 
 
 fun main(args: Array<String>) {
-
 
     val cliParser = ArgParser("data")
 
@@ -38,14 +35,13 @@ fun main(args: Array<String>) {
 
     val config = parseConf(File(configPath).readText())
 
-    // TODO Andrei: zmq context should be created only once
-    val pubSocket = getPubSocket(config.zeromq)
 
-    val subSocket = getSubSocket(config.zeromq)
+    val zmqContext = ZContext()
 
+    val pubSocket = zmqContext.getPubSocket(config.zeromq)
 
-    // TODO Andrei: no lateinit vars
-    val dbService = DBService()
+    val subSocket = zmqContext.getSubSocket(config.zeromq)
+
 
 
     runBlocking {
@@ -60,12 +56,6 @@ fun main(args: Array<String>) {
                     zeroMQSubClient.run()
                 }
 
-                // TODO() better
-                dbService.apply {
-                    mongoClient = kMongoClient
-                    this.zeroMQSubClient = zeroMQSubClient
-                }
-
                 val client = MongoDBClient(zeroMQSubClient.getData("")).apply {
                     addHandlers(
                         BinanceMongoDBHandler(kMongoClient),
@@ -78,6 +68,22 @@ fun main(args: Array<String>) {
 
                 launch {
                     client.run()
+                }
+
+                // TODO Anything better?????
+                with(config.platforms.binance) {
+                    if (isOn) {
+                        val apiClient = BinanceAPIClient(
+                            this,
+                            zeroMQSubClient.getData(PlatformName.BINANCE.toString()),
+                            kMongoClient
+                        )
+
+                        launch {
+                            delay(2000)
+                            apiClient.run()
+                        }
+                    }
                 }
             }
         }
@@ -95,19 +101,6 @@ fun main(args: Array<String>) {
                 launch {
                     websocketClient.run()
                 }
-
-
-                val apiClient = BinanceAPIClient(
-                    this,
-                    dbService.zeroMQSubClient.getData(PlatformName.BINANCE.toString()),
-                    dbService.mongoClient
-                )
-
-                launch {
-                    delay(2000)
-                    apiClient.run()
-                }
-
 
             }
         }
@@ -186,5 +179,7 @@ fun main(args: Array<String>) {
         }
 
     }
+
+    zmqContext.close()
 
 }

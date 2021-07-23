@@ -28,7 +28,10 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-coroutine:4.2.8")
 
 
-    implementation("io.github.microutils:kotlin-logging:1.12.5")
+
+    implementation("org.slf4j:slf4j-simple:1.7.32")
+    implementation("io.github.microutils:kotlin-logging-jvm:2.0.10")
+
     implementation("io.ktor:ktor-client-websockets:1.6.0")
     implementation("io.ktor:ktor-client-cio:1.6.0")
 
