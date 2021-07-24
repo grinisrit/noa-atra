@@ -26,20 +26,15 @@ internal val logger = KotlinLogging.logger { }
 fun main(args: Array<String>) {
 
     val cliParser = ArgParser("data")
-
     val configPathArg by cliParser.argument(ArgType.String, description = "Path to .yaml config file").optional()
-
     cliParser.parse(args)
 
     val configPath = configPathArg ?: "conf.yaml"
-
     val config = parseConf(File(configPath).readText())
 
 
     val zmqContext = ZContext()
-
     val pubSocket = zmqContext.getPubSocket(config.zeromq)
-
     val subSocket = zmqContext.getSubSocket(config.zeromq)
 
 

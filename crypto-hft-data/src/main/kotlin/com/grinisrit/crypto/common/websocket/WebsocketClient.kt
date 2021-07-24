@@ -20,41 +20,40 @@ abstract class WebsocketClient(
     private val socket: ZMQ.Socket,
     private val reconnectTimeoutMillis: Long = 5000L,
     private val socketTimeoutMillis: Long = 2000L
-)  {
+) {
 
     var lastConnectionTimeMilli: Long = 0L
 
     suspend fun run() {
 
-            while (true) {
-               try {
-                    val instant = Instant.now()
-                    val currentTimeMilli = instant.toEpochMilli()
+        while (true) {
+            try {
+                val instant = Instant.now()
+                val currentTimeMilli = instant.toEpochMilli()
 
-                    val timeFromLastConnectionMilli = currentTimeMilli - lastConnectionTimeMilli
+                val timeFromLastConnectionMilli = currentTimeMilli - lastConnectionTimeMilli
 
-                    delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)
+                delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)
 
-                    lastConnectionTimeMilli = Instant.now().toEpochMilli()
+                lastConnectionTimeMilli = Instant.now().toEpochMilli()
 
-                    dataFlow().collect {
-                        socket.send(it)
-                    }
+                dataFlow().collect {
+                    socket.send(it)
+                }
 
-                } catch (e: Throwable) {
-                    // TODO Andrei: better error message
-                   logger.error(e) {" ${platform.name} failed to launch flow"}
-               }
-
+            } catch (e: Throwable) {
+                // TODO Andrei: better error message
+                logger.error(e) { " ${platform.name} failed to launch flow" }
             }
 
+        }
 
     }
 
     abstract suspend fun DefaultClientWebSocketSession.receiveData(): Flow<String>
 
     suspend fun dataFlow() = flow {
-        // TODO()
+
         val client = HttpClient(CIO) {
             install(WebSockets)
             install(HttpTimeout) {

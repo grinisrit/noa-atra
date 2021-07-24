@@ -94,7 +94,6 @@ data class Event(
     override val type: String = "event"
 ) : DeribitData
 
-//TODO()
 object DeribitDataSerializer : JsonContentPolymorphicSerializer<DeribitData>(DeribitData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
         element !is JsonObject -> Event.serializer()

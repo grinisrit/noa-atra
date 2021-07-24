@@ -5,7 +5,6 @@ import com.grinisrit.crypto.KrakenPlatform
 import com.grinisrit.crypto.common.websocket.SeveralRequestWebsocketClient
 import org.zeromq.ZMQ
 
-// TODO log
 class BitstampWebsocketClient(
     platform: BitstampPlatform,
     socket : ZMQ.Socket,
