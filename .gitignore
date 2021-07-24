@@ -40,3 +40,4 @@ dist/
 # User data
 data*/
 *.pt
+*.zip
