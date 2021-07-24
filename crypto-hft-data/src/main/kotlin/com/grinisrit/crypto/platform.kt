@@ -1,5 +1,7 @@
 package com.grinisrit.crypto
 
+import com.grinisrit.crypto.common.PlatformName
+
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -25,7 +27,7 @@ data class CoinbasePlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val platformName: PlatformName = PlatformName.COINBASE
+    override val platformName: PlatformName = PlatformName.coinbase
 }
 
 @Serializable
@@ -37,7 +39,7 @@ data class BinancePlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val platformName: PlatformName = PlatformName.BINANCE
+    override val platformName: PlatformName = PlatformName.binance
 }
 
 @Serializable
@@ -47,7 +49,7 @@ data class DeribitPlatform(
     override val status: String,
     override val symbols: List<String>
 ) : Platform {
-    override val platformName: PlatformName = PlatformName.DERIBIT
+    override val platformName: PlatformName = PlatformName.deribit
 }
 
 @Serializable
@@ -57,7 +59,7 @@ data class KrakenPlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val platformName: PlatformName = PlatformName.KRAKEN
+    override val platformName: PlatformName = PlatformName.kraken
 }
 
 @Serializable
@@ -67,7 +69,7 @@ data class BitstampPlatform(
     override val status: String,
     override val symbols: List<String>,
 ) : Platform {
-    override val platformName: PlatformName = PlatformName.BITSTAMP
+    override val platformName: PlatformName = PlatformName.bitstamp
 }
 
 @Serializable

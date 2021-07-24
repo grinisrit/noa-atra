@@ -7,9 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.Instant
 
-interface KrakenData : PlatformData {
-    val type: String
-}
+interface KrakenData : PlatformData
 
 @Serializable
 class Event : KrakenData {

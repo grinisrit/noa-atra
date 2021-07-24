@@ -4,7 +4,7 @@ import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MongoDB(
+data class MongoDBConfig(
     val address: String,
     val status: String,
 ) {
@@ -13,15 +13,15 @@ data class MongoDB(
 }
 
 @Serializable
-data class ZeroMQ(
+data class ZeroMQConfig(
     val address: String,
 )
 
 @Serializable
 data class ConfYAMl(
     val version: String,
-    val zeromq: ZeroMQ,
-    val mongodb: MongoDB,
+    val zeromq: ZeroMQConfig,
+    val mongodb: MongoDBConfig,
     val platforms: Platforms,
 )
 

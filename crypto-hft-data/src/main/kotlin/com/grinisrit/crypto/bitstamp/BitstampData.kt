@@ -5,9 +5,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import java.time.Instant
 
-interface BitstampData : PlatformData {
-    val type: String
-}
+interface BitstampData : PlatformData
 
 interface BitstampDataTime : BitstampData {
     val datetime: Instant

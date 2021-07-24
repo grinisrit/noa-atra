@@ -1,28 +1,11 @@
 package com.grinisrit.crypto
 
 import kotlinx.cli.*
-
-import com.grinisrit.crypto.binance.*
-import com.grinisrit.crypto.bitstamp.*
-import com.grinisrit.crypto.coinbase.*
-import com.grinisrit.crypto.common.getPubSocket
-import com.grinisrit.crypto.common.getSubSocket
-import com.grinisrit.crypto.common.mongodb.MongoDBClient
-import com.grinisrit.crypto.common.zeromq.zmqSubFlow
-import com.grinisrit.crypto.deribit.*
-import com.grinisrit.crypto.kraken.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.filter
-import org.litote.kmongo.coroutine.*
-import org.litote.kmongo.reactivestreams.KMongo
-
 import java.io.File
 import mu.KotlinLogging
-import org.zeromq.ZContext
-
 
 internal val logger = KotlinLogging.logger { }
-
 
 fun main(args: Array<String>) {
 
@@ -34,16 +17,21 @@ fun main(args: Array<String>) {
     val config = parseConf(File(configPath).readText())
 
 
-    val zmqContext = ZContext()
-    val pubSocket = zmqContext.getPubSocket(config.zeromq)
-    val subSocket = zmqContext.getSubSocket(config.zeromq)
-
 
     runBlocking {
-
+/*
         with(config.mongodb) {
             if (isOn) {
-                val kMongoClient = KMongo.createClient(address).coroutine
+
+                val mongoServer = getMongoDBServer(this)
+
+
+                val kMongoClient = try {
+                    KMongo.createClient(address).coroutine
+                } catch (e: Throwable) {
+                    logger.error(e) { "Failed to connect to mongo" }
+                    throw RuntimeException("FUCK")
+                }
 
                // val zeroMQSubClient = ZeroMQSubClient(subSocket)
 
@@ -176,10 +164,8 @@ fun main(args: Array<String>) {
 
 
             }
-        }
+        }*/
 
     }
-
-    zmqContext.close()
 
 }

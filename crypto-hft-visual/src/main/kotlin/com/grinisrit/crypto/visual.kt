@@ -2,13 +2,12 @@ package com.grinisrit.crypto
 
 
 import com.grinisrit.crypto.binance.*
-import com.grinisrit.crypto.common.DataTransport
+import com.grinisrit.crypto.common.MarketDataParser
 import com.grinisrit.crypto.common.zeromq.ZeroMQSubClient
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.optional
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.html.h1
 import space.kscience.dataforge.meta.invoke
 import space.kscience.plotly.Plotly
@@ -86,7 +85,7 @@ fun main(args: Array<String>) {
     GlobalScope.launch {
         println(Thread.currentThread())
         zeroMQSubClient.getData("binance").collect {
-            val dataTime = DataTransport.fromDataString(it, BinanceDataSerializer)
+            val dataTime = MarketDataParser.fromDataString(it, BinanceDataSerializer)
             with(dataTime.platform_data) {
                 if (this is Trade && symbol == "BTCUSDT"){
                     data.add(Pair(Instant.ofEpochMilli(tradeTime), price))

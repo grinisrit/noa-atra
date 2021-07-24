@@ -1,10 +1,7 @@
 package com.grinisrit.crypto
 
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 
 class BasicLoopActor(
@@ -18,6 +15,7 @@ class BasicLoopActor(
 
     private val messageQueue: Channel<Boolean> = Channel()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun startActor(): Unit {
         onStartActor()
         coroutineScope.launch { messageQueue.send(true) }

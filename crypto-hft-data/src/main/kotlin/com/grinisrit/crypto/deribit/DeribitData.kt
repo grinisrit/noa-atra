@@ -5,9 +5,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.Instant
 
-interface DeribitData : PlatformData {
-    val type: String
-}
+interface DeribitData : PlatformData
 
 @Serializable
 data class TradeData(

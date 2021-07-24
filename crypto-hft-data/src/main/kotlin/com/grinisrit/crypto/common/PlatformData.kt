@@ -1,3 +1,5 @@
 package com.grinisrit.crypto.common
 
-interface PlatformData
+interface PlatformData {
+    val type: String
+}

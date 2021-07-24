@@ -1,7 +1,7 @@
 package com.grinisrit.crypto.common.websocket
 
 import com.grinisrit.crypto.Platform
-import com.grinisrit.crypto.common.DataTransport
+import com.grinisrit.crypto.common.MarketDataParser
 import com.grinisrit.crypto.logger
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
@@ -22,7 +22,7 @@ open class SeveralRequestWebsocketClient(
     socketTimeoutMillis
 ) {
     protected fun dataStringOf(data: String) =
-        DataTransport.dataStringOf(platform.name, Instant.now(), data)
+        MarketDataParser.dataStringOf(platform.name, Instant.now(), data)
     // TODO() make this function better
     override suspend fun DefaultClientWebSocketSession.receiveData() = flow {
         // TODO Andrei: more informative log messages

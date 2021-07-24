@@ -1,6 +1,7 @@
 package com.grinisrit.crypto.common.websocket
 
 import com.grinisrit.crypto.Platform
+import com.grinisrit.crypto.common.RawMarketDataFlow
 import com.grinisrit.crypto.logger
 
 import io.ktor.client.*
@@ -8,7 +9,6 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import org.zeromq.ZMQ
@@ -22,10 +22,9 @@ abstract class WebsocketClient(
     private val socketTimeoutMillis: Long = 2000L
 ) {
 
-    var lastConnectionTimeMilli: Long = 0L
+    private var lastConnectionTimeMilli: Long = 0L
 
-    suspend fun run() {
-
+    fun getFlow(): RawMarketDataFlow = flow {
         while (true) {
             try {
                 val instant = Instant.now()
@@ -37,23 +36,19 @@ abstract class WebsocketClient(
 
                 lastConnectionTimeMilli = Instant.now().toEpochMilli()
 
-                dataFlow().collect {
-                    socket.send(it)
+                rawMarketDataFlow().collect {
+                    emit(it)
                 }
 
             } catch (e: Throwable) {
-                // TODO Andrei: better error message
-                logger.error(e) { " ${platform.name} failed to launch flow" }
+                logger.error(e) { "Failed to connect to ${platform.name}" }
             }
-
         }
-
     }
 
-    abstract suspend fun DefaultClientWebSocketSession.receiveData(): Flow<String>
+    protected abstract suspend fun DefaultClientWebSocketSession.receiveData(): RawMarketDataFlow
 
-    suspend fun dataFlow() = flow {
-
+    private suspend fun rawMarketDataFlow() = flow {
         val client = HttpClient(CIO) {
             install(WebSockets)
             install(HttpTimeout) {

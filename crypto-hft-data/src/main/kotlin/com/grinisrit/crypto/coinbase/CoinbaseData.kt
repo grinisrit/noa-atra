@@ -5,9 +5,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.Instant
 
-interface CoinbaseData : PlatformData {
-    val type: String
-}
+interface CoinbaseData : PlatformData
 
 interface CoinbaseDataTime : CoinbaseData {
     val time: String
