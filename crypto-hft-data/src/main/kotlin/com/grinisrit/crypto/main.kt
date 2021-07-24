@@ -8,10 +8,11 @@ import com.grinisrit.crypto.coinbase.*
 import com.grinisrit.crypto.common.getPubSocket
 import com.grinisrit.crypto.common.getSubSocket
 import com.grinisrit.crypto.common.mongodb.MongoDBClient
-import com.grinisrit.crypto.common.zeromq.ZeroMQSubClient
+import com.grinisrit.crypto.common.zeromq.zmqSubFlow
 import com.grinisrit.crypto.deribit.*
 import com.grinisrit.crypto.kraken.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.filter
 import org.litote.kmongo.coroutine.*
 import org.litote.kmongo.reactivestreams.KMongo
 
@@ -26,20 +27,15 @@ internal val logger = KotlinLogging.logger { }
 fun main(args: Array<String>) {
 
     val cliParser = ArgParser("data")
-
     val configPathArg by cliParser.argument(ArgType.String, description = "Path to .yaml config file").optional()
-
     cliParser.parse(args)
 
     val configPath = configPathArg ?: "conf.yaml"
-
     val config = parseConf(File(configPath).readText())
 
 
     val zmqContext = ZContext()
-
     val pubSocket = zmqContext.getPubSocket(config.zeromq)
-
     val subSocket = zmqContext.getSubSocket(config.zeromq)
 
 
@@ -49,13 +45,18 @@ fun main(args: Array<String>) {
             if (isOn) {
                 val kMongoClient = KMongo.createClient(address).coroutine
 
-                val zeroMQSubClient = ZeroMQSubClient(subSocket)
+               // val zeroMQSubClient = ZeroMQSubClient(subSocket)
 
+
+                val dataFlow = zmqSubFlow(subSocket, Dispatchers.IO)
+                /*
                 launch(Dispatchers.IO) {
                     zeroMQSubClient.run()
                 }
 
-                val client = MongoDBClient(zeroMQSubClient.getData("")).apply {
+                 */
+
+                val client = MongoDBClient(dataFlow).apply {
                     addHandlers(
                         BinanceMongoDBHandler(kMongoClient),
                         CoinbaseMongoDBHandler(kMongoClient),
@@ -74,7 +75,7 @@ fun main(args: Array<String>) {
                     if (isOn) {
                         val apiClient = BinanceAPIClient(
                             this,
-                            zeroMQSubClient.getData(PlatformName.BINANCE.toString()),
+                            dataFlow.filter { it.startsWith(PlatformName.BINANCE.toString()) },
                             kMongoClient
                         )
 

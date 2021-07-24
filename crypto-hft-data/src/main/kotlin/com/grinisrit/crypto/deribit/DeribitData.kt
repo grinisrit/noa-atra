@@ -1,11 +1,11 @@
 package com.grinisrit.crypto.deribit
 
-import com.grinisrit.crypto.common.ChannelData
+import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.Instant
 
-interface DeribitData : ChannelData {
+interface DeribitData : PlatformData {
     val type: String
 }
 
@@ -55,8 +55,8 @@ object OrderDataSerializer :
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return element.jsonArray.let {
             buildJsonObject {
-                put("price", it[0].toString().toDouble())
-                put("amount", it[1].toString().toDouble())
+                put("price", it[0])
+                put("amount", it[1])
             }
         }
     }
@@ -94,11 +94,18 @@ data class Event(
     override val type: String = "event"
 ) : DeribitData
 
-//TODO()
 object DeribitDataSerializer : JsonContentPolymorphicSerializer<DeribitData>(DeribitData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
-        "params" !in element.jsonObject -> Event.serializer()
-        element.jsonObject["params"]!!.jsonObject["channel"]!!.toString().startsWith("\"book.") -> Book.serializer()
-        else -> Trades.serializer()
+        element !is JsonObject -> Event.serializer()
+        element.jsonObject["params"] !is JsonObject -> Event.serializer()
+        element.jsonObject["params"]?.jsonObject?.get("channel") !is JsonPrimitive -> Event.serializer()
+        else -> with(element.jsonObject["params"]?.jsonObject?.get("channel")?.jsonPrimitive?.content) {
+            when {
+                this == null -> Event.serializer()
+                this.startsWith("trades") -> Trades.serializer()
+                this.startsWith("book") -> Book.serializer()
+                else -> Trades.serializer()
+            }
+        }
     }
 }

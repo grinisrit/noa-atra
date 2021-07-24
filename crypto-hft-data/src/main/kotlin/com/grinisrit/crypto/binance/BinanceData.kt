@@ -1,11 +1,11 @@
 package com.grinisrit.crypto.binance
 
-import com.grinisrit.crypto.common.ChannelData
+import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import java.time.Instant
 
-interface BinanceData : ChannelData {
+interface BinanceData : PlatformData {
     val type: String
 }
 

@@ -2,13 +2,16 @@ package com.grinisrit.crypto.common
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import java.time.Instant
 
-// TODO() mb refactor
 object DataTransport {
 
     private const val internalDelimiter = "/**/"
+
+    private val decoder = Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+    }
 
     fun dataStringOf(platformName: String, receivingDateTime: Instant, dataJSON: String): String {
         return buildString {
@@ -27,17 +30,14 @@ object DataTransport {
     fun <T> decodeJsonData(
         jsonData: String,
         serializer: KSerializer<T>
-    ) = Json {
-        encodeDefaults = true
-        ignoreUnknownKeys = true
-    }.decodeFromString(serializer, jsonData)
+    ) = decoder.decodeFromString(serializer, jsonData)
 
-    fun <T : ChannelData> fromDataString(
+    fun <T : PlatformData> fromDataString(
         dataString: String,
         serializer: KSerializer<T>
-    ): DataTime<T> {
+    ): MarketData<T> {
         val (_, receivingDateTimeString, jsonData) = dataString.split(internalDelimiter)
-        return DataTime(
+        return MarketData(
             Instant.parse(receivingDateTimeString),
             decodeJsonData(jsonData, serializer)
         )

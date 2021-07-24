@@ -14,10 +14,10 @@ class BinanceMongoDBHandler(client: CoroutineClient) : MongoDBHandler(
 
     override suspend fun handleData(data: String) {
         val dataTime = DataTransport.fromDataString(data, BinanceDataSerializer)
-        if (dataTime.data is Event) {
+        if (dataTime.platform_data is Event) {
             return
         }
-        val col = nameToCollection[dataTime.data.type]
+        val col = nameToCollection[dataTime.platform_data.type]
         col?.insertOne(dataTime)
     }
 

@@ -3,7 +3,6 @@ package com.grinisrit.crypto
 
 import com.grinisrit.crypto.binance.*
 import com.grinisrit.crypto.common.DataTransport
-import com.grinisrit.crypto.common.getSubSocket
 import com.grinisrit.crypto.common.zeromq.ZeroMQSubClient
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
@@ -88,7 +87,7 @@ fun main(args: Array<String>) {
         println(Thread.currentThread())
         zeroMQSubClient.getData("binance").collect {
             val dataTime = DataTransport.fromDataString(it, BinanceDataSerializer)
-            with(dataTime.data) {
+            with(dataTime.platform_data) {
                 if (this is Trade && symbol == "BTCUSDT"){
                     data.add(Pair(Instant.ofEpochMilli(tradeTime), price))
                 }

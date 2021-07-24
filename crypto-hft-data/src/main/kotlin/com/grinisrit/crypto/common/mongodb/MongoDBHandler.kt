@@ -13,7 +13,7 @@ abstract class MongoDBHandler(
     private val database = client.getDatabase(platformName.toString())
 
     protected val nameToCollection = databaseNames.associateWith {
-        database.getCollection<DataTime<ChannelData>>(it)
+        database.getCollection<MarketData<PlatformData>>(it)
     }
 
     abstract suspend fun handleData(data: String)
