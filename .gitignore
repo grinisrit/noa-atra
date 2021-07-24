@@ -1,13 +1,8 @@
+# Builds S
 .gradle
 build/
 out/
 
-.idea/
-
-!.idea/copyright/
-!.idea/scopes/
-
-.vscode/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
@@ -33,11 +28,13 @@ dist/
 # IDE & notebooks files
 .vscode
 .idea
+!.idea/copyright/
+!.idea/scopes/
 .ipynb_checkpoints/
 .mypy_cache/
 .DS_Store
 
 # User data
-data*/
+mongodata*
 *.pt
 *.zip
