@@ -1,11 +1,11 @@
 package com.grinisrit.crypto.deribit
 
-import com.grinisrit.crypto.common.ChannelData
+import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.Instant
 
-interface DeribitData : ChannelData {
+interface DeribitData : PlatformData {
     val type: String
 }
 

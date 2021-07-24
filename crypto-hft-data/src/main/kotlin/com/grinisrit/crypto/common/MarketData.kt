@@ -2,7 +2,7 @@ package com.grinisrit.crypto.common
 
 import java.time.Instant
 
-data class DataTime<out T : ChannelData>(
+data class MarketData<out T : PlatformData>(
     val receiving_datetime: Instant,
-    val data: T,
+    val platform_data: T,
 )

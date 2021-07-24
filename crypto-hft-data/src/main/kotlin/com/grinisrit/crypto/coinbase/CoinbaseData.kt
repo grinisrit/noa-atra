@@ -1,11 +1,11 @@
 package com.grinisrit.crypto.coinbase
 
-import com.grinisrit.crypto.common.ChannelData
+import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.Instant
 
-interface CoinbaseData : ChannelData {
+interface CoinbaseData : PlatformData {
     val type: String
 }
 

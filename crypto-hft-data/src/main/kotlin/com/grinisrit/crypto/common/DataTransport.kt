@@ -32,12 +32,12 @@ object DataTransport {
         serializer: KSerializer<T>
     ) = decoder.decodeFromString(serializer, jsonData)
 
-    fun <T : ChannelData> fromDataString(
+    fun <T : PlatformData> fromDataString(
         dataString: String,
         serializer: KSerializer<T>
-    ): DataTime<T> {
+    ): MarketData<T> {
         val (_, receivingDateTimeString, jsonData) = dataString.split(internalDelimiter)
-        return DataTime(
+        return MarketData(
             Instant.parse(receivingDateTimeString),
             decodeJsonData(jsonData, serializer)
         )

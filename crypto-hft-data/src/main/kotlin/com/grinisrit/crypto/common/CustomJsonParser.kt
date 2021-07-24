@@ -1,5 +1,5 @@
 package com.grinisrit.crypto.common
 
-interface CustomJsonParser<T: ChannelData> {
+interface CustomJsonParser<T: PlatformData> {
     fun parse(jsonString: String): T
 }

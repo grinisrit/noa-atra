@@ -1,9 +1,8 @@
 package com.grinisrit.crypto.binance
 
 import com.grinisrit.crypto.BinancePlatform
-import com.grinisrit.crypto.common.DataTime
+import com.grinisrit.crypto.common.MarketData
 import com.grinisrit.crypto.common.DataTransport
-import com.mongodb.client.MongoClient
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.*
@@ -20,7 +19,7 @@ class BinanceAPIClient(
 ) {
 
     private val col = kMongoClient.getDatabase(platform.name)
-        .getCollection<DataTime<Snapshot>>("snapshot")
+        .getCollection<MarketData<Snapshot>>("snapshot")
 
     private val symbolToLastUpdateId: MutableMap<String, Long> = mutableMapOf()
 
@@ -31,7 +30,7 @@ class BinanceAPIClient(
         }
 
         col.insertOne(
-            DataTime(
+            MarketData(
                 Instant.now(),
                 Snapshot(
                     DataTransport.decodeJsonData(snapshot, SnapshotData.serializer()),
@@ -51,7 +50,7 @@ class BinanceAPIClient(
 
     private suspend fun filterBinanceData(dataString: String) {
         val dataTime = DataTransport.fromDataString(dataString, BinanceDataSerializer)
-        (dataTime.data as? BookUpdate)?.let { bookUpdate ->
+        (dataTime.platform_data as? BookUpdate)?.let { bookUpdate ->
             try {
                 handleBookUpdate(bookUpdate)
             } catch (e: Throwable) {

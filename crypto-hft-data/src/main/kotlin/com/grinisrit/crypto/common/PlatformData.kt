@@ -1,3 +1,3 @@
 package com.grinisrit.crypto.common
 
-interface ChannelData
+interface PlatformData

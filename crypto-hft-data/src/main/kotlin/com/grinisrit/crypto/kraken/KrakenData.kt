@@ -1,13 +1,13 @@
 package com.grinisrit.crypto.kraken
 
 
-import com.grinisrit.crypto.common.ChannelData
+import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.Instant
 
-interface KrakenData : ChannelData {
+interface KrakenData : PlatformData {
     val type: String
 }
 
