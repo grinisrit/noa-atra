@@ -2,16 +2,18 @@ package com.grinisrit.crypto.coinbase
 
 import com.grinisrit.crypto.CoinbasePlatform
 import com.grinisrit.crypto.common.websocket.SingleRequestWebsocketClient
-import org.zeromq.ZMQ
 
 
-class CoinbaseWebsocketClient(
+fun CoinbasePlatform.createCoinbaseSource(request: String): CoinbaseWebsocketClient {
+    return CoinbaseWebsocketClient(this, request)
+}
+
+class CoinbaseWebsocketClient
+internal constructor(
     platform: CoinbasePlatform,
-    socket : ZMQ.Socket,
     request: String
 ) : SingleRequestWebsocketClient(
     platform,
-    socket,
     request,
     backendReconnectTimeout = 4000L
 )

@@ -6,7 +6,7 @@ import com.grinisrit.crypto.common.MongoDBSink
 import com.grinisrit.crypto.common.PlatformName
 
 
-fun MongoDBServer.createBinanceMongoDBSink() = BinanceMongoDBSink(this)
+fun MongoDBServer.createBinanceSink() = BinanceMongoDBSink(this)
 
 class BinanceMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSink(
     server,

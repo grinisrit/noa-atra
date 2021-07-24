@@ -1,9 +1,13 @@
 package com.grinisrit.crypto.kraken
 
+import com.grinisrit.crypto.KrakenPlatform
 import com.grinisrit.crypto.common.RequestBuilder
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+
+fun KrakenPlatform.createKrakenRequests() =
+    KrakenWebsocketRequestBuilder.buildRequest(symbols)
 
 object KrakenWebsocketRequestBuilder : RequestBuilder {
 

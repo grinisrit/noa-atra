@@ -7,7 +7,7 @@ import com.grinisrit.crypto.common.PlatformName
 
 
 
-fun MongoDBServer.createBitstampMongoDBSink() = BitstampMongoDBSink(this)
+fun MongoDBServer.createBitstampSink() = BitstampMongoDBSink(this)
 
 class BitstampMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSink(
     server,

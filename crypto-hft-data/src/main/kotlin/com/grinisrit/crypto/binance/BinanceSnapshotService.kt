@@ -13,7 +13,10 @@ import kotlinx.coroutines.flow.map
 import java.time.Instant
 import kotlin.io.use
 
-class BinanceSnapshotService(
+fun BinancePlatform.createBinanceSnapshots() =
+    BinanceSnapshotService(this)
+
+class BinanceSnapshotService internal constructor(
     val platform: BinancePlatform,
 ) {
 

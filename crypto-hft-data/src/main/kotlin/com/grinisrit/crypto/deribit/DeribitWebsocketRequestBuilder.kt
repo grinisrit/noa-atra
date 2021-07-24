@@ -1,9 +1,13 @@
 package com.grinisrit.crypto.deribit
 
+import com.grinisrit.crypto.DeribitPlatform
 import com.grinisrit.crypto.common.RequestBuilder
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+
+fun DeribitPlatform.createDeribitRequest() =
+    DeribitWebsocketRequestBuilder.buildRequest(symbols).first()
 
 object DeribitWebsocketRequestBuilder : RequestBuilder {
 

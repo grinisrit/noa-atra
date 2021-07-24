@@ -11,13 +11,11 @@ import io.ktor.client.features.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import org.zeromq.ZMQ
 import java.time.Instant
 
 
 abstract class WebsocketClient(
     protected val platform: Platform,
-    private val socket: ZMQ.Socket,
     private val reconnectTimeoutMillis: Long = 5000L,
     private val socketTimeoutMillis: Long = 2000L
 ) {

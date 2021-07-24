@@ -5,7 +5,7 @@ import com.grinisrit.crypto.common.MongoDBServer
 import com.grinisrit.crypto.common.MongoDBSink
 import com.grinisrit.crypto.common.PlatformName
 
-fun MongoDBServer.createDeribitMongoDBSink() = DeribitMongoDBSink(this)
+fun MongoDBServer.createDeribitSink() = DeribitMongoDBSink(this)
 
 class DeribitMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSink(
     server,

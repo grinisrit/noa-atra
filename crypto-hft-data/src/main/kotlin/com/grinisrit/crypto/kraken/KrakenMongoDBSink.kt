@@ -6,7 +6,7 @@ import com.grinisrit.crypto.common.MongoDBSink
 import com.grinisrit.crypto.common.PlatformName
 
 
-fun MongoDBServer.createKrakenMongoDBSink() = KrakenMongoDBSink(this)
+fun MongoDBServer.createKrakenSink() = KrakenMongoDBSink(this)
 
 class KrakenMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSink(
     server,

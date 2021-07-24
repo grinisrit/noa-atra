@@ -1,9 +1,13 @@
 package com.grinisrit.crypto.bitstamp
 
+import com.grinisrit.crypto.BitstampPlatform
 import com.grinisrit.crypto.common.RequestBuilder
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+
+fun BitstampPlatform.createBitstampRequests() =
+    BitstampWebsocketRequestBuilder.buildRequest(symbols)
 
 object BitstampWebsocketRequestBuilder : RequestBuilder {
 
