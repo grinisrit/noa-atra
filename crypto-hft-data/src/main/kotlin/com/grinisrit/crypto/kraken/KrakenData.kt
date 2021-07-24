@@ -60,7 +60,7 @@ object TradeSerializer :
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return element.jsonArray.let {
             buildJsonObject {
-                put("channelId", it[0].toString().toInt())
+                put("channelId", it[0])
                 put("tradeData", it[1])
                 put("channelName", it[2])
                 put("pair", it[3])
@@ -94,8 +94,8 @@ object OrderDataSerializer :
 
 @Serializable
 data class BookSnapshotData(
-    @SerialName("as") val asks: List<@Serializable(with = OrderDataSerializer::class)OrderData>,
-    @SerialName("bs") val bids: List<@Serializable(with = OrderDataSerializer::class)OrderData>,
+    @SerialName("as") val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
+    @SerialName("bs") val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
 )
 
 @Serializable
@@ -113,7 +113,7 @@ object BookSnapshotSerializer :
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return element.jsonArray.let {
             buildJsonObject {
-                put("channelId", it[0].toString().toInt())
+                put("channelId", it[0])
                 put("bookData", it[1])
                 put("channelName", it[2])
                 put("pair", it[3])
@@ -148,13 +148,13 @@ object UpdateDataSerializer :
 
 @Serializable
 data class AsksUpdate(
-    val a: List<@Serializable(with = UpdateDataSerializer::class)UpdateData>,
+    val a: List<@Serializable(with = UpdateDataSerializer::class) UpdateData>,
     val c: String? = null,
 )
 
 @Serializable
 data class BidsUpdate(
-    val b: List<@Serializable(with = UpdateDataSerializer::class)UpdateData>,
+    val b: List<@Serializable(with = UpdateDataSerializer::class) UpdateData>,
     val c: String? = null,
 )
 
@@ -211,17 +211,27 @@ object BookUpdateSerializer :
 
 object KrakenDataSerializer : JsonContentPolymorphicSerializer<KrakenData>(KrakenData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
-        element is JsonObject -> Event.serializer()
-        else -> with(element.jsonArray[element.jsonArray.size - 2].toString()) {
+        element !is JsonArray -> Event.serializer()
+        else -> element.jsonArray.let { mainArray ->
             when {
-                this == "\"trade\"" -> TradeSerializer
-                this.startsWith("\"book") -> with(element.jsonArray[1].jsonObject) {
+                mainArray.size < 2 -> Event.serializer()
+                mainArray[mainArray.size - 2] !is JsonPrimitive -> Event.serializer()
+                else -> with(mainArray[mainArray.size - 2].jsonPrimitive.content) {
                     when {
-                        "as" in this.keys -> BookSnapshotSerializer
-                        else -> BookUpdateSerializer
+                        this == "trade" -> TradeSerializer
+                        startsWith("book") -> when {
+                            mainArray[1] !is JsonObject -> Event.serializer()
+                            else -> with(mainArray[1].jsonObject.keys) {
+                                when {
+                                    "as" in this -> BookSnapshotSerializer
+                                    "a" in this || "b" in this -> BookUpdateSerializer
+                                    else -> Event.serializer()
+                                }
+                            }
+                        }
+                        else -> Event.serializer()
                     }
                 }
-                else -> Event.serializer()
             }
         }
     }
