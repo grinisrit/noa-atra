@@ -22,9 +22,8 @@ platforms:
       - btcusdt
   deribit:
     websocket_address: wss://deribit.com/ws/api/v2
-    status: off
+    status: on
     symbols:
-      - ETH-PERPETUAL
       - BTC-PERPETUAL
   kraken:
     websocket_address: wss://ws.kraken.com

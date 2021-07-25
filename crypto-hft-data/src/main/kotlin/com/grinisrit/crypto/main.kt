@@ -33,7 +33,9 @@ fun main(args: Array<String>) {
     runBlocking {
 
         val marketDataBroker = createMarketDataBroker(config)
+        marketDataBroker.launchBroker()
         val marketDataFlow = marketDataBroker.getFlow()
+
 
         with(config.mongodb) {
             if (isOn) {

@@ -9,6 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import mu.KLogger
+import mu.KotlinLogging
 import org.zeromq.SocketType
 import org.zeromq.ZContext
 import org.zeromq.ZMQ
@@ -55,17 +57,20 @@ class MarketDataBroker internal constructor(
 
     fun launchBroker(): Job =
         coroutineScope.launch(Dispatchers.IO) {
+
+            val logger = KotlinLogging.logger { }
+
             ZContext().use { context ->
 
                 if (launchPub) {
-                    val pubSocket = context.getPubSocket(zmqConfig)
+                    val pubSocket = context.getPubSocket(zmqConfig, logger)
                     inFlow.onEach { rawData ->
                         pubSocket.send(rawData)
                     }.launchIn(this)
                 }
 
                 if (launchSub) {
-                    val subSocket = context.getSubSocket(zmqConfig)
+                    val subSocket = context.getSubSocket(zmqConfig, logger)
                     for (rawData in subSocket.recvStrStream())
                         try {
                             outFlow.emit(MarketDataParser.parseRawMarketData(rawData))
@@ -78,9 +83,10 @@ class MarketDataBroker internal constructor(
 
     private val pubInfo = "Publishing market data on ${zmqConfig.address}"
     private val pubError = "Failed to launch market data publication on ${zmqConfig.address}"
+    private val subInfo = "Subscribing to market data feed on ${zmqConfig.address}"
     private val subError = "Failed to consume market data from ${zmqConfig.address}"
 
-    private fun ZContext.getPubSocket(zmq: ZeroMQConfig): ZMQ.Socket =
+    private fun ZContext.getPubSocket(zmq: ZeroMQConfig, logger: KLogger): ZMQ.Socket =
         try {
             logger.debug { pubInfo }
             createSocket(SocketType.PUB).apply { bind(zmq.address) }
@@ -89,8 +95,9 @@ class MarketDataBroker internal constructor(
             throw RuntimeException(pubError)
         }
 
-    private fun ZContext.getSubSocket(zmq: ZeroMQConfig): ZMQ.Socket =
+    private fun ZContext.getSubSocket(zmq: ZeroMQConfig, logger: KLogger): ZMQ.Socket =
         try {
+            logger.debug { subInfo }
             createSocket(SocketType.SUB).apply {
                 connect(zmq.address)
                 subscribe("")
