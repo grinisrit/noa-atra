@@ -88,6 +88,7 @@ data class Event(
 object BinanceDataSerializer : JsonContentPolymorphicSerializer<BinanceData>(BinanceData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
         element !is JsonObject -> Event.serializer()
+        "snapshot" in element.jsonObject -> Snapshot.serializer()
         "U" in element.jsonObject -> BookUpdate.serializer()
         "t" in element.jsonObject -> Trade.serializer()
         else -> Event.serializer()

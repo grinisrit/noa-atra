@@ -31,7 +31,8 @@ class BinanceSnapshotService internal constructor(
         val snapshot: String = HttpClient().use {
             it.get("${platform.apiAddress}/depth?symbol=$symbol&limit=${bookDepth}")
         }
-        return MarketDataParser.dataStringOf(platform.name, Instant.now(), snapshot)
+        return MarketDataParser.dataStringOf(platform.name, Instant.now(),
+            "{\"snapshot\":$snapshot,\"symbol\":\"$symbol\"}")
     }
 
     private fun filterBookUpdate(bookUpdate: BookUpdate): Boolean {
