@@ -5,8 +5,11 @@ import com.grinisrit.crypto.common.MarketDataParser
 import com.grinisrit.crypto.logger
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import org.zeromq.ZMQ
+import java.lang.Exception
 import java.time.Instant
 
 open class SeveralRequestWebsocketClient
@@ -20,22 +23,19 @@ internal constructor(
     backendReconnectTimeout,
     socketTimeoutMillis
 ) {
-    protected fun dataStringOf(data: String) =
+    private fun dataStringOf(data: String) =
         MarketDataParser.dataStringOf(platform.name, Instant.now(), data)
 
-    // TODO() make this function better
     override suspend fun DefaultClientWebSocketSession.receiveData() = flow {
-        // TODO Andrei: more informative log messages
-        logger.debug { "${platform.name} connected successfully" }
+        debugLog("connected successfully")
 
         for (request in requests) {
-            logger.debug { "Sending request:\n$request" }
+            debugLog("sending request:\n$request")
             send(Frame.Text(request))
         }
 
         for (frame in incoming) {
-            frame as? Frame.Text ?: throw Error(frame.toString()) // TODO log
-            //loggerFile.log(frame.readText())
+            frame as? Frame.Text ?: throw Exception("Unexpected response: $frame")
             emit(dataStringOf(frame.readText()))
         }
 

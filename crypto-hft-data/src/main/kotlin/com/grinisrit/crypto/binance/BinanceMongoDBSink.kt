@@ -14,5 +14,5 @@ class BinanceMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSi
     listOf("snapshot", "trade", "update")
 ) {
     override suspend fun consume(marketDataFlow: MarkedDataFlow) =
-        handleFlow<BinanceData, Event>(marketDataFlow)
+        handleFlow<BinanceData>(marketDataFlow)
 }

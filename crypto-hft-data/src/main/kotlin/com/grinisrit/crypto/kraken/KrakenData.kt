@@ -1,6 +1,7 @@
 package com.grinisrit.crypto.kraken
 
 
+import com.grinisrit.crypto.common.UnbookedEvent
 import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -10,7 +11,7 @@ import java.time.Instant
 interface KrakenData : PlatformData
 
 @Serializable
-class Event : KrakenData {
+class Event : KrakenData, UnbookedEvent {
     override val type: String = "event"
 }
 

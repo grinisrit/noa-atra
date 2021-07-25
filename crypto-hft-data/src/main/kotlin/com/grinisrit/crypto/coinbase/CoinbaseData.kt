@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.coinbase
 
+import com.grinisrit.crypto.common.UnbookedEvent
 import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
@@ -90,7 +91,7 @@ data class L2Update(
 }
 
 @Serializable
-class Event : CoinbaseData {
+class Event : CoinbaseData, UnbookedEvent {
     override val type: String = "event"
 }
 

@@ -13,5 +13,5 @@ class CoinbaseMongoDBSink internal constructor(server: MongoDBServer) : MongoDBS
     listOf("ticker", "l2update", "snapshot")
 ) {
     override suspend fun consume(marketDataFlow: MarkedDataFlow) =
-        handleFlow<CoinbaseData, Event>(marketDataFlow)
+        handleFlow<CoinbaseData>(marketDataFlow)
 }

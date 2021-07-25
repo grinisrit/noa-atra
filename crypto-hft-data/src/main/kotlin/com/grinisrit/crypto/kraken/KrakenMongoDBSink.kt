@@ -14,5 +14,5 @@ class KrakenMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSin
     listOf("snapshot", "trade", "update")
 ) {
     override suspend fun consume(marketDataFlow: MarkedDataFlow) =
-        handleFlow<KrakenData, Event>(marketDataFlow)
+        handleFlow<KrakenData>(marketDataFlow)
 }
