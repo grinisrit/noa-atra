@@ -27,10 +27,12 @@ class BinanceSnapshotService internal constructor(
 
     private suspend fun getSnapshot(symbol: String): RawMarketData {
 
+        //TODO Andrei: informative logging
         val snapshot: String = HttpClient().use {
             it.get("${platform.apiAddress}/depth?symbol=$symbol&limit=${bookDepth}")
         }
-        return MarketDataParser.dataStringOf(platform.name, Instant.now(), snapshot)
+        return MarketDataParser.dataStringOf(platform.name, Instant.now(),
+            "{\"snapshot\":$snapshot,\"symbol\":\"$symbol\"}")
     }
 
     private fun filterBookUpdate(bookUpdate: BookUpdate): Boolean {
@@ -42,7 +44,7 @@ class BinanceSnapshotService internal constructor(
 
     fun getFlow(marketDataFlow: MarkedDataFlow): RawMarketDataFlow =
         marketDataFlow
-            .filter { it is BinanceData }
+            .filter { it.platform_data is BinanceData }
             .filter { it.platform_data is BookUpdate}
             .drop(dropFirst)
             .map {it.platform_data as BookUpdate}
@@ -52,7 +54,6 @@ class BinanceSnapshotService internal constructor(
                 logger.error(e) { "Failed to fetch snapshot from Binance" }
                 delay(delayOnFailure)
             }
-
     }
 
 
