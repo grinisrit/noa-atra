@@ -17,9 +17,7 @@ import com.grinisrit.crypto.kraken.createKrakenSource
 import kotlinx.cli.*
 import kotlinx.coroutines.*
 import java.io.File
-import mu.KotlinLogging
 
-internal val logger = KotlinLogging.logger { }
 
 fun main(args: Array<String>) {
 
@@ -48,21 +46,24 @@ fun main(args: Array<String>) {
                 val krakenSink = mongoServer.createKrakenSink()
                 val deribitSink = mongoServer.createDeribitSink()
 
-                launch {
-                    coinbaseSink.consume(marketDataFlow!!)
-                }
-                launch {
-                    binanceSink.consume(marketDataFlow!!)
-                }
-                launch {
-                    bitstampSink.consume(marketDataFlow!!)
-                }
-                launch {
-                    krakenSink.consume(marketDataFlow!!)
-                }
-                launch {
-                    deribitSink.consume(marketDataFlow!!)
-                }
+                marketDataFlow?.let { marketData ->
+                    launch {
+                        coinbaseSink.consume(marketData)
+                    }
+                    launch {
+                        binanceSink.consume(marketData)
+                    }
+                    launch {
+                        bitstampSink.consume(marketData)
+                    }
+                    launch {
+                        krakenSink.consume(marketData)
+                    }
+                    launch {
+                        deribitSink.consume(marketData)
+                    }
+                } ?: logger.warn { noMarketFlow }
+
 
             }
         }
@@ -85,9 +86,11 @@ fun main(args: Array<String>) {
                 launch {
                     marketDataBroker.publishFlow(ws.getFlow())
                 }
-                launch {
-                    marketDataBroker.publishFlow(snapshots.getFlow(marketDataFlow!!))
-                }
+                marketDataFlow?.let {
+                    launch {
+                        marketDataBroker.publishFlow(snapshots.getFlow(marketDataFlow))
+                    }
+                }?: logger.warn { noMarketFlow}
             }
         }
 
