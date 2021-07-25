@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.common
 
+import com.grinisrit.crypto.ConfYAMl
 import com.grinisrit.crypto.ZeroMQConfig
 import com.grinisrit.crypto.logger
 
@@ -18,41 +19,60 @@ typealias MarkedDataFlow = SharedFlow<MarkedData>
 typealias MutableRawMarketDataFlow = MutableSharedFlow<RawMarketData>
 typealias RawMarketDataFlow = Flow<RawMarketData>
 
-fun CoroutineScope.createMarketDataBroker(zmqConfig: ZeroMQConfig): MarketDataBroker =
-    MarketDataBroker(this, zmqConfig)
+fun CoroutineScope.createMarketDataBroker(conf: ConfYAMl): MarketDataBroker {
+    val launchPub = with(conf.platforms) {
+        coinbase.isOn or binance.isOn or bitstamp.isOn or kraken.isOn or deribit.isOn
+    }
+    val launchSub = conf.mongodb.isOn or conf.platforms.binance.isOn
+    return MarketDataBroker(this, conf.zeromq, launchPub, launchSub)
+}
+
 
 class MarketDataBroker internal constructor(
     private val coroutineScope: CoroutineScope,
-    private val zmqConfig: ZeroMQConfig
+    private val zmqConfig: ZeroMQConfig,
+    private val launchPub: Boolean,
+    private val launchSub: Boolean
 ) {
 
     private val inFlow: MutableRawMarketDataFlow = MutableSharedFlow()
     private val outFlow: MutableMarkedDataFlow = MutableSharedFlow()
 
-
-    fun getFlow(): MarkedDataFlow = outFlow.asSharedFlow()
+    fun getFlow(): MarkedDataFlow? =
+        if (launchSub) {
+            outFlow.asSharedFlow()
+        } else {
+            logger.warn { "No subscription for market data launched on ${zmqConfig.address}" }
+            null
+        }
 
     suspend fun publishFlow(rawMarketDataFlow: RawMarketDataFlow) =
-        rawMarketDataFlow.collect { inFlow.emit(it) }
+        if (launchPub) {
+            rawMarketDataFlow.collect { inFlow.emit(it) }
+        } else {
+            logger.warn { "No market data publication server launched on ${zmqConfig.address}" }
+        }
 
     fun launchBroker(): Job =
         coroutineScope.launch(Dispatchers.IO) {
             ZContext().use { context ->
 
-                val pubSocket = context.getPubSocket(zmqConfig)
-                inFlow.onEach { rawData ->
-                    pubSocket.send(rawData)
-                }.launchIn(this)
+                if (launchPub) {
+                    val pubSocket = context.getPubSocket(zmqConfig)
+                    inFlow.onEach { rawData ->
+                        pubSocket.send(rawData)
+                    }.launchIn(this)
+                }
 
-
-                val subSocket = context.getSubSocket(zmqConfig)
-                for (rawData in subSocket.recvStrStream())
-                    try {
-                        outFlow.emit(MarketDataParser.parseRawMarketData(rawData))
-                    } catch (e: Throwable) {
-                        logger.error(e) { "Received corrupted market data " }
-                    }
-
+                if (launchSub) {
+                    val subSocket = context.getSubSocket(zmqConfig)
+                    for (rawData in subSocket.recvStrStream())
+                        try {
+                            outFlow.emit(MarketDataParser.parseRawMarketData(rawData))
+                        } catch (e: Throwable) {
+                            logger.error(e) { "Received corrupted market data" }
+                        }
+                }
             }
         }
 
@@ -79,4 +99,5 @@ class MarketDataBroker internal constructor(
             logger.error(e) { subError }
             throw RuntimeException(subError)
         }
+
 }

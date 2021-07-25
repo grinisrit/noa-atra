@@ -7,6 +7,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 
@@ -18,14 +19,16 @@ fun BinancePlatform.createBinanceSnapshots() =
 
 class BinanceSnapshotService internal constructor(
     val platform: BinancePlatform,
+    private val dropFirst: Int = 10,
+    private val bookDepth: Int = 100,
+    private val delayOnFailure: Long = 1000
 ) {
-
     private val symbolToLastUpdateId: MutableMap<String, Long> = mutableMapOf()
 
     private suspend fun getSnapshot(symbol: String): RawMarketData {
 
         val snapshot: String = HttpClient().use {
-            it.get("${platform.apiAddress}/depth?symbol=$symbol&limit=100") // TODO
+            it.get("${platform.apiAddress}/depth?symbol=$symbol&limit=${bookDepth}")
         }
         return MarketDataParser.dataStringOf(platform.name, Instant.now(), snapshot)
     }
@@ -41,12 +44,13 @@ class BinanceSnapshotService internal constructor(
         marketDataFlow
             .filter { it is BinanceData }
             .filter { it.platform_data is BookUpdate}
+            .drop(dropFirst)
             .map {it.platform_data as BookUpdate}
             .filter { filterBookUpdate(it) }
             .map{ getSnapshot(it.symbol) }
             .catch { e ->
                 logger.error(e) { "Failed to fetch snapshot from Binance" }
-                delay(1000)
+                delay(delayOnFailure)
             }
 
     }

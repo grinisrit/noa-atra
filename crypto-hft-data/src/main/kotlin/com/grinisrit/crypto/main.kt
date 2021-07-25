@@ -34,8 +34,8 @@ fun main(args: Array<String>) {
 
     runBlocking {
 
-        val marketDataBroker = createMarketDataBroker(config.zeromq)
-        val marketData = marketDataBroker.getFlow()
+        val marketDataBroker = createMarketDataBroker(config)
+        val marketDataFlow = marketDataBroker.getFlow()
 
         with(config.mongodb) {
             if (isOn) {
@@ -49,19 +49,19 @@ fun main(args: Array<String>) {
                 val deribitSink = mongoServer.createDeribitSink()
 
                 launch {
-                    coinbaseSink.consume(marketData)
+                    coinbaseSink.consume(marketDataFlow!!)
                 }
                 launch {
-                    binanceSink.consume(marketData)
+                    binanceSink.consume(marketDataFlow!!)
                 }
                 launch {
-                    bitstampSink.consume(marketData)
+                    bitstampSink.consume(marketDataFlow!!)
                 }
                 launch {
-                    krakenSink.consume(marketData)
+                    krakenSink.consume(marketDataFlow!!)
                 }
                 launch {
-                    deribitSink.consume(marketData)
+                    deribitSink.consume(marketDataFlow!!)
                 }
 
             }
@@ -86,8 +86,7 @@ fun main(args: Array<String>) {
                     marketDataBroker.publishFlow(ws.getFlow())
                 }
                 launch {
-                    delay(2000)
-                    marketDataBroker.publishFlow(snapshots.getFlow(marketData))
+                    marketDataBroker.publishFlow(snapshots.getFlow(marketDataFlow!!))
                 }
             }
         }
