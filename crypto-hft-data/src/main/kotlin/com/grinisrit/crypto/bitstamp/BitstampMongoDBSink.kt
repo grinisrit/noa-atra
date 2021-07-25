@@ -12,7 +12,7 @@ fun MongoDBServer.createBitstampSink() = BitstampMongoDBSink(this)
 class BitstampMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSink(
     server,
     PlatformName.bitstamp,
-    listOf("snapshot", "trade", "update")
+    listOf("order_book", "trade")
 ) {
     override suspend fun consume(marketDataFlow: MarkedDataFlow) =
         handleFlow<BitstampData, Event>(marketDataFlow)

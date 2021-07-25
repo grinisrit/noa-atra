@@ -10,7 +10,7 @@ fun MongoDBServer.createDeribitSink() = DeribitMongoDBSink(this)
 class DeribitMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSink(
     server,
     PlatformName.deribit,
-    listOf("snapshot", "trade", "update")
+    listOf("book", "trades")
 ) {
     override suspend fun consume(marketDataFlow: MarkedDataFlow) =
         handleFlow<DeribitData, Event>(marketDataFlow)

@@ -10,7 +10,7 @@ fun MongoDBServer.createCoinbaseSink() = CoinbaseMongoDBSink(this)
 class CoinbaseMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSink(
     server,
     PlatformName.coinbase,
-    listOf("snapshot", "trade", "update")
+    listOf("ticker", "l2update", "snapshot")
 ) {
     override suspend fun consume(marketDataFlow: MarkedDataFlow) =
         handleFlow<CoinbaseData, Event>(marketDataFlow)

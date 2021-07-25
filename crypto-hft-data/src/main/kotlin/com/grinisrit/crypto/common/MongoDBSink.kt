@@ -4,6 +4,7 @@ import com.grinisrit.crypto.*
 import com.grinisrit.crypto.common.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 
 import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.coroutine
@@ -33,7 +34,7 @@ abstract class MongoDBSink constructor(
     protected suspend inline fun<reified Data: PlatformData, reified Event: PlatformData>
             handleFlow(marketDataFlow: MarkedDataFlow) =
         marketDataFlow
-            .filter { it is Data }
+            .filter { it.platform_data is Data }
             .filter { it.platform_data !is Event }
             .collect {
                 val col = nameToCollection[it.platform_data.type]
