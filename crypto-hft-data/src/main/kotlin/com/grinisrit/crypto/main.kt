@@ -40,7 +40,7 @@ fun main(args: Array<String>) {
         with(config.mongodb) {
             if (isOn) {
 
-                val mongoServer = getMongoDBServer(this)
+                val mongoServer = getMongoDBServer()
 
                 val coinbaseSink = mongoServer.createCoinbaseSink()
                 val binanceSink = mongoServer.createBinanceSink()

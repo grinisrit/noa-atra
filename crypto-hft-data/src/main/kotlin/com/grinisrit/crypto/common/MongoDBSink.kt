@@ -9,9 +9,9 @@ import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 
-suspend fun getMongoDBServer(mongoConfig: MongoDBConfig): MongoDBServer {
-    val mongo = KMongo.createClient(mongoConfig.address).coroutine
-    logger.debug { "Connecting to MongoDB at ${mongoConfig.address} ..." }
+suspend fun MongoDBConfig.getMongoDBServer(): MongoDBServer {
+    val mongo = KMongo.createClient(this.address).coroutine
+    logger.debug { "Connecting to MongoDB at ${this.address} ..." }
     val dbs = mongo.listDatabaseNames()
     logger.debug { "Connection to MongoDB established, found ${dbs.size} databases" }
     return MongoDBServer(mongo)
