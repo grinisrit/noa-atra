@@ -6,7 +6,7 @@ import com.grinisrit.crypto.coinbase.createCoinbaseRequest
 import com.grinisrit.crypto.coinbase.createCoinbaseSink
 import com.grinisrit.crypto.coinbase.createCoinbaseSource
 import com.grinisrit.crypto.common.createMarketDataBroker
-import com.grinisrit.crypto.common.getMongoDBServer
+import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.deribit.createDeribitRequest
 import com.grinisrit.crypto.deribit.createDeribitSink
 import com.grinisrit.crypto.deribit.createDeribitSource

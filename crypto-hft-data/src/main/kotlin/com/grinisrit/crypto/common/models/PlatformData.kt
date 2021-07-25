@@ -1,4 +1,4 @@
-package com.grinisrit.crypto.common
+package com.grinisrit.crypto.common.models
 
 interface PlatformData {
     val type: String

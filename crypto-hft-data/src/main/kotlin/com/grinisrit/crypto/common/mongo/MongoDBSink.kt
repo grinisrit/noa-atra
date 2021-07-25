@@ -1,10 +1,13 @@
-package com.grinisrit.crypto.common
+package com.grinisrit.crypto.common.mongo
 
 import com.grinisrit.crypto.*
-import com.grinisrit.crypto.common.*
+import com.grinisrit.crypto.common.PlatformName
+import com.grinisrit.crypto.common.TimestampedData
+import com.grinisrit.crypto.common.TimestampedDataFlow
+import com.grinisrit.crypto.common.models.PlatformData
+import com.grinisrit.crypto.common.models.UnbookedEvent
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 
 import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.coroutine
@@ -28,11 +31,11 @@ abstract class MongoDBSink constructor(
     private val database = server.client.getDatabase(platformName.toString())
 
     protected val nameToCollection = databaseNames.associateWith {
-        database.getCollection<MarkedData>(it)
+        database.getCollection<TimestampedData>(it)
     }
 
     protected suspend inline fun<reified Data: PlatformData>
-            handleFlow(marketDataFlow: MarkedDataFlow) =
+            handleFlow(marketDataFlow: TimestampedDataFlow) =
         marketDataFlow
             .filter { it.platform_data is Data }
             .filter { it.platform_data !is UnbookedEvent }
@@ -41,5 +44,5 @@ abstract class MongoDBSink constructor(
                 col?.insertOne(it)
             }
 
-    abstract suspend fun consume(marketDataFlow: MarkedDataFlow): Unit
+    abstract suspend fun consume(marketDataFlow: TimestampedDataFlow): Unit
 }

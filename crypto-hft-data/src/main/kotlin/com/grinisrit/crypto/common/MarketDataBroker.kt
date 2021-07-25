@@ -15,10 +15,10 @@ import org.zeromq.ZContext
 import org.zeromq.ZMQ
 import java.lang.RuntimeException
 
-typealias MutableMarkedDataFlow = MutableSharedFlow<MarkedData>
-typealias MarkedDataFlow = SharedFlow<MarkedData>
-typealias MutableRawMarketDataFlow = MutableSharedFlow<RawMarketData>
-typealias RawMarketDataFlow = Flow<RawMarketData>
+typealias MutableTimestampedDataFlow = MutableSharedFlow<TimestampedData>
+typealias TimestampedDataFlow = SharedFlow<TimestampedData>
+typealias MutableJsonStringDataFlow = MutableSharedFlow<JsonStringData>
+typealias JsonStringDataFlow = Flow<JsonStringData>
 
 fun CoroutineScope.createMarketDataBroker(conf: ConfYAMl): MarketDataBroker =
     MarketDataBroker.fromConfig(this, conf)
@@ -43,10 +43,10 @@ class MarketDataBroker private constructor(
             )
     }
 
-    fun getFlow(): MarkedDataFlow? = subService?.getFlow()
+    fun getFlow(): TimestampedDataFlow? = subService?.getFlow()
 
-    suspend fun publishFlow(rawMarketDataFlow: RawMarketDataFlow): Unit? =
-        pubService?.publishFlow(rawMarketDataFlow)
+    suspend fun publishFlow(jsonStringDataFlow: JsonStringDataFlow): Unit? =
+        pubService?.publishFlow(jsonStringDataFlow)
 
     fun launchBroker(): Job =
         coroutineScope.launch(Dispatchers.IO) {
@@ -66,11 +66,11 @@ private sealed class ZMQService {
 }
 
 private class MarketDataSubService(val zmqConfig: ZeroMQConfig) : ZMQService() {
-    private val outFlow: MutableMarkedDataFlow = MutableSharedFlow()
+    private val outFlow: MutableTimestampedDataFlow = MutableSharedFlow()
     private val subInfo = "Subscribing to market data feed on ${zmqConfig.address}"
     private val subError = "Failed to consume market data from ${zmqConfig.address}"
 
-    fun getFlow(): MarkedDataFlow = outFlow.asSharedFlow()
+    fun getFlow(): TimestampedDataFlow = outFlow.asSharedFlow()
 
     suspend fun launchSubService(context: ZContext, logger: KLogger) {
         val socket = context.getSubSocket(zmqConfig, logger)
@@ -96,14 +96,14 @@ private class MarketDataSubService(val zmqConfig: ZeroMQConfig) : ZMQService() {
 }
 
 private class MarketDataPubService(val zmqConfig: ZeroMQConfig) : ZMQService() {
-    private val inFlow: MutableRawMarketDataFlow = MutableSharedFlow()
+    private val inFlow: MutableJsonStringDataFlow = MutableSharedFlow()
     private val pubInfo = "Publishing market data on ${zmqConfig.address}"
     private val pubError = "Failed to launch market data publication on ${zmqConfig.address}"
 
-    suspend fun publishFlow(rawMarketDataFlow: RawMarketDataFlow) =
-        rawMarketDataFlow.collect { inFlow.emit(it) }
+    suspend fun publishFlow(jsonStringDataFlow: JsonStringDataFlow) =
+        jsonStringDataFlow.collect { inFlow.emit(it) }
 
-    fun launchPubService(context: ZContext, logger: KLogger): Flow<RawMarketData> {
+    fun launchPubService(context: ZContext, logger: KLogger): Flow<JsonStringData> {
         socket = context.getPubSocket(zmqConfig, logger)
         return inFlow.onEach { rawData ->
             socket?.send(rawData)

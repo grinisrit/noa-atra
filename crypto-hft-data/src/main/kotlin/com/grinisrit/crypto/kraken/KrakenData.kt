@@ -1,8 +1,8 @@
 package com.grinisrit.crypto.kraken
 
 
-import com.grinisrit.crypto.common.UnbookedEvent
-import com.grinisrit.crypto.common.PlatformData
+import com.grinisrit.crypto.common.models.UnbookedEvent
+import com.grinisrit.crypto.common.models.PlatformData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*

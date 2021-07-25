@@ -3,14 +3,16 @@ package com.grinisrit.crypto.common
 import com.grinisrit.crypto.binance.BinanceDataSerializer
 import com.grinisrit.crypto.bitstamp.BitstampDataSerializer
 import com.grinisrit.crypto.coinbase.CoinbaseDataSerializer
+import com.grinisrit.crypto.common.models.PlatformData
+import com.grinisrit.crypto.common.models.TimestampedMarketData
 import com.grinisrit.crypto.deribit.DeribitDataSerializer
 import com.grinisrit.crypto.kraken.KrakenDataSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import java.time.Instant
 
-typealias RawMarketData = String
-typealias MarkedData = TimestampedMarketData<PlatformData>
+typealias JsonStringData = String
+typealias TimestampedData = TimestampedMarketData<PlatformData>
 
 enum class PlatformName {
     binance,
@@ -40,11 +42,11 @@ object MarketDataParser {
         }
     }
 
-    fun getRawPlatformName(rawData: String): String {
+    fun getRawPlatformName(rawData: JsonStringData): String {
         return rawData.split(internalDelimiter).first()
     }
 
-    fun getPlatformName(rawData: RawMarketData): PlatformName {
+    fun getPlatformName(rawData: JsonStringData): PlatformName {
         return PlatformName.valueOf(getRawPlatformName(rawData))
     }
 
@@ -64,7 +66,7 @@ object MarketDataParser {
         )
     }
 
-    fun parseRawMarketData(rawData: RawMarketData): MarkedData =
+    fun parseRawMarketData(rawData: JsonStringData): TimestampedData =
         when (getPlatformName(rawData)) {
             PlatformName.binance -> fromDataString(rawData, BinanceDataSerializer)
             PlatformName.coinbase -> fromDataString(rawData, CoinbaseDataSerializer)

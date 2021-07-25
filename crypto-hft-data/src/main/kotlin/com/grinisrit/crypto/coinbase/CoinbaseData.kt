@@ -1,7 +1,7 @@
 package com.grinisrit.crypto.coinbase
 
-import com.grinisrit.crypto.common.UnbookedEvent
-import com.grinisrit.crypto.common.PlatformData
+import com.grinisrit.crypto.common.models.UnbookedEvent
+import com.grinisrit.crypto.common.models.PlatformData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.Instant

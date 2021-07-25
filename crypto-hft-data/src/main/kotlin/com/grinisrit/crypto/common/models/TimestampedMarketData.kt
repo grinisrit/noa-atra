@@ -1,4 +1,4 @@
-package com.grinisrit.crypto.common
+package com.grinisrit.crypto.common.models
 
 import java.time.Instant
 

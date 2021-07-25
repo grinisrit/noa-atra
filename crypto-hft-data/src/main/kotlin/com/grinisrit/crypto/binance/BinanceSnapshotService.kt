@@ -25,7 +25,7 @@ class BinanceSnapshotService internal constructor(
 ) {
     private val symbolToLastUpdateId: MutableMap<String, Long> = mutableMapOf()
 
-    private suspend fun getSnapshot(symbol: String): RawMarketData {
+    private suspend fun getSnapshot(symbol: String): JsonStringData {
 
         //TODO Andrei: informative logging
         val snapshot: String = HttpClient().use {
@@ -42,7 +42,7 @@ class BinanceSnapshotService internal constructor(
         return flag
     }
 
-    fun getFlow(marketDataFlow: MarkedDataFlow): RawMarketDataFlow =
+    fun getFlow(marketDataFlow: TimestampedDataFlow): JsonStringDataFlow =
         marketDataFlow
             .filter { it.platform_data is BinanceData }
             .filter { it.platform_data is BookUpdate}

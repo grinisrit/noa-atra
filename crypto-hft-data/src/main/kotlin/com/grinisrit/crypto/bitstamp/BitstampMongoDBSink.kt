@@ -1,8 +1,8 @@
 package com.grinisrit.crypto.bitstamp
 
-import com.grinisrit.crypto.common.MarkedDataFlow
-import com.grinisrit.crypto.common.MongoDBServer
-import com.grinisrit.crypto.common.MongoDBSink
+import com.grinisrit.crypto.common.TimestampedDataFlow
+import com.grinisrit.crypto.common.mongo.MongoDBServer
+import com.grinisrit.crypto.common.mongo.MongoDBSink
 import com.grinisrit.crypto.common.PlatformName
 
 
@@ -14,7 +14,7 @@ class BitstampMongoDBSink internal constructor(server: MongoDBServer) : MongoDBS
     PlatformName.bitstamp,
     listOf("order_book", "trade")
 ) {
-    override suspend fun consume(marketDataFlow: MarkedDataFlow) =
+    override suspend fun consume(marketDataFlow: TimestampedDataFlow) =
         handleFlow<BitstampData>(marketDataFlow)
 }
 
