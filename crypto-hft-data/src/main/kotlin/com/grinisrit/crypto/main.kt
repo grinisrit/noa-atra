@@ -86,9 +86,9 @@ fun main(args: Array<String>) {
                 launch {
                     marketDataBroker.publishFlow(ws.getFlow())
                 }
-                marketDataFlow?.let {
+                marketDataFlow?.let { marketData ->
                     launch {
-                        marketDataBroker.publishFlow(snapshots.getFlow(marketDataFlow))
+                        marketDataBroker.publishFlow(snapshots.getFlow(marketData))
                     }
                 }?: logger.warn { noMarketFlow}
             }
