@@ -7,7 +7,7 @@ zeromq:
 platforms:
   coinbase:
     websocket_address: wss://ws-feed.pro.coinbase.com
-    status: on
+    status: off
     symbols:
       - ETH-BTC
       - BTC-USD
@@ -22,20 +22,20 @@ platforms:
       - btcusdt
   deribit:
     websocket_address: wss://deribit.com/ws/api/v2
-    status: on
+    status: off
     symbols:
       - ETH-PERPETUAL
       - BTC-PERPETUAL
   kraken:
     websocket_address: wss://ws.kraken.com
-    status: on
+    status: off
     symbols:
       - ETH/USD
       - ETH/XBT
       - XBT/USD
   bitstamp:
     websocket_address: wss://ws.bitstamp.net
-    status: on
+    status: off
     symbols:
       - ethbtc
       - btcusd

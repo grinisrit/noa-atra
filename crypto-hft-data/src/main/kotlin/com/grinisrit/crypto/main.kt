@@ -92,7 +92,7 @@ fun main(args: Array<String>) {
                     launch {
                         marketDataBroker.publishFlow(snapshots.getFlow(marketData))
                     }
-                }?: logger.warn { noMarketFlow}
+                }?: logger.warn { noMarketFlow }
             }
         }
 
