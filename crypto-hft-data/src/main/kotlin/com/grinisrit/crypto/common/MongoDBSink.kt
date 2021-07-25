@@ -31,11 +31,11 @@ abstract class MongoDBSink constructor(
         database.getCollection<MarkedData>(it)
     }
 
-    protected suspend inline fun<reified Data: PlatformData, reified Event: PlatformData>
+    protected suspend inline fun<reified Data: PlatformData>
             handleFlow(marketDataFlow: MarkedDataFlow) =
         marketDataFlow
             .filter { it.platform_data is Data }
-            .filter { it.platform_data !is Event }
+            .filter { it.platform_data !is UnbookedEvent }
             .collect {
                 val col = nameToCollection[it.platform_data.type]
                 col?.insertOne(it)

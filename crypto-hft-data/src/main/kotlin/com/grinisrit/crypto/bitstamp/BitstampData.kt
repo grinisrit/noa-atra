@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.bitstamp
 
+import com.grinisrit.crypto.common.UnbookedEvent
 import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
@@ -80,7 +81,7 @@ data class Trade(
 @Serializable
 data class Event(
     override val type: String = "event"
-) : BitstampData
+) : BitstampData, UnbookedEvent
 
 
 object BitstampDataSerializer : JsonContentPolymorphicSerializer<BitstampData>(BitstampData::class) {

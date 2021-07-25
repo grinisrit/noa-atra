@@ -15,6 +15,6 @@ class BitstampMongoDBSink internal constructor(server: MongoDBServer) : MongoDBS
     listOf("order_book", "trade")
 ) {
     override suspend fun consume(marketDataFlow: MarkedDataFlow) =
-        handleFlow<BitstampData, Event>(marketDataFlow)
+        handleFlow<BitstampData>(marketDataFlow)
 }
 

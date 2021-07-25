@@ -20,19 +20,19 @@ abstract class WebsocketClient(
     private val socketTimeoutMillis: Long = 2000L
 ) {
 
-    private var lastConnectionTimeMilli: Long = 0L
+    protected fun debugLog(msg: String) = logger.debug { "${platform.name} ws: $msg" }
+
+
+    private var lastConnectionTimeMillis: Long = 0L
 
     fun getFlow(): RawMarketDataFlow = flow {
         while (true) {
             try {
-                val instant = Instant.now()
-                val currentTimeMilli = instant.toEpochMilli()
 
-                val timeFromLastConnectionMilli = currentTimeMilli - lastConnectionTimeMilli
-
+                val currentTimeMilli = Instant.now().toEpochMilli()
+                val timeFromLastConnectionMilli = currentTimeMilli - lastConnectionTimeMillis
                 delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)
-
-                lastConnectionTimeMilli = Instant.now().toEpochMilli()
+                lastConnectionTimeMillis = Instant.now().toEpochMilli()
 
                 rawMarketDataFlow().collect {
                     emit(it)
@@ -55,7 +55,20 @@ abstract class WebsocketClient(
         }
 
         client.wss(urlString = platform.websocketAddress) {
-            this.receiveData().collect { emit(it) }
+            var messagesReceived = 0
+
+            launch {
+                while (true) {
+                    delay(5000L)
+                    debugLog("received $messagesReceived messages")
+                    messagesReceived = 0
+                }
+            }
+
+            this.receiveData().collect {
+                emit(it)
+                messagesReceived += 1
+            }
         }
 
     }

@@ -13,5 +13,5 @@ class DeribitMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSi
     listOf("book", "trades")
 ) {
     override suspend fun consume(marketDataFlow: MarkedDataFlow) =
-        handleFlow<DeribitData, Event>(marketDataFlow)
+        handleFlow<DeribitData>(marketDataFlow)
 }

@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.deribit
 
+import com.grinisrit.crypto.common.UnbookedEvent
 import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
@@ -90,7 +91,7 @@ data class Book(
 @Serializable
 data class Event(
     override val type: String = "event"
-) : DeribitData
+) : DeribitData, UnbookedEvent
 
 object DeribitDataSerializer : JsonContentPolymorphicSerializer<DeribitData>(DeribitData::class) {
     override fun selectDeserializer(element: JsonElement) = when {

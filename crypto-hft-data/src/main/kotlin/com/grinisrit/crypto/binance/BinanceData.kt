@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.binance
 
+import com.grinisrit.crypto.common.UnbookedEvent
 import com.grinisrit.crypto.common.PlatformData
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
@@ -83,7 +84,7 @@ data class BookUpdate(
 @Serializable
 data class Event(
     override val type: String = "event"
-) : BinanceData
+) : BinanceData, UnbookedEvent
 
 object BinanceDataSerializer : JsonContentPolymorphicSerializer<BinanceData>(BinanceData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
