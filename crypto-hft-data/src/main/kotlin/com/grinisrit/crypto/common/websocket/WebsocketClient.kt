@@ -55,8 +55,8 @@ abstract class WebsocketClient(
         }
 
         client.wss(urlString = platform.websocketAddress) {
-            var messagesReceived = 0
-
+       //     var messagesReceived = 0
+/*
             launch {
                 while (true) {
                     delay(5000L)
@@ -65,9 +65,12 @@ abstract class WebsocketClient(
                 }
             }
 
+ */
+
             this.receiveData().collect {
                 emit(it)
-                messagesReceived += 1
+              //  messagesReceived += 1
+               // debugLog(messagesReceived.toString())
             }
         }
 
