@@ -8,5 +8,5 @@ repositories {
 }
 
 dependencies {
-    implementation("space.kscience:kmath-noa:0.3.0-dev-14")
+    //implementation("space.kscience:kmath-noa:0.3.0-dev-14")
 }

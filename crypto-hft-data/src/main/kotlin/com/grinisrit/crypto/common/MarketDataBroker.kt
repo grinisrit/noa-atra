@@ -52,8 +52,9 @@ class MarketDataBroker private constructor(
         coroutineScope.launch(Dispatchers.IO) {
             val logger = KotlinLogging.logger { }
             ZContext().use { context ->
-                pubService?.launchPubService(context, logger)?.launchIn(this)
+                val pubJob = pubService?.launchPubService(context, logger)?.launchIn(this)
                 subService?.launchSubService(context, logger)
+                pubJob?.join()
             }
         }
 }
