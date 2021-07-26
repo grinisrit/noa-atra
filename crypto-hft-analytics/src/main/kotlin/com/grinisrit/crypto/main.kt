@@ -1,8 +1,8 @@
 package com.grinisrit.crypto
 
-import space.kscience.kmath.noa.cudaAvailable
+//import space.kscience.kmath.noa.cudaAvailable
 
 
 fun main(){
-    println("CUDA found: ${cudaAvailable()}")
+    //println("CUDA found: ${cudaAvailable()}")
 }
