@@ -2,7 +2,7 @@ package com.grinisrit.crypto.binance
 
 import com.grinisrit.crypto.BinancePlatform
 import com.grinisrit.crypto.common.*
-import com.grinisrit.crypto.logger
+import com.grinisrit.crypto.commonLogger
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.*
@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import mu.KotlinLogging
 
 import java.time.Instant
 import kotlin.io.use
@@ -23,14 +24,22 @@ class BinanceSnapshotService internal constructor(
     private val bookDepth: Int = 100,
     private val delayOnFailure: Long = 1000
 ) {
+    private val logger = KotlinLogging.logger { }
+
+    private fun debugLog(msg: String) = logger.debug { "${platform.name} ws: $msg" }
+
     private val symbolToLastUpdateId: MutableMap<String, Long> = mutableMapOf()
 
     private suspend fun getSnapshot(symbol: String): JsonStringData {
 
-        //TODO Andrei: informative logging
+        debugLog("Trying to get snapshot for $symbol")
+
         val snapshot: String = HttpClient().use {
             it.get("${platform.apiAddress}/depth?symbol=$symbol&limit=${bookDepth}")
         }
+
+        debugLog("Get snapshot for $symbol successfully")
+
         return MarketDataParser.dataStringOf(platform.name, Instant.now(),
             "{\"snapshot\":$snapshot,\"symbol\":\"$symbol\"}")
     }
@@ -51,7 +60,7 @@ class BinanceSnapshotService internal constructor(
             .filter { filterBookUpdate(it) }
             .map{ getSnapshot(it.symbol) }
             .catch { e ->
-                logger.error(e) { "Failed to fetch snapshot from Binance" }
+                commonLogger.error(e) { "Failed to fetch snapshot from Binance" }
                 delay(delayOnFailure)
             }
     }

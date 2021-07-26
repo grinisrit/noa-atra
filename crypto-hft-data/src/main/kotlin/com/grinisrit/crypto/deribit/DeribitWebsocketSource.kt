@@ -15,5 +15,6 @@ class DeribitWebsocketSource(
     platform,
     request,
     backendReconnectTimeout = 1000L,
-    socketTimeoutMillis = 5000L
+    socketTimeoutMillis = 5000L,
+    aliveBound = 500
 )

@@ -11,9 +11,7 @@ import java.time.Instant
 interface KrakenData : PlatformData
 
 @Serializable
-class Event : KrakenData, UnbookedEvent {
-    override val type: String = "event"
-}
+class Event : KrakenData, UnbookedEvent
 
 @Serializable
 data class TradeData(
@@ -51,7 +49,7 @@ data class Trade(
     val channelName: String,
     val pair: String,
 ) : KrakenData {
-    override val type: String = "trade"
+    override val type = KrakenDataType.trade
 }
 
 object TradeSerializer :
@@ -104,7 +102,7 @@ data class BookSnapshot(
     val channelName: String,
     val pair: String,
 ) : KrakenData {
-    override val type: String = "snapshot"
+    override val type = KrakenDataType.snapshot
 }
 
 object BookSnapshotSerializer :
@@ -165,7 +163,7 @@ data class BookUpdate(
     val channelName: String,
     val pair: String,
 ) : KrakenData {
-    override val type: String = "update"
+    override val type = KrakenDataType.update
 }
 
 object BookUpdateSerializer :

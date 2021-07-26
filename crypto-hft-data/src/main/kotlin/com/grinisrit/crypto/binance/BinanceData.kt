@@ -42,7 +42,7 @@ data class Snapshot(
     val snapshot: SnapshotData,
     val symbol: String,
 ) : BinanceData {
-    override val type = "snapshot"
+    override val type = BinanceDataType.snapshot
 }
 
 @Serializable
@@ -59,7 +59,7 @@ data class Trade(
     @SerialName("m") val isMarketMaker: Boolean,
     @SerialName("M") val ignore: Boolean,
 ) : BinanceDataTime {
-    override val type = "trade"
+    override val type = BinanceDataType.trade
 
     override val datetime: Instant
         get() = Instant.ofEpochMilli(tradeTime)
@@ -75,16 +75,14 @@ data class BookUpdate(
     @SerialName("b") val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
     @SerialName("a") val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
 ) : BinanceDataTime {
-    override val type = "update"
+    override val type = BinanceDataType.update
 
     override val datetime: Instant
         get() = Instant.ofEpochMilli(eventTime)
 }
 
 @Serializable
-data class Event(
-    override val type: String = "event"
-) : BinanceData, UnbookedEvent
+class Event : BinanceData, UnbookedEvent
 
 object BinanceDataSerializer : JsonContentPolymorphicSerializer<BinanceData>(BinanceData::class) {
     override fun selectDeserializer(element: JsonElement) = when {

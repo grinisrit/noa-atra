@@ -16,5 +16,6 @@ internal constructor(
     platform,
     requests,
     backendReconnectTimeout = 5000L,
-    socketTimeoutMillis = 82000L
+    socketTimeoutMillis = 10000L,
+    aliveBound = 1500
 )

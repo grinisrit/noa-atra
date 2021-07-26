@@ -40,7 +40,7 @@ data class Trades(
     val method: String,
     val jsonrpc: String,
 ) : DeribitData {
-    override val type = "trades"
+    override val type = DeribitDataType.trades
 }
 
 @Serializable
@@ -85,13 +85,11 @@ data class Book(
     val method: String,
     val jsonrpc: String,
 ) : DeribitData {
-    override val type = "book"
+    override val type = DeribitDataType.book
 }
 
 @Serializable
-data class Event(
-    override val type: String = "event"
-) : DeribitData, UnbookedEvent
+class Event: DeribitData, UnbookedEvent
 
 object DeribitDataSerializer : JsonContentPolymorphicSerializer<DeribitData>(DeribitData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
