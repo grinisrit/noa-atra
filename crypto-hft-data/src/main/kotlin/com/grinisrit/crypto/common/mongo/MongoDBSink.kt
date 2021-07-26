@@ -4,10 +4,12 @@ import com.grinisrit.crypto.*
 import com.grinisrit.crypto.common.PlatformName
 import com.grinisrit.crypto.common.TimestampedData
 import com.grinisrit.crypto.common.TimestampedDataFlow
+import com.grinisrit.crypto.common.models.DataType
 import com.grinisrit.crypto.common.models.PlatformData
 import com.grinisrit.crypto.common.models.UnbookedEvent
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import mu.KotlinLogging
 
 import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.coroutine
@@ -15,9 +17,9 @@ import org.litote.kmongo.reactivestreams.KMongo
 
 suspend fun MongoDBConfig.getMongoDBServer(): MongoDBServer {
     val mongo = KMongo.createClient(this.address).coroutine
-    logger.debug { "Connecting to MongoDB at ${this.address} ..." }
+    commonLogger.debug { "Connecting to MongoDB at ${this.address} ..." }
     val dbs = mongo.listDatabaseNames()
-    logger.debug { "Connection to MongoDB established, found ${dbs.size} databases" }
+    commonLogger.debug { "Connection to MongoDB established, found ${dbs.size} databases" }
     return MongoDBServer(mongo)
 }
 
@@ -26,12 +28,17 @@ class MongoDBServer internal constructor(val client: CoroutineClient)
 abstract class MongoDBSink constructor(
     val server: MongoDBServer,
     val platformName: PlatformName,
-    databaseNames: List<String>
+    dataTypes: Array<out DataType>
 ) {
+
+    protected val logger = KotlinLogging.logger { }
+
+    protected fun debugLog(msg: String) = logger.debug { "$platformName mongo: $msg" }
+
     private val database = server.client.getDatabase(platformName.toString())
 
-    protected val nameToCollection = databaseNames.associateWith {
-        database.getCollection<TimestampedData>(it)
+    protected val nameToCollection = dataTypes.associateWith {
+        database.getCollection<TimestampedData>(it.toString())
     }
 
     protected suspend inline fun<reified Data: PlatformData>
@@ -40,8 +47,13 @@ abstract class MongoDBSink constructor(
             .filter { it.platform_data is Data }
             .filter { it.platform_data !is UnbookedEvent }
             .collect {
-                val col = nameToCollection[it.platform_data.type]
-                col?.insertOne(it)
+                val collectionName = it.platform_data.type
+                val col = nameToCollection[collectionName]
+                if (col!=null) {
+                    col.insertOne(it)
+                } else {
+                    logger.warn { "$platformName mongo: unknown collection name $collectionName" }
+                }
             }
 
     abstract suspend fun consume(marketDataFlow: TimestampedDataFlow): Unit

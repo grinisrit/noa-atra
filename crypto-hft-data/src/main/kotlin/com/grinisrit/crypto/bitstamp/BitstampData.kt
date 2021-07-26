@@ -46,7 +46,7 @@ data class OrderBook(
     val channel: String,
     val event: String,
 ) : BitstampDataTime {
-    override val type = "order_book"
+    override val type = BitstampDataType.order_book
 
     override val datetime: Instant
         get() = Instant.ofEpochMilli(data.microtimestamp / 1000)
@@ -72,16 +72,14 @@ data class Trade(
     val data: TradeData,
     val event: String,
 ) : BitstampDataTime {
-    override val type = "trade"
+    override val type = BitstampDataType.trade
 
     override val datetime: Instant
         get() = Instant.ofEpochMilli(data.microtimestamp / 1000)
 }
 
 @Serializable
-data class Event(
-    override val type: String = "event"
-) : BitstampData, UnbookedEvent
+class Event: BitstampData, UnbookedEvent
 
 
 object BitstampDataSerializer : JsonContentPolymorphicSerializer<BitstampData>(BitstampData::class) {

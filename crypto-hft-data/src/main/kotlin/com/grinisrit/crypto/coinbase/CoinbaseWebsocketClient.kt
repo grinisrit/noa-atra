@@ -15,5 +15,6 @@ internal constructor(
 ) : SingleRequestWebsocketClient(
     platform,
     request,
-    backendReconnectTimeout = 4000L
+    backendReconnectTimeout = 4000L,
+    aliveBound = 24000,
 )

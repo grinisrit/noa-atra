@@ -14,6 +14,5 @@ private fun setUpLogger(): KLogger {
     return KotlinLogging.logger { }
 }
 
-internal val logger = setUpLogger()
+internal val commonLogger = setUpLogger()
 internal const val noMarketFlow = "No market data flow available"
-

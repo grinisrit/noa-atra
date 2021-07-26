@@ -7,10 +7,12 @@ internal constructor(
     platform: Platform,
     request: String,
     backendReconnectTimeout: Long = 5000L,
-    socketTimeoutMillis: Long = 2000L
+    socketTimeoutMillis: Long = 2000L,
+    aliveBound: Int = 10000,
 ) : SeveralRequestWebsocketClient(
     platform,
     listOf(request),
     backendReconnectTimeout,
-    socketTimeoutMillis
+    socketTimeoutMillis,
+    aliveBound
 )

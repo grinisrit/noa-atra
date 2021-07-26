@@ -13,5 +13,6 @@ class BinanceWebsocketSource
     request: String
 ) : SingleRequestWebsocketClient(
     platform,
-    request
+    request,
+    aliveBound = 5000,
 )

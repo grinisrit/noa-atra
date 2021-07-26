@@ -36,7 +36,6 @@ fun main(args: Array<String>) {
         marketDataBroker.launchBroker()
         val marketDataFlow = marketDataBroker.getFlow()
 
-
         with(config.mongodb) {
             if (isOn) {
 
@@ -64,7 +63,7 @@ fun main(args: Array<String>) {
                     launch {
                         deribitSink.consume(marketData)
                     }
-                } ?: logger.warn { noMarketFlow }
+                } ?: commonLogger.warn { noMarketFlow }
 
 
             }
@@ -92,7 +91,7 @@ fun main(args: Array<String>) {
                     launch {
                         marketDataBroker.publishFlow(snapshots.getFlow(marketData))
                     }
-                }?: logger.warn { noMarketFlow }
+                }?: commonLogger.warn { noMarketFlow }
             }
         }
 

@@ -11,7 +11,7 @@ fun MongoDBServer.createBinanceSink() = BinanceMongoDBSink(this)
 class BinanceMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSink(
     server,
     PlatformName.binance,
-    listOf("snapshot", "trade", "update")
+    BinanceDataType.values()
 ) {
     override suspend fun consume(marketDataFlow: TimestampedDataFlow) =
         handleFlow<BinanceData>(marketDataFlow)

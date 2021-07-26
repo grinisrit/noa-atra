@@ -14,5 +14,6 @@ class KrakenWebsocketSource(
     platform,
     requests,
     backendReconnectTimeout = 5000L,
-    socketTimeoutMillis = 2000L
+    socketTimeoutMillis = 2000L,
+    aliveBound = 10000
 )

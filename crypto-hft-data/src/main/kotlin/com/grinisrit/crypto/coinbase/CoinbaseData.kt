@@ -31,7 +31,7 @@ data class Ticker(
     val high_24h: Double,
     val volume_30d: Double,
 ) : CoinbaseDataTime {
-    override val type: String = "ticker"
+    override val type = CoinbaseDataType.ticker
 }
 
 @Serializable
@@ -78,7 +78,7 @@ data class Snapshot(
     val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
     val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
 ) : CoinbaseData {
-    override val type: String = "snapshot"
+    override val type = CoinbaseDataType.snapshot
 }
 
 @Serializable
@@ -87,13 +87,26 @@ data class L2Update(
     override val time: String,
     val changes: List<@Serializable(with = OrderUpdateDataSerializer::class) OrderUpdateData>,
 ) : CoinbaseDataTime {
-    override val type: String = "l2update"
+    override val type = CoinbaseDataType.snapshot
 }
 
 @Serializable
-class Event : CoinbaseData, UnbookedEvent {
-    override val type: String = "event"
+data class Match(
+    val trade_id: Long,
+    val maker_order_id: String,
+    val taker_order_id: String,
+    val side: String,
+    override val time: String,
+    val product_id: String,
+    val price: Double,
+    val size: Double,
+    val sequence: Long,
+) : CoinbaseDataTime {
+    override val type = CoinbaseDataType.match
 }
+
+@Serializable
+class Event : CoinbaseData, UnbookedEvent
 
 object CoinbaseDataSerializer : JsonContentPolymorphicSerializer<CoinbaseData>(CoinbaseData::class) {
     override fun selectDeserializer(element: JsonElement) =
@@ -104,6 +117,7 @@ object CoinbaseDataSerializer : JsonContentPolymorphicSerializer<CoinbaseData>(C
                 "ticker" -> Ticker.serializer()
                 "snapshot" -> Snapshot.serializer()
                 "l2update" -> L2Update.serializer()
+                "match" -> Match.serializer()
                 else -> Event.serializer()
             }
         }

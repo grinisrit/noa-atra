@@ -23,7 +23,8 @@ object CoinbaseWebsocketRequestBuilder : RequestBuilder {
     private val channels = listOf(
         "level2",
         "heartbeat",
-        "ticker",
+        "matches",
+        //   "ticker",
     )
 
     override fun buildRequest(symbols: List<String>): List<String> {

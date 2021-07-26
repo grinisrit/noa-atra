@@ -11,7 +11,7 @@ fun MongoDBServer.createKrakenSink() = KrakenMongoDBSink(this)
 class KrakenMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSink(
     server,
     PlatformName.kraken,
-    listOf("snapshot", "trade", "update")
+    KrakenDataType.values()
 ) {
     override suspend fun consume(marketDataFlow: TimestampedDataFlow) =
         handleFlow<KrakenData>(marketDataFlow)
