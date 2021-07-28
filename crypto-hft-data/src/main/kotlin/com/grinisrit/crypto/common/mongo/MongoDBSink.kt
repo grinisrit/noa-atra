@@ -36,10 +36,12 @@ abstract class MongoDBSink constructor(
         database.getCollection<TimestampedData>(it.toString())
     }
 
-    suspend fun makeLog(){
-        nameToCollection.map { (name, collection) ->
-            debugLog("$name collection size: ${collection.countDocuments()}")
+    suspend fun sentinelLog(){
+        var numEntities = 0L
+        nameToCollection.forEach { (name, collection) ->
+            numEntities += collection.countDocuments()
         }
+        debugLog("contains $numEntities entities")
     }
 
     protected suspend inline fun<reified Data: PlatformData>

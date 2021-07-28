@@ -69,35 +69,35 @@ fun main(args: Array<String>) {
 
                 launch {
                     while (isActive) {
-                        coinbaseSink.makeLog()
+                        coinbaseSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
 
                 launch {
                     while (isActive) {
-                        binanceSink.makeLog()
+                        binanceSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
 
                 launch {
                     while (isActive) {
-                        bitstampSink.makeLog()
+                        bitstampSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
 
                 launch {
                     while (isActive) {
-                        krakenSink.makeLog()
+                        krakenSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
 
                 launch {
                     while (isActive) {
-                        deribitSink.makeLog()
+                        deribitSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
