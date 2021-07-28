@@ -39,10 +39,8 @@ internal constructor(
             emit(dataStringOf(frame.readText()))
 
             messagesReceived += 1
-            if (messagesReceived > aliveBound) {
-                debugLog("connection alive")
-                messagesReceived = 0
-            }
+            if (messagesReceived.mod(aliveBound) == 0)
+                debugLog("connection alive, received $messagesReceived messages")
         }
 
     }
