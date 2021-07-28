@@ -2,18 +2,12 @@ package com.grinisrit.crypto
 
 import com.grinisrit.crypto.binance.*
 import com.grinisrit.crypto.bitstamp.*
-import com.grinisrit.crypto.coinbase.createCoinbaseRequest
-import com.grinisrit.crypto.coinbase.createCoinbaseSink
-import com.grinisrit.crypto.coinbase.createCoinbaseSource
-import com.grinisrit.crypto.common.createMarketDataBroker
-import com.grinisrit.crypto.common.mongo.getMongoDBServer
-import com.grinisrit.crypto.deribit.createDeribitRequest
-import com.grinisrit.crypto.deribit.createDeribitSink
-import com.grinisrit.crypto.deribit.createDeribitSource
-
-import com.grinisrit.crypto.kraken.createKrakenRequests
-import com.grinisrit.crypto.kraken.createKrakenSink
-import com.grinisrit.crypto.kraken.createKrakenSource
+import com.grinisrit.crypto.coinbase.*
+import com.grinisrit.crypto.common.*
+import com.grinisrit.crypto.common.mongo.*
+import com.grinisrit.crypto.deribit.*
+import com.grinisrit.crypto.finery.*
+import com.grinisrit.crypto.kraken.*
 import kotlinx.cli.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -64,7 +58,7 @@ fun main(args: Array<String>) {
                         deribitSink.consume(marketData)
                     }
                 } ?: commonLogger.warn { noMarketFlow }
-
+                /*
                 val mongoLogTimeout = 10000L
 
                 launch {
@@ -101,6 +95,8 @@ fun main(args: Array<String>) {
                         delay(mongoLogTimeout)
                     }
                 }
+
+                 */
 
 
             }
@@ -162,5 +158,17 @@ fun main(args: Array<String>) {
             }
         }
 
+        with(config.platforms.finery) {
+            if (isOn) {
+                val ws = createFinerySource(createFineryRequest())
+
+                launch {
+                    marketDataBroker.publishFlow(ws.getFlow())
+                }
+
+            }
+        }
+
     }
+
 }

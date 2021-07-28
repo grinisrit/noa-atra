@@ -72,6 +72,21 @@ data class BitstampPlatform(
     override val platformName: PlatformName = PlatformName.bitstamp
 }
 
+
+@Serializable
+data class FineryPlatform(
+    @SerialName("websocket_address")
+    override val websocketAddress: String,
+    override val status: String,
+    override val symbols: List<String>,
+    @SerialName("key_path")
+    val keyPath: String,
+    @SerialName("secret_path")
+    val secretPath: String,
+) : Platform {
+    override val platformName: PlatformName = PlatformName.finery
+}
+
 @Serializable
 data class Platforms(
     val coinbase: CoinbasePlatform,
@@ -79,4 +94,5 @@ data class Platforms(
     val binance: BinancePlatform,
     val deribit: DeribitPlatform,
     val bitstamp: BitstampPlatform,
+    val finery: FineryPlatform,
 )

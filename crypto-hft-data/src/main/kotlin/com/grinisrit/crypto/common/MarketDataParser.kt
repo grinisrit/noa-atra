@@ -20,6 +20,7 @@ enum class PlatformName {
     coinbase,
     deribit,
     kraken,
+    finery
     ;
 }
 
@@ -73,6 +74,7 @@ object MarketDataParser {
             PlatformName.bitstamp -> fromDataString(rawData, BitstampDataSerializer)
             PlatformName.kraken -> fromDataString(rawData, KrakenDataSerializer)
             PlatformName.deribit -> fromDataString(rawData, DeribitDataSerializer)
+            PlatformName.finery -> TODO()
         }
 
 

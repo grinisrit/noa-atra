@@ -35,7 +35,7 @@ class MarketDataBroker private constructor(
             MarketDataBroker(
                 scope,
                 with(conf.platforms) {
-                    if (coinbase.isOn or binance.isOn or bitstamp.isOn or kraken.isOn or deribit.isOn)
+                    if (coinbase.isOn or binance.isOn or bitstamp.isOn or kraken.isOn or deribit.isOn or finery.isOn)
                         MarketDataPubService(conf.zeromq) else null
                 },
                 if (conf.mongodb.isOn or conf.platforms.binance.isOn)

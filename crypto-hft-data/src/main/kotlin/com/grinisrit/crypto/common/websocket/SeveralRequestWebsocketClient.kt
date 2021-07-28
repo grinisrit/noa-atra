@@ -32,6 +32,8 @@ internal constructor(
             send(Frame.Text(request))
         }
 
+
+
         var messagesReceived = 0
 
         for (frame in incoming) {

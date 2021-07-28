@@ -32,7 +32,6 @@ abstract class WebsocketClient(
     fun getFlow(): JsonStringDataFlow = flow {
         while (true) {
             try {
-
                 val currentTimeMilli = Instant.now().toEpochMilli()
                 val timeFromLastConnectionMilli = currentTimeMilli - lastConnectionTimeMillis
                 delay(reconnectTimeoutMillis - timeFromLastConnectionMilli)
@@ -48,6 +47,7 @@ abstract class WebsocketClient(
         }
     }
 
+    protected open suspend fun DefaultClientWebSocketSession.authorize(): Unit {}
     protected abstract suspend fun DefaultClientWebSocketSession.receiveData(): JsonStringDataFlow
 
     private suspend fun rawMarketDataFlow() = flow {
@@ -59,6 +59,7 @@ abstract class WebsocketClient(
         }
 
         client.wss(urlString = platform.websocketAddress) {
+            authorize()
             receiveData().collect {
                 emit(it)
             }
