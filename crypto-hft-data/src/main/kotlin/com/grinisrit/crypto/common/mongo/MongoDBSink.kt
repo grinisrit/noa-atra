@@ -1,14 +1,9 @@
 package com.grinisrit.crypto.common.mongo
 
 import com.grinisrit.crypto.*
-import com.grinisrit.crypto.common.PlatformName
-import com.grinisrit.crypto.common.TimestampedData
-import com.grinisrit.crypto.common.TimestampedDataFlow
-import com.grinisrit.crypto.common.models.DataType
-import com.grinisrit.crypto.common.models.PlatformData
-import com.grinisrit.crypto.common.models.UnbookedEvent
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import com.grinisrit.crypto.common.*
+import com.grinisrit.crypto.common.models.*
+import kotlinx.coroutines.flow.*
 import mu.KotlinLogging
 
 import org.litote.kmongo.coroutine.CoroutineClient
@@ -39,6 +34,12 @@ abstract class MongoDBSink constructor(
 
     protected val nameToCollection = dataTypes.associateWith {
         database.getCollection<TimestampedData>(it.toString())
+    }
+
+    suspend fun makeLog(){
+        nameToCollection.map { (name, collection) ->
+            debugLog("$name collection size: ${collection.countDocuments()}")
+        }
     }
 
     protected suspend inline fun<reified Data: PlatformData>
