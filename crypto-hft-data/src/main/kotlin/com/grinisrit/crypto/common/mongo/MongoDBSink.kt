@@ -38,7 +38,7 @@ abstract class MongoDBSink constructor(
 
     suspend fun sentinelLog(){
         var numEntities = 0L
-        nameToCollection.forEach { (name, collection) ->
+        nameToCollection.forEach { (_, collection) ->
             numEntities += collection.countDocuments()
         }
         debugLog("contains $numEntities entities")
