@@ -20,6 +20,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.2")
 
+    implementation("commons-codec:commons-codec:1.15")
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("org.zeromq:jeromq:0.5.0")
