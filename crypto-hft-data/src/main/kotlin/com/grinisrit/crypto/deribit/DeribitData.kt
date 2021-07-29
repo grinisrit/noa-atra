@@ -14,14 +14,14 @@ data class TradeData(
     val trade_id: String,
     val timestamp: Long,
     val tick_direction: Int,
-    val price: Double,
-    val mark_price: Double,
+    val price: Float,
+    val mark_price: Float,
     val instrument_name: String,
-    val index_price: Double,
+    val index_price: Float,
     val direction: String,
-    val amount: Double,
+    val amount: Float,
     val liquidation: String? = null,
-    val iv: Double? = null,
+    val iv: Float? = null,
     val block_trade_id: String? = null,
 ) {
     val datetime: Instant
@@ -45,8 +45,8 @@ data class Trades(
 
 @Serializable
 data class OrderData(
-    val price: Double,
-    val amount: Double,
+    val price: Float,
+    val amount: Float,
 )
 
 object OrderDataSerializer :

@@ -14,8 +14,8 @@ interface BinanceDataTime : BinanceData {
 
 @Serializable
 data class OrderData(
-    val price: Double,
-    val amount: Double,
+    val price: Float,
+    val amount: Float,
 )
 
 object OrderDataSerializer :
@@ -51,8 +51,8 @@ data class Trade(
     @SerialName("E") val eventTime: Long,
     @SerialName("s") val symbol: String,
     @SerialName("t") val tradeID: Long,
-    @SerialName("p") val price: Double,
-    @SerialName("q") val quantity: Double,
+    @SerialName("p") val price: Float,
+    @SerialName("q") val quantity: Float,
     @SerialName("b") val buyerOrderID: Long,
     @SerialName("a") val sellerOrderID: Long,
     @SerialName("T") val tradeTime: Long,

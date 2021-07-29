@@ -14,8 +14,8 @@ interface BitstampDataTime : BitstampData {
 
 @Serializable
 data class OrderData(
-    val price: Double,
-    val amount: Double,
+    val price: Float,
+    val amount: Float,
     val orderId: Long,
 )
 
@@ -54,9 +54,9 @@ data class OrderBook(
 
 @Serializable
 data class TradeData(
-    val amount: Double,
+    val amount: Float,
     val amount_str: String,
-    val price: Double,
+    val price: Float,
     val price_str: String,
     val buy_order_id: Long,
     val id: Long,

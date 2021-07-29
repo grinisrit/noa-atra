@@ -69,7 +69,7 @@ fun main(args: Array<String>) {
     server.show()
 
 
-    val data = CopyOnWriteArrayList<Pair<Instant, Double>>()
+    val data = CopyOnWriteArrayList<Pair<Instant, Float>>()
 
     GlobalScope.launch {
         println(Thread.currentThread())

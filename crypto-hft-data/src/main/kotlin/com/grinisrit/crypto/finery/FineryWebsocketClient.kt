@@ -21,16 +21,16 @@ internal constructor(
     platform,
     request,
     backendReconnectTimeout = 4000L,
-    aliveBound = 1000,
+    socketTimeoutMillis = 4000L,
+    aliveBound = 10000,
 ) {
     private val key = File(platform.keyPath).readText()
     private val secret = File(platform.secretPath).readText()
 
     override suspend fun DefaultClientWebSocketSession.authorize() {
         val authRequest = getAuthRequest(key, secret)
-        println(authRequest)
         send(Frame.Text(authRequest))
-        delay(1000L)
+        delay(2000L) // TODO
     }
 
 }

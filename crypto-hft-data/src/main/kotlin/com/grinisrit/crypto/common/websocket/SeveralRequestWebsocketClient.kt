@@ -38,6 +38,7 @@ internal constructor(
 
         for (frame in incoming) {
             frame as? Frame.Text ?: throw Exception("Unexpected response: $frame")
+          //  debugLog(frame.readText())
             emit(dataStringOf(frame.readText()))
 
             messagesReceived += 1

@@ -20,24 +20,24 @@ data class Ticker(
     val sequence: Long,
     override val time: String,
     val product_id: String,
-    val price: Double,
+    val price: Float,
     val side: String,
-    val last_size: Double,
-    val best_bid: Double,
-    val best_ask: Double,
-    val open_24h: Double,
-    val volume_24h: Double,
-    val low_24h: Double,
-    val high_24h: Double,
-    val volume_30d: Double,
+    val last_size: Float,
+    val best_bid: Float,
+    val best_ask: Float,
+    val open_24h: Float,
+    val volume_24h: Float,
+    val low_24h: Float,
+    val high_24h: Float,
+    val volume_30d: Float,
 ) : CoinbaseDataTime {
     override val type = CoinbaseDataType.ticker
 }
 
 @Serializable
 data class OrderData(
-    val price: Double,
-    val amount: Double,
+    val price: Float,
+    val amount: Float,
 )
 
 object OrderDataSerializer :
@@ -55,8 +55,8 @@ object OrderDataSerializer :
 @Serializable
 data class OrderUpdateData(
     val side: String,
-    val price: Double,
-    val amount: Double,
+    val price: Float,
+    val amount: Float,
 )
 
 object OrderUpdateDataSerializer :
@@ -98,8 +98,8 @@ data class Match(
     val side: String,
     override val time: String,
     val product_id: String,
-    val price: Double,
-    val size: Double,
+    val price: Float,
+    val size: Float,
     val sequence: Long,
 ) : CoinbaseDataTime {
     override val type = CoinbaseDataType.match

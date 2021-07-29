@@ -15,9 +15,9 @@ class Event : KrakenData, UnbookedEvent
 
 @Serializable
 data class TradeData(
-    val price: Double,
-    val volume: Double,
-    val time: Double,
+    val price: Float,
+    val volume: Float,
+    val time: Float,
     val side: String,
     val orderType: String,
     val misc: String,
@@ -68,9 +68,9 @@ object TradeSerializer :
 
 @Serializable
 data class OrderData(
-    val price: Double,
-    val volume: Double,
-    val timestamp: Double,
+    val price: Float,
+    val volume: Float,
+    val timestamp: Float,
 ) {
     val datetime: Instant
         get() = Instant.ofEpochMilli((timestamp * 1000).toLong())
@@ -121,8 +121,8 @@ object BookSnapshotSerializer :
 
 @Serializable
 data class UpdateData(
-    val price: Double,
-    val volume: Double,
+    val price: Float,
+    val volume: Float,
     val timestamp: String,
     val updateType: String? = null,
 )
@@ -205,7 +205,6 @@ object BookUpdateSerializer :
     }
 }
 
-
 object KrakenDataSerializer : JsonContentPolymorphicSerializer<KrakenData>(KrakenData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
         element !is JsonArray -> Event.serializer()
@@ -233,4 +232,3 @@ object KrakenDataSerializer : JsonContentPolymorphicSerializer<KrakenData>(Krake
         }
     }
 }
-

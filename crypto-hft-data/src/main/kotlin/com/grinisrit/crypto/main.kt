@@ -40,6 +40,7 @@ fun main(args: Array<String>) {
                 val bitstampSink = mongoServer.createBitstampSink()
                 val krakenSink = mongoServer.createKrakenSink()
                 val deribitSink = mongoServer.createDeribitSink()
+                val finerySink = mongoServer.createFinerySink()
 
                 marketDataFlow?.let { marketData ->
                     launch {
@@ -57,8 +58,11 @@ fun main(args: Array<String>) {
                     launch {
                         deribitSink.consume(marketData)
                     }
+                    launch {
+                        finerySink.consume(marketData)
+                    }
                 } ?: commonLogger.warn { noMarketFlow }
-                /*
+
                 val mongoLogTimeout = 10000L
 
                 launch {
@@ -96,8 +100,12 @@ fun main(args: Array<String>) {
                     }
                 }
 
-                 */
-
+                launch {
+                    while (isActive) {
+                        finerySink.makeLog()
+                        delay(mongoLogTimeout)
+                    }
+                }
 
             }
         }

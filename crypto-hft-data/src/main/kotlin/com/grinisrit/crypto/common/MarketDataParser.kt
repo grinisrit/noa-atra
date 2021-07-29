@@ -6,6 +6,7 @@ import com.grinisrit.crypto.coinbase.CoinbaseDataSerializer
 import com.grinisrit.crypto.common.models.PlatformData
 import com.grinisrit.crypto.common.models.TimestampedMarketData
 import com.grinisrit.crypto.deribit.DeribitDataSerializer
+import com.grinisrit.crypto.finery.FineryDataSerializer
 import com.grinisrit.crypto.kraken.KrakenDataSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
@@ -74,7 +75,7 @@ object MarketDataParser {
             PlatformName.bitstamp -> fromDataString(rawData, BitstampDataSerializer)
             PlatformName.kraken -> fromDataString(rawData, KrakenDataSerializer)
             PlatformName.deribit -> fromDataString(rawData, DeribitDataSerializer)
-            PlatformName.finery -> TODO()
+            PlatformName.finery -> fromDataString(rawData, FineryDataSerializer)
         }
 
 
