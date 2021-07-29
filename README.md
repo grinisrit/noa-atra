@@ -25,7 +25,7 @@ within [crypto-hft-data](crypto-hft-analytics). To build and run the application
 execute:
 ```
 $ ./gradlew -Dorg.gradle.java.home=/path/to/local/jdk -q :crypto-hft-data:installDist
-$ crypto-hft-data/build/install/crypto-hft-data/bin/crypto-hft-data /path/to/conf.yaml
+$ ./gradlew -Dorg.gradle.java.home=/path/to/local/jdk -q :crypto-hft-data:run --args='/path/to/conf.yaml'
 ```
 You can configure the app in [conf.yaml](conf.yaml) to get the LOB data feed from the following 
 exchanges and liquidity aggregators:
