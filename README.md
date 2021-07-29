@@ -21,13 +21,13 @@ on execution costs and liquidity for several
 Cryptocurrency exchanges.
 
 You will find the data collection utilities 
-within [crypto-hft-data](crypto-hft-analytics). To build and run the application
+within [crypto-hft-data](crypto-hft-analytics). To run the app you need to simply
 execute:
 ```
 $ ./gradlew -Dorg.gradle.java.home=/path/to/local/jdk -q :crypto-hft-data:installDist
 $ ./gradlew -Dorg.gradle.java.home=/path/to/local/jdk -q :crypto-hft-data:run --args='/path/to/conf.yaml'
 ```
-You can configure the app in [conf.yaml](conf.yaml) to get the LOB data feed from the following 
+You can configure it in [conf.yaml](conf.yaml) to get the LOB data feed from the following 
 exchanges and liquidity aggregators:
 
 * [Coinbase](https://docs.pro.coinbase.com/#websocket-feed)
