@@ -37,7 +37,7 @@ exchanges and liquidity aggregators:
 * [Deribit](https://docs.deribit.com/?python#subscriptions)
 * [Finery Markets](https://faq.finerymarkets.com/api-specifications)
 
-for the any of the traded instruments available on the platforms.
+for any of the traded instruments available on the platforms.
 
 Once you've collected a bit of data you can run the analysis with
 the models we provide in [crypto-hft-analytics](crypto-hft-analytics). 
