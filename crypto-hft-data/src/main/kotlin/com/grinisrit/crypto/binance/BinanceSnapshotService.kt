@@ -21,7 +21,7 @@ fun BinancePlatform.createBinanceSnapshots() =
 class BinanceSnapshotService internal constructor(
     val platform: BinancePlatform,
     private val dropFirst: Int = 10,
-    private val bookDepth: Int = 100,
+    private val bookDepth: Int = 1000,
     private val delayOnFailure: Long = 1000
 ) {
     private val logger = KotlinLogging.logger { }
