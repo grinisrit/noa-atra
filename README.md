@@ -24,7 +24,7 @@ You will find the data collection utilities
 within [crypto-hft-data](crypto-hft-analytics). To run the app you need to simply
 execute:
 ```
-$ ./gradlew -Dorg.gradle.java.home=/path/to/local/jdk -q :crypto-hft-data:run --args='/path/to/conf.yaml'
+$ ./gradlew -Dorg.gradle.java.home=/path/to/local/jdk -q :crypto-hft-data:run --args=/path/to/conf.yaml
 ```
 You can configure it in [conf.yaml](conf.yaml) to get the LOB data feed from the following 
 exchanges and liquidity aggregators:
