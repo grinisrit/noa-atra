@@ -21,8 +21,13 @@ on execution costs and liquidity for several
 Cryptocurrency exchanges.
 
 You will find the data collection utilities 
-within [crypto-hft-data](crypto-hft-analytics).
-We get the LOB data feed from the following 
+within [crypto-hft-data](crypto-hft-analytics). To build and run the application
+execute:
+```
+$ ./gradlew -Dorg.gradle.java.home=/path/to/local/jdk -q :crypto-hft-data:installDist
+$ crypto-hft-data/build/install/crypto-hft-data/bin/crypto-hft-data /path/to/conf.yaml
+```
+You can configure the app in [conf.yaml](conf.yaml) to get the LOB data feed from the following 
 exchanges and liquidity aggregators:
 
 * [Coinbase](https://docs.pro.coinbase.com/#websocket-feed)
@@ -32,10 +37,7 @@ exchanges and liquidity aggregators:
 * [Deribit](https://docs.deribit.com/?python#subscriptions)
 * [Finery Markets](https://faq.finerymarkets.com/api-specifications)
 
-for the pairs: 
-* BTCUSD
-* ETHBTC
-* ETHUSD
+for the any of the traded instruments available on the platforms.
 
 Once you've collected a bit of data you can run the analysis with
 the models we provide in [crypto-hft-analytics](crypto-hft-analytics). 
