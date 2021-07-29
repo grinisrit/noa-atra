@@ -26,6 +26,8 @@ abstract class MongoDBSink constructor(
     dataTypes: Array<out DataType>
 ) {
 
+    protected var numEntities = 0L
+
     protected val logger = KotlinLogging.logger { }
 
     protected fun debugLog(msg: String) = logger.debug { "$platformName mongo: $msg" }
@@ -36,10 +38,8 @@ abstract class MongoDBSink constructor(
         database.getCollection<TimestampedData>(it.toString())
     }
 
-    suspend fun makeLog(){
-        nameToCollection.map { (name, collection) ->
-            debugLog("$name collection size: ${collection.countDocuments()}")
-        }
+    fun sentinelLog(){
+        debugLog("persisted $numEntities entities")
     }
 
     protected suspend inline fun<reified Data: PlatformData>
@@ -52,6 +52,7 @@ abstract class MongoDBSink constructor(
                 val col = nameToCollection[collectionName]
                 if (col!=null) {
                     col.insertOne(it)
+                    numEntities += 1
                 } else {
                     logger.warn { "$platformName mongo: unknown collection name $collectionName" }
                 }

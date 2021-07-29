@@ -38,7 +38,7 @@ class BinanceSnapshotService internal constructor(
             it.get("${platform.apiAddress}/depth?symbol=$symbol&limit=${bookDepth}")
         }
 
-        debugLog("Get snapshot for $symbol successfully")
+        debugLog("Got snapshot for $symbol")
 
         return MarketDataParser.dataStringOf(platform.name, Instant.now(),
             "{\"snapshot\":$snapshot,\"symbol\":\"$symbol\"}")

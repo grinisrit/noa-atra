@@ -67,42 +67,42 @@ fun main(args: Array<String>) {
 
                 launch {
                     while (isActive) {
-                        coinbaseSink.makeLog()
+                        coinbaseSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
 
                 launch {
                     while (isActive) {
-                        binanceSink.makeLog()
+                        binanceSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
 
                 launch {
                     while (isActive) {
-                        bitstampSink.makeLog()
+                        bitstampSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
 
                 launch {
                     while (isActive) {
-                        krakenSink.makeLog()
+                        krakenSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
 
                 launch {
                     while (isActive) {
-                        deribitSink.makeLog()
+                        deribitSink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
 
                 launch {
                     while (isActive) {
-                        finerySink.makeLog()
+                        finerySink.sentinelLog()
                         delay(mongoLogTimeout)
                     }
                 }
@@ -132,7 +132,7 @@ fun main(args: Array<String>) {
                     launch {
                         marketDataBroker.publishFlow(snapshots.getFlow(marketData))
                     }
-                }?: commonLogger.warn { noMarketFlow }
+                } ?: commonLogger.warn { noMarketFlow }
             }
         }
 
