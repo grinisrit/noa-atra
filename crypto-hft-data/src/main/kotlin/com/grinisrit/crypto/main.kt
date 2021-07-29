@@ -65,6 +65,42 @@ fun main(args: Array<String>) {
                     }
                 } ?: commonLogger.warn { noMarketFlow }
 
+                val mongoLogTimeout = 10000L
+
+                launch {
+                    while (isActive) {
+                        coinbaseSink.sentinelLog()
+                        delay(mongoLogTimeout)
+                    }
+                }
+
+                launch {
+                    while (isActive) {
+                        binanceSink.sentinelLog()
+                        delay(mongoLogTimeout)
+                    }
+                }
+
+                launch {
+                    while (isActive) {
+                        bitstampSink.sentinelLog()
+                        delay(mongoLogTimeout)
+                    }
+                }
+
+                launch {
+                    while (isActive) {
+                        krakenSink.sentinelLog()
+                        delay(mongoLogTimeout)
+                    }
+                }
+
+                launch {
+                    while (isActive) {
+                        deribitSink.sentinelLog()
+                        delay(mongoLogTimeout)
+                    }
+                }
             }
         }
 
