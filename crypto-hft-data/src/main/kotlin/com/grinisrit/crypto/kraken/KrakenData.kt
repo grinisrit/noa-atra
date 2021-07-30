@@ -125,7 +125,10 @@ data class UpdateData(
     val volume: Float,
     val timestamp: String,
     val updateType: String? = null,
-)
+) {
+    val datetime: Instant
+        get() = Instant.ofEpochMilli((timestamp.toFloat() * 1000).toLong())
+}
 
 object UpdateDataSerializer :
     JsonTransformingSerializer<UpdateData>(UpdateData.serializer()) {
