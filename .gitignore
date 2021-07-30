@@ -36,5 +36,6 @@ dist/
 
 # User data
 mongodata*
+data/
 *.pt
 *.zip
