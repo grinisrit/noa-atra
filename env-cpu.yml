@@ -1,0 +1,14 @@
+name: noa-atra
+channels:
+  - defaults
+  - pytorch
+dependencies:
+  - jupyter
+  - ninja
+  - pytorch==1.9.0
+  - cpuonly # CPU only version for LibTorch
+  - pip
+  - pyyaml
+  - seaborn
+  - pip:
+        - motor # Asynchronous mongo driver
