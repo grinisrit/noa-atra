@@ -77,9 +77,16 @@ fun someDataAsk(): List<Triple<Instant, Float, Float>> {
 
 }
 
+
+
 fun main() {
 
+    val arr = floatArrayOf(1.0F, 2.2F, 3.4F)
 
+    arr.forEach {
+        println(it)
+    }
+/*
     val data = someData()
 
     val xValuesTrade = data.map { it.first.toString() }
@@ -123,6 +130,8 @@ fun main() {
     }
 
     plot.makeFile()
+
+ */
 
 
 }
