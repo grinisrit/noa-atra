@@ -24,8 +24,8 @@ internal constructor(
     socketTimeoutMillis = 4000L,
     aliveBound = 10000,
 ) {
-    private val key = File(platform.keyPath).readText()
-    private val secret = File(platform.secretPath).readText()
+    private val key = platform.key
+    private val secret = platform.secret
 
     override suspend fun DefaultClientWebSocketSession.authorize() {
         val authRequest = getAuthRequest(key, secret)

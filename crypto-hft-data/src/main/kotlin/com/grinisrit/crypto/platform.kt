@@ -79,10 +79,10 @@ data class FineryPlatform(
     override val websocketAddress: String,
     override val status: String,
     override val symbols: List<String>,
-    @SerialName("key_path")
-    val keyPath: String,
-    @SerialName("secret_path")
-    val secretPath: String,
+    @SerialName("key")
+    val key: String,
+    @SerialName("secret")
+    val secret: String,
 ) : Platform {
     override val platformName: PlatformName = PlatformName.finery
 }
