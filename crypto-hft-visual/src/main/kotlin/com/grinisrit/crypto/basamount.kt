@@ -8,43 +8,6 @@ import space.kscience.plotly.*
 import java.time.Instant
 
 
-class Orders(
-    val prices: FloatArray,
-    val amounts: FloatArray,
-) {
-    val size = prices.size
-
-    fun getCost(amount: Float):Float {
-        var rest = amount
-        var cost = 0.0F
-
-        for (i in 0 until size) {
-            if (amounts[i] > rest) {
-                cost += rest * prices[i]
-                rest = 0.0F
-                break
-            }
-            cost += amounts[i] * prices[i]
-            rest -= amounts[i]
-        }
-
-        if (rest != 0.0F){
-            return 0.0F
-        }
-
-        return cost
-    }
-}
-/*
-class Book(
-    val asks: Orders,
-    val bids: Orders
-) {
-    fun getBAS(amount: Float): Float = asks.getCost(amount) - bids.getCost(amount)
-}
-
- */
-
 fun getCost(amount: Float, data: List<OrderData>): Float {
     val size = data.size
 
@@ -69,7 +32,7 @@ fun getCost(amount: Float, data: List<OrderData>): Float {
 }
 
 fun BookData.getBAS(amount: Float): Float {
-    return getCost(amount, asks) - getCost(amount, bids)
+    return (getCost(amount, asks) - getCost(amount, bids))/amount
 }
 
 fun loadBookData(): BookData {
@@ -100,7 +63,7 @@ fun main(){
                 title = "Amount"
             }
             yaxis {
-                title = "Bid-ask spread, $"
+                title = "Bid-ask spread, $/BTC"
             }
         }
     }
