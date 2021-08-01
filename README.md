@@ -1,7 +1,7 @@
 # Analytics for Trading using NOA
 
 In this repository we present a few examples for trading analytics that leverage 
-the Bayesian computation platform [NOA](https://github.com/grinisrit/noa) 
+the nonlinear optimisation platform [NOA](https://github.com/grinisrit/noa) 
 and its experimental `kotlin-jvm` frontend 
 within the [KMath](https://github.com/mipt-npm/kmath) library. 
 
@@ -43,6 +43,9 @@ the models we provide in [crypto-hft-analytics](crypto-hft-analytics).
 
 The module [crypto-hft-visual](crypto-hft-visual) 
 provides the visualisation apps.
+
+
+## Contributions
 
 We are very grateful to contributions from:
 * [Roland Grinis, GrinisRIT ltd.](https://github.com/grinisrit)
