@@ -27,9 +27,9 @@ dependencies {
     implementation("org.zeromq:jeromq:0.5.0")
     implementation("com.charleskorn.kaml:kaml:0.34.0")
     implementation("org.litote.kmongo:kmongo:4.2.8")
-    implementation("org.litote.kmongo:kmongo-coroutine:4.2.8")
+    api("org.litote.kmongo:kmongo-coroutine:4.2.8")
 
-    implementation("io.github.microutils:kotlin-logging-jvm:2.0.10")
+    api("io.github.microutils:kotlin-logging-jvm:2.0.10")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
     implementation("io.ktor:ktor-client-websockets:1.6.0")

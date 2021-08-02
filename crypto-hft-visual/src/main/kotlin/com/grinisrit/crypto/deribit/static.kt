@@ -1,30 +1,8 @@
-package com.grinisrit.crypto
+package com.grinisrit.crypto.deribit
 
-
-import com.grinisrit.crypto.deribit.*
 import org.litote.kmongo.*
-import space.kscience.dataforge.meta.invoke
-import space.kscience.plotly.Plotly
-import space.kscience.plotly.UnstablePlotlyAPI
-import space.kscience.plotly.makeFile
-import space.kscience.plotly.trace
-import kotlin.math.*
-
-
-import space.kscience.plotly.*
-import space.kscience.plotly.models.*
-import space.kscience.plotly.palettes.T10
 import java.time.Instant
 
-data class TimestampedMarketTrades(
-    val receiving_datetime: Instant,
-    val platform_data: Trades,
-)
-
-data class TimestampedMarketBook(
-    val receiving_datetime: Instant,
-    val platform_data: Book,
-)
 
 fun someData(): List<Pair<Instant, Float>> {
     val mongo = KMongo.createClient("mongodb://localhost:27017")
@@ -35,9 +13,9 @@ fun someData(): List<Pair<Instant, Float>> {
     println(from)
     println(to)
 
-    val col = mongo.getDatabase("deribit").getCollection<TimestampedMarketTrades>("trades")
+    val col = mongo.getDatabase("deribit").getCollection<TimestampedTrades>("trades")
 
-    val f = with(TimestampedMarketTrades::platform_data/ Trades::params / TradesParameters::data  / TradeData::datetime) {
+    val f = with(TimestampedTrades::platform_data/ Trades::params / TradesParameters::data  / TradeData::datetime) {
         col.find(and(this gte from, this lte to)).flatMap {
             it.platform_data.params.data.filter { data ->
                 data.instrument_name == "BTC-PERPETUAL"
@@ -61,9 +39,9 @@ fun someDataAsk(): List<Triple<Instant, Float, Float>> {
     println(from)
     println(to)
 
-    val col = mongo.getDatabase("deribit").getCollection<TimestampedMarketBook>("book")
+    val col = mongo.getDatabase("deribit").getCollection<TimestampedBook>("book")
 
-    val f = with(TimestampedMarketBook::platform_data/ Book::params / BookParameters::data  / BookData::datetime) {
+    val f = with(TimestampedBook::platform_data/ Book::params / BookParameters::data  / BookData::datetime) {
         col.find(and(this gte from, this lte to)).toList().filter {
             it.platform_data.params.data.instrument_name == "BTC-PERPETUAL"
         }.map {

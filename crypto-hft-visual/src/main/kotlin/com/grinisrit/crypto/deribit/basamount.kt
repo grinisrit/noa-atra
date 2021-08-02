@@ -1,11 +1,9 @@
-package com.grinisrit.crypto
+package com.grinisrit.crypto.deribit
 
-import com.grinisrit.crypto.deribit.*
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.*
 import org.litote.kmongo.getCollection
 import space.kscience.plotly.*
-import java.time.Instant
 
 
 fun getCost(amount: Float, data: List<OrderData>): Float {
@@ -37,9 +35,9 @@ fun BookData.getBAS(amount: Float): Float {
 
 fun loadBookData(): BookData {
     val mongo = KMongo.createClient("mongodb://localhost:27017")
-    val col = mongo.getDatabase("deribit").getCollection<TimestampedMarketBook>("book")
+    val col = mongo.getDatabase("deribit").getCollection<TimestampedBook>("book")
 
-    val res = col.findOne(TimestampedMarketBook::platform_data / Book::params/ BookParameters::data / BookData::instrument_name eq "BTC-PERPETUAL")
+    val res = col.findOne(TimestampedBook::platform_data / Book::params/ BookParameters::data / BookData::instrument_name eq "BTC-PERPETUAL")
 
     return res!!.platform_data.params.data
 }

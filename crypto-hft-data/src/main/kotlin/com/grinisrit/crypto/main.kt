@@ -8,21 +8,12 @@ import com.grinisrit.crypto.common.mongo.*
 import com.grinisrit.crypto.deribit.*
 import com.grinisrit.crypto.finery.*
 import com.grinisrit.crypto.kraken.*
-import kotlinx.cli.*
 import kotlinx.coroutines.*
-import java.io.File
 
 
 fun main(args: Array<String>) {
 
-    val cliParser = ArgParser("data")
-    val configPathArg by cliParser.argument(ArgType.String, description = "Path to .yaml config file").optional()
-    cliParser.parse(args)
-
-    val configPath = configPathArg ?: "conf.yaml"
-    val config = parseConf(File(configPath).readText())
-
-
+    val config = loadConf(args)
 
     runBlocking {
 
