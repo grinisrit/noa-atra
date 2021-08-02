@@ -14,13 +14,11 @@ fun main(args: Array<String>)  {
     runBlocking {
         with(config.mongodb) {
             if (isOn){
-                commonLogger.info { "all good mongo configured" }
+                println("CUDA found: ${cudaAvailable()}")
             } else {
-                commonLogger.warn { "MongoDB configured" }
+                commonLogger.warn { "MongoDB not configured" }
             }
 
         }
     }
-    println(config.version)
-    println("CUDA found: ${cudaAvailable()}")
 }
