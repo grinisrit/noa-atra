@@ -1,6 +1,6 @@
 package com.grinisrit.crypto.kraken
 
-import com.grinisrit.crypto.common.TimestampedDataFlow
+import com.grinisrit.crypto.common.MarketDataFlow
 import com.grinisrit.crypto.common.mongo.MongoDBServer
 import com.grinisrit.crypto.common.mongo.MongoDBSink
 import com.grinisrit.crypto.common.PlatformName
@@ -13,6 +13,6 @@ class KrakenMongoDBSink internal constructor(server: MongoDBServer) : MongoDBSin
     PlatformName.kraken,
     KrakenDataType.values()
 ) {
-    override suspend fun consume(marketDataFlow: TimestampedDataFlow) =
+    override suspend fun consume(marketDataFlow: MarketDataFlow) =
         handleFlow<KrakenData>(marketDataFlow)
 }

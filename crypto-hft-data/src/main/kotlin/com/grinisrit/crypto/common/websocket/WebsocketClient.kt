@@ -1,7 +1,7 @@
 package com.grinisrit.crypto.common.websocket
 
 import com.grinisrit.crypto.Platform
-import com.grinisrit.crypto.common.JsonStringDataFlow
+import com.grinisrit.crypto.common.RawMarketJsonFlow
 import com.grinisrit.crypto.commonLogger
 
 import io.ktor.client.*
@@ -29,7 +29,7 @@ abstract class WebsocketClient(
 
     private var lastConnectionTimeMillis: Long = 0L
 
-    fun getFlow(): JsonStringDataFlow = flow {
+    fun getFlow(): RawMarketJsonFlow = flow {
         while (true) {
             try {
                 val currentTimeMilli = Instant.now().toEpochMilli()
@@ -48,7 +48,7 @@ abstract class WebsocketClient(
     }
 
     protected open suspend fun DefaultClientWebSocketSession.authorize(): Unit {}
-    protected abstract suspend fun DefaultClientWebSocketSession.receiveData(): JsonStringDataFlow
+    protected abstract suspend fun DefaultClientWebSocketSession.receiveData(): RawMarketJsonFlow
 
     private suspend fun rawMarketDataFlow() = flow {
         val client = HttpClient(CIO) {

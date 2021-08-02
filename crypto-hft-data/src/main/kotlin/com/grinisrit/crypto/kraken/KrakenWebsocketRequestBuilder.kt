@@ -52,7 +52,7 @@ object KrakenWebsocketRequestBuilder : RequestBuilder {
                 KrakenWebsocketBookRequest(
                     "subscribe",
                     symbols,
-                    BookSubscription(100),
+                    BookSubscription(1000),
                 )
             ),
             encoder.encodeToString(
