@@ -41,11 +41,11 @@ platforms:
       - btcusd
       - ethusd
   finery:
-    websocket_address: wss://test.finerymarkets.com/ws
+    websocket_address: wss://trade.finerymarkets.com/ws
     key:
     secret:
     status: off
     symbols:
-      - todo
-      - lolkek
-      - cheburek
+      - BTC-USD
+      - ETH-USD
+      - ETH-BTC

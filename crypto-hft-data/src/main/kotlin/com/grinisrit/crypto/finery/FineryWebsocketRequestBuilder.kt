@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 
 
 fun FineryPlatform.createFineryRequest() =
-    FineryWebsocketRequestBuilder.buildRequest(symbols).first()
+    FineryWebsocketRequestBuilder.buildRequest(symbols)
 
 
 object FineryWebsocketRequestBuilder : RequestBuilder {
@@ -20,20 +20,25 @@ object FineryWebsocketRequestBuilder : RequestBuilder {
         val feedId: Long,
     )
 
-    private val channels = listOf(
-        "B"
+    // TODO(
+    private val symbolToFeedId = mapOf(
+        "BTC-USD" to 4955410050,
+        "ETH-USD" to 4955415173,
+        "ETH-BTC" to 3895304837,
     )
 
     override fun buildRequest(symbols: List<String>): List<String> {
 
-        // TODO()
-        val request = FineryWebsocketRequest(
-            "bind",
-            "B",
-            4955410050
-        )
+        return symbols.map {
+            Json.encodeToString(
+                FineryWebsocketRequest(
+                    "bind",
+                    "B",
+                    symbolToFeedId[it]!!
+                )
+            )
+        }
 
-        return listOf(Json.encodeToString(request))
     }
 
 }
