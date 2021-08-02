@@ -18,10 +18,10 @@ suspend fun MongoDBConfig.getMongoDBServer(): MongoDBServer {
     return MongoDBServer(mongo)
 }
 
-class MongoDBServer internal constructor(val client: CoroutineClient)
+class MongoDBServer internal constructor(internal val client: CoroutineClient)
 
 abstract class MongoDBSink constructor(
-    val server: MongoDBServer,
+    private val server: MongoDBServer,
     val platformName: PlatformName,
     dataTypes: Array<out DataType>
 ) {
