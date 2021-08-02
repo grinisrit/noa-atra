@@ -1,11 +1,9 @@
-package com.grinisrit.crypto
+package com.grinisrit.crypto.deribit
 
-import com.grinisrit.crypto.deribit.*
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.*
 import org.litote.kmongo.getCollection
 import space.kscience.plotly.*
-import java.time.Instant
 
 
 fun getCost(amount: Float, data: List<OrderData>): Float {

@@ -3,7 +3,7 @@ package com.grinisrit.crypto
 import kotlin.test.Test
 import space.kscience.kmath.noa.cudaAvailable
 
-class TestKmathNoa {
+class TestKMathNoa {
 
     @Test
     fun checkCuda() {

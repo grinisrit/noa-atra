@@ -1,30 +1,12 @@
-package com.grinisrit.crypto
+package com.grinisrit.crypto.deribit
 
 
-import com.grinisrit.crypto.deribit.*
+import com.grinisrit.crypto.common.models.TimestampedData
 import org.litote.kmongo.*
-import space.kscience.dataforge.meta.invoke
-import space.kscience.plotly.Plotly
-import space.kscience.plotly.UnstablePlotlyAPI
-import space.kscience.plotly.makeFile
-import space.kscience.plotly.trace
-import kotlin.math.*
-
-
-import space.kscience.plotly.*
-import space.kscience.plotly.models.*
-import space.kscience.plotly.palettes.T10
 import java.time.Instant
 
-data class TimestampedMarketTrades(
-    val receiving_datetime: Instant,
-    val platform_data: Trades,
-)
-
-data class TimestampedMarketBook(
-    val receiving_datetime: Instant,
-    val platform_data: Book,
-)
+typealias TimestampedMarketTrades = TimestampedData<Trades>
+typealias TimestampedMarketBook = TimestampedData<Book>
 
 fun someData(): List<Pair<Instant, Float>> {
     val mongo = KMongo.createClient("mongodb://localhost:27017")
