@@ -38,6 +38,8 @@ abstract class MongoDBSink constructor(
         database.getCollection<TimestampedMarketData>(it.toString())
     }
 
+    fun getCollection(dataType: DataType) = nameToCollection[dataType]
+
     fun sentinelLog(){
         debugLog("persisted $numEntities entities")
     }

@@ -1,10 +1,9 @@
-package com.grinisrit.crypto.binance
+package com.grinisrit.crypto.bitstamp
 
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.commonLogger
 import com.grinisrit.crypto.loadConf
 import kotlinx.coroutines.runBlocking
-import space.kscience.kmath.noa.cudaAvailable
 
 
 // Make sure to add to the VM options:
@@ -16,7 +15,10 @@ fun main(args: Array<String>)  {
     runBlocking {
         with(config.mongodb) {
             if (isOn){
-                println("CUDA found: ${cudaAvailable()}")
+                val mongo = getMongoDBServer()
+                val binanceDB = mongo.createBitstampSink()
+                val orderBook = binanceDB.getCollection(BitstampDataType.order_book)
+
             } else {
                 commonLogger.warn { "MongoDB not configured" }
             }
