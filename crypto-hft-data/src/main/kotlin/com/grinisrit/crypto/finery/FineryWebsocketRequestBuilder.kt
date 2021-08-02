@@ -20,12 +20,6 @@ object FineryWebsocketRequestBuilder : RequestBuilder {
         val feedId: Long,
     )
 
-    // TODO(
-    private val symbolToFeedId = mapOf(
-        "BTC-USD" to 4955410050,
-        "ETH-USD" to 4955415173,
-        "ETH-BTC" to 3895304837,
-    )
 
     override fun buildRequest(symbols: List<String>): List<String> {
 
