@@ -1,13 +1,13 @@
 version: 0.0.1
 mongodb:
   address: mongodb://localhost:27017
-  status: onf
+  status: on
 zeromq:
   address: tcp://localhost:5897
 platforms:
   coinbase:
     websocket_address: wss://ws-feed.pro.coinbase.com
-    status: onf
+    status: on
     symbols:
       - ETH-BTC
       - BTC-USD
@@ -15,27 +15,27 @@ platforms:
   binance:
     api_address: https://api.binance.com/api/v3
     websocket_address: wss://stream.binance.com:9443/ws
-    status: onf
+    status: on
     symbols:
       - ethusdt
       - ethbtc
       - btcusdt
   deribit:
     websocket_address: wss://deribit.com/ws/api/v2
-    status: onf
+    status: on
     symbols:
       - ETH-PERPETUAL
       - BTC-PERPETUAL
   kraken:
     websocket_address: wss://ws.kraken.com
-    status: onf
+    status: on
     symbols:
       - ETH/USD
       - ETH/XBT
       - XBT/USD
   bitstamp:
     websocket_address: wss://ws.bitstamp.net
-    status: onf
+    status: on
     symbols:
       - ethbtc
       - btcusd
@@ -44,8 +44,8 @@ platforms:
     websocket_address: wss://trade.finerymarkets.com/ws
     key_path: C:\Users\admin\key.txt
     secret_path: C:\Users\admin\secret.txt
-    status: on
+    status: off
     symbols:
-      - todo
-      - lolkek
-      - cheburek
+      - BTC-USD
+      - ETH-USD
+      - ETH-BTC
