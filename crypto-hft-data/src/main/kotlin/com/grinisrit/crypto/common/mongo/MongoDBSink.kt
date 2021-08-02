@@ -35,7 +35,7 @@ abstract class MongoDBSink constructor(
     private val database = server.client.getDatabase(platformName.toString())
 
     protected val nameToCollection = dataTypes.associateWith {
-        database.getCollection<TimestampedData>(it.toString())
+        database.getCollection<TimestampedMarketData>(it.toString())
     }
 
     fun sentinelLog(){
@@ -43,7 +43,7 @@ abstract class MongoDBSink constructor(
     }
 
     protected suspend inline fun<reified Data: PlatformData>
-            handleFlow(marketDataFlow: TimestampedDataFlow) =
+            handleFlow(marketDataFlow: MarketDataFlow) =
         marketDataFlow
             .filter { it.platform_data is Data }
             .filter { it.platform_data !is UnbookedEvent }
@@ -58,5 +58,5 @@ abstract class MongoDBSink constructor(
                 }
             }
 
-    abstract suspend fun consume(marketDataFlow: TimestampedDataFlow): Unit
+    abstract suspend fun consume(marketDataFlow: MarketDataFlow): Unit
 }

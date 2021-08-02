@@ -4,7 +4,7 @@ import com.grinisrit.crypto.binance.BinanceDataSerializer
 import com.grinisrit.crypto.bitstamp.BitstampDataSerializer
 import com.grinisrit.crypto.coinbase.CoinbaseDataSerializer
 import com.grinisrit.crypto.common.models.PlatformData
-import com.grinisrit.crypto.common.models.TimestampedMarketData
+import com.grinisrit.crypto.common.models.TimestampedData
 import com.grinisrit.crypto.deribit.DeribitDataSerializer
 import com.grinisrit.crypto.finery.FineryDataSerializer
 import com.grinisrit.crypto.kraken.KrakenDataSerializer
@@ -12,8 +12,8 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import java.time.Instant
 
-typealias JsonStringData = String
-typealias TimestampedData = TimestampedMarketData<PlatformData>
+typealias RawMarketJson = String
+typealias TimestampedMarketData = TimestampedData<PlatformData>
 
 enum class PlatformName {
     binance,
@@ -44,11 +44,11 @@ object MarketDataParser {
         }
     }
 
-    fun getRawPlatformName(rawData: JsonStringData): String {
+    fun getRawPlatformName(rawData: RawMarketJson): String {
         return rawData.split(internalDelimiter).first()
     }
 
-    fun getPlatformName(rawData: JsonStringData): PlatformName {
+    fun getPlatformName(rawData: RawMarketJson): PlatformName {
         return PlatformName.valueOf(getRawPlatformName(rawData))
     }
 
@@ -60,15 +60,15 @@ object MarketDataParser {
     fun <T : PlatformData> fromDataString(
         dataString: String,
         serializer: KSerializer<T>
-    ): TimestampedMarketData<T> {
+    ): TimestampedData<T> {
         val (_, receivingDateTimeString, jsonData) = dataString.split(internalDelimiter)
-        return TimestampedMarketData(
+        return TimestampedData(
             Instant.parse(receivingDateTimeString),
             decodeJsonData(jsonData, serializer)
         )
     }
 
-    fun parseRawMarketData(rawData: JsonStringData): TimestampedData =
+    fun parseRawMarketData(rawData: RawMarketJson): TimestampedMarketData =
         when (getPlatformName(rawData)) {
             PlatformName.binance -> fromDataString(rawData, BinanceDataSerializer)
             PlatformName.coinbase -> fromDataString(rawData, CoinbaseDataSerializer)
