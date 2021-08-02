@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.deribit
 
+import com.grinisrit.crypto.bitstamp.OrderBook
 import com.grinisrit.crypto.common.models.UnbookedEvent
 import com.grinisrit.crypto.common.models.PlatformData
 import kotlinx.serialization.Serializable
@@ -42,6 +43,11 @@ data class Trades(
 ) : DeribitData {
     override val type = DeribitDataType.trades
 }
+
+data class TimestampedTrades(
+    val receiving_datetime: Instant,
+    val platform_data: Trades,
+)
 
 @Serializable
 data class OrderData(
@@ -87,6 +93,11 @@ data class Book(
 ) : DeribitData {
     override val type = DeribitDataType.book
 }
+
+data class TimestampedBook(
+    val receiving_datetime: Instant,
+    val platform_data: Book,
+)
 
 @Serializable
 class Event: DeribitData, UnbookedEvent

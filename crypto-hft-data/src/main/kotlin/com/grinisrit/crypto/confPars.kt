@@ -1,7 +1,11 @@
 package com.grinisrit.crypto
 
 import com.charleskorn.kaml.Yaml
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.optional
 import kotlinx.serialization.Serializable
+import java.io.File
 
 @Serializable
 data class MongoDBConfig(
@@ -27,4 +31,13 @@ data class ConfYAMl(
 
 fun parseConf(input: String): ConfYAMl {
     return Yaml.default.decodeFromString(ConfYAMl.serializer(), input)
+}
+
+fun loadConf(args: Array<String>): ConfYAMl {
+    val cliParser = ArgParser("data")
+    val configPathArg by cliParser.argument(ArgType.String, description = "Path to .yaml config file").optional()
+    cliParser.parse(args)
+
+    val configPath = configPathArg ?: "conf.yaml"
+    return parseConf(File(configPath).readText())
 }

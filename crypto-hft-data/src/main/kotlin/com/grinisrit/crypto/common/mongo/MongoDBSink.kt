@@ -18,10 +18,10 @@ suspend fun MongoDBConfig.getMongoDBServer(): MongoDBServer {
     return MongoDBServer(mongo)
 }
 
-class MongoDBServer internal constructor(val client: CoroutineClient)
+class MongoDBServer internal constructor(internal val client: CoroutineClient)
 
 abstract class MongoDBSink constructor(
-    val server: MongoDBServer,
+    private val server: MongoDBServer,
     val platformName: PlatformName,
     dataTypes: Array<out DataType>
 ) {
@@ -35,15 +35,17 @@ abstract class MongoDBSink constructor(
     private val database = server.client.getDatabase(platformName.toString())
 
     protected val nameToCollection = dataTypes.associateWith {
-        database.getCollection<TimestampedData>(it.toString())
+        database.getCollection<TimestampedMarketData>(it.toString())
     }
+
+    fun getCollection(dataType: DataType) = nameToCollection[dataType]
 
     fun sentinelLog(){
         debugLog("persisted $numEntities entities")
     }
 
     protected suspend inline fun<reified Data: PlatformData>
-            handleFlow(marketDataFlow: TimestampedDataFlow) =
+            handleFlow(marketDataFlow: MarketDataFlow) =
         marketDataFlow
             .filter { it.platform_data is Data }
             .filter { it.platform_data !is UnbookedEvent }
@@ -58,5 +60,5 @@ abstract class MongoDBSink constructor(
                 }
             }
 
-    abstract suspend fun consume(marketDataFlow: TimestampedDataFlow): Unit
+    abstract suspend fun consume(marketDataFlow: MarketDataFlow): Unit
 }

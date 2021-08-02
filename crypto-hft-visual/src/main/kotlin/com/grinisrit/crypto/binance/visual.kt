@@ -1,4 +1,4 @@
-package com.grinisrit.crypto
+package com.grinisrit.crypto.binance
 
 /*
 import com.grinisrit.crypto.binance.*
