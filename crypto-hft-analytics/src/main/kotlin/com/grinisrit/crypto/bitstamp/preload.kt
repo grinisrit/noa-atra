@@ -1,6 +1,8 @@
-package com.grinisrit.crypto
+package com.grinisrit.crypto.binance
 
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
+import com.grinisrit.crypto.commonLogger
+import com.grinisrit.crypto.loadConf
 import kotlinx.coroutines.runBlocking
 import space.kscience.kmath.noa.cudaAvailable
 
