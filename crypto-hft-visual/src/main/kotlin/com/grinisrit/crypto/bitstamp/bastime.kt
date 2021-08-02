@@ -1,24 +1,16 @@
 package com.grinisrit.crypto.bitstamp
 
-import com.grinisrit.crypto.common.models.TimestampedData
 import org.litote.kmongo.*
 import space.kscience.plotly.Plotly
 import space.kscience.plotly.layout
 import space.kscience.plotly.makeFile
 import space.kscience.plotly.trace
 
-/*data class TimestampedMarketOrderBook(
-    val receiving_datetime: Instant,
-    val platform_data: OrderBook,
-)*/
-
-typealias TimestampedMarketOrderBook = TimestampedData<OrderBook>
-
 fun loadAllBookData(): List<OrderBook> {
     val mongo = KMongo.createClient("mongodb://localhost:27017")
-    val col = mongo.getDatabase("bitstamp").getCollection<TimestampedMarketOrderBook>("order_book")
+    val col = mongo.getDatabase("bitstamp").getCollection<TimestampedOrderBook>("order_book")
 
-    val res = col.find(TimestampedMarketOrderBook::platform_data / OrderBook::channel eq "detail_order_book_btcusd")
+    val res = col.find(TimestampedOrderBook::platform_data / OrderBook::channel eq "detail_order_book_btcusd")
 
     return res.toList().map { it.platform_data }
 
