@@ -15,6 +15,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 dependencies {
     implementation(project(":crypto-hft-data"))
+    implementation(project(":crypto-hft-client"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.2")
 

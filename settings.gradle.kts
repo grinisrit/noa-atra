@@ -10,6 +10,7 @@ rootProject.name = "noa-atra-examples"
 
 include(":crypto-hft-data")
 include(":crypto-hft-visual")
+include(":crypto-hft-client")
 
 if(System.getProperty("os.name") == "Linux"){
     include(":crypto-hft-analytics")

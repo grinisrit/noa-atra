@@ -7,6 +7,14 @@ import org.litote.kmongo.getCollection
 import space.kscience.plotly.*
 import space.kscience.plotly.models.ScatterMode
 
+import java.time.Instant
+
+/*
+data class TimestampedMarketTrade(
+    val receiving_datetime: Instant,
+    val platform_data: Trade,
+)
+
 fun getTotalAmount(data: List<OrderData>): Float {
     return data.map { it.amount }.sum()
 }
@@ -32,7 +40,7 @@ fun main(){
 
     val tradeAmounts = mutableListOf<Float>()
     val timeTrade = mutableListOf<String>()
-
+/*
     loadAllBookData().forEach {
         with(it.getTotalAmounts()) {
             asksTotals.add(first)
@@ -40,6 +48,8 @@ fun main(){
         }
         timeBook.add(it.datetime.toString())
     }
+
+ */
 
     loadAllTrades().forEach {
         tradeAmounts.add(it.data.amount)
@@ -95,3 +105,5 @@ fun main(){
     plot.makeFile()
     plot2.makeFile()
 }
+
+ */
