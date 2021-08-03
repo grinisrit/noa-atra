@@ -64,7 +64,7 @@ object SnapshotDataSerializer :
 }
 
 @Serializable
-data class Snapshot(
+data class FinerySnapshot(
     val feed: Char,
     val feedId: Long,
     val dataType: Char,
@@ -75,7 +75,7 @@ data class Snapshot(
 }
 
 object SnapshotSerializer :
-    JsonTransformingSerializer<Snapshot>(Snapshot.serializer()) {
+    JsonTransformingSerializer<FinerySnapshot>(FinerySnapshot.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return element.jsonArray.let {
             buildJsonObject {
@@ -108,7 +108,7 @@ object UpdatesDataSerializer :
 }
 
 @Serializable
-data class Updates(
+data class FineryUpdates(
     val feed: Char,
     val feedId: Long,
     val dataType: Char,
@@ -119,7 +119,7 @@ data class Updates(
 }
 
 object UpdatesSerializer :
-    JsonTransformingSerializer<Updates>(Updates.serializer()) {
+    JsonTransformingSerializer<FineryUpdates>(FineryUpdates.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return element.jsonArray.let {
             buildJsonObject {
@@ -133,10 +133,10 @@ object UpdatesSerializer :
 }
 
 @Serializable
-class Event : FineryData, UnbookedEvent
+class FineryEvent : FineryData, UnbookedEvent
 
 object EventSerializer :
-    JsonTransformingSerializer<Event>(Event.serializer()) {
+    JsonTransformingSerializer<FineryEvent>(FineryEvent.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return buildJsonObject {}
     }
@@ -150,7 +150,7 @@ object FineryDataSerializer : JsonContentPolymorphicSerializer<FineryData>(Finer
                 mainArray.size < 3 -> EventSerializer
                 mainArray.first() !is JsonPrimitive -> EventSerializer
                 mainArray.first().jsonPrimitive.content != "B" -> EventSerializer
-                mainArray[2] !is JsonPrimitive -> Event.serializer()
+                mainArray[2] !is JsonPrimitive -> FineryEvent.serializer()
                 else -> with(mainArray[2].jsonPrimitive.content) {
                     when (this) {
                         "S" -> SnapshotSerializer

@@ -44,7 +44,7 @@ class BinanceSnapshotService internal constructor(
             "{\"snapshot\":$snapshot,\"symbol\":\"$symbol\"}")
     }
 
-    private fun filterBookUpdate(bookUpdate: BookUpdate): Boolean {
+    private fun filterBookUpdate(bookUpdate: BinanceBookUpdate): Boolean {
         val symbol = bookUpdate.symbol
         val flag = (symbolToLastUpdateId[symbol] != bookUpdate.firstUpdateId - 1)
         symbolToLastUpdateId[symbol] = bookUpdate.finalUpdateId
@@ -54,9 +54,9 @@ class BinanceSnapshotService internal constructor(
     fun getFlow(marketDataFlow: MarketDataFlow): RawMarketJsonFlow =
         marketDataFlow
             .filter { it.platform_data is BinanceData }
-            .filter { it.platform_data is BookUpdate}
+            .filter { it.platform_data is BinanceBookUpdate}
             .drop(dropFirst)
-            .map {it.platform_data as BookUpdate}
+            .map {it.platform_data as BinanceBookUpdate}
             .filter { filterBookUpdate(it) }
             .map{ getSnapshot(it.symbol) }
             .catch { e ->

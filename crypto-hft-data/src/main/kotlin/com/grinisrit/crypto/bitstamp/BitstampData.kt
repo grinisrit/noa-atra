@@ -2,7 +2,6 @@ package com.grinisrit.crypto.bitstamp
 
 import com.grinisrit.crypto.common.models.UnbookedEvent
 import com.grinisrit.crypto.common.models.PlatformData
-import com.grinisrit.crypto.deribit.Book
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import java.time.Instant
@@ -42,7 +41,7 @@ data class OrderBookData(
 )
 
 @Serializable
-data class OrderBook(
+data class BitstampOrderBook(
     val data: OrderBookData,
     val channel: String,
     val event: String,
@@ -52,13 +51,6 @@ data class OrderBook(
     override val datetime: Instant
         get() = Instant.ofEpochMilli(data.microtimestamp / 1000)
 }
-
-// TODO() Delete!!!
-data class TimestampedOrderBook(
-    val receiving_datetime: Instant,
-    val platform_data: OrderBook,
-)
-
 
 @Serializable
 data class TradeData(
@@ -75,7 +67,7 @@ data class TradeData(
 )
 
 @Serializable
-data class Trade(
+data class BitstampTrade(
     val channel: String,
     val data: TradeData,
     val event: String,
@@ -86,20 +78,21 @@ data class Trade(
         get() = Instant.ofEpochMilli(data.microtimestamp / 1000)
 }
 
+// TODO() delete!!!
 data class TimestampedTrade(
     val receiving_datetime: Instant,
-    val platform_data: Trade,
+    val platform_data: BitstampTrade,
 )
 
 @Serializable
-class Event: BitstampData, UnbookedEvent
+class BitstampEvent: BitstampData, UnbookedEvent
 
 
 object BitstampDataSerializer : JsonContentPolymorphicSerializer<BitstampData>(BitstampData::class) {
     override fun selectDeserializer(element: JsonElement) =
         when (element.jsonObject["event"]!!.jsonPrimitive.content) {
-            "trade" -> Trade.serializer()
-            "data" -> OrderBook.serializer()
-            else -> Event.serializer()
+            "trade" -> BitstampTrade.serializer()
+            "data" -> BitstampOrderBook.serializer()
+            else -> BitstampEvent.serializer()
         }
 }

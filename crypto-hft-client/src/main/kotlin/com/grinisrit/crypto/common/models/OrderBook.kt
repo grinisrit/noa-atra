@@ -1,19 +1,19 @@
 package com.grinisrit.crypto.common.models
 
-class LocalOrderBook(
+class OrderBook(
     val asks: AsksArray,
     val bids: BidsArray,
     //milliseconds
     val timestamp: Long,
 ) {
 
-    fun updateAsks(price: Float, amount: Float, timestamp: Long) = LocalOrderBook(
+    fun updateAsks(price: Float, amount: Float, timestamp: Long) = OrderBook(
         asks.update(price, amount),
         bids,
         timestamp
     )
 
-    fun updateBids(price: Float, amount: Float) = LocalOrderBook(
+    fun updateBids(price: Float, amount: Float) = OrderBook(
         asks,
         bids.update(price, amount),
         timestamp

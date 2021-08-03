@@ -23,6 +23,8 @@ typealias RawMarketJsonFlow = Flow<RawMarketJson>
 fun CoroutineScope.createMarketDataBroker(conf: ConfYAMl): MarketDataBroker =
     MarketDataBroker.fromConfig(this, conf)
 
+fun CoroutineScope.createServer(conf: ConfYAMl): MarketDataBroker =
+    MarketDataBroker.createServer(this, conf)
 
 class MarketDataBroker private constructor(
     private val coroutineScope: CoroutineScope,
@@ -40,6 +42,13 @@ class MarketDataBroker private constructor(
                 },
                 if (conf.mongodb.isOn or conf.platforms.binance.isOn)
                     MarketDataSubService(conf.zeromq) else null
+            )
+
+        internal fun createServer(scope: CoroutineScope, conf: ConfYAMl): MarketDataBroker =
+            MarketDataBroker(
+                scope,
+                null,
+                MarketDataSubService(conf.zeromq)
             )
     }
 
