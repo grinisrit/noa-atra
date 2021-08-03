@@ -86,6 +86,11 @@ data class Trade(
         get() = Instant.ofEpochMilli(data.microtimestamp / 1000)
 }
 
+data class TimestampedTrade(
+    val receiving_datetime: Instant,
+    val platform_data: Trade,
+)
+
 @Serializable
 class Event: BitstampData, UnbookedEvent
 
