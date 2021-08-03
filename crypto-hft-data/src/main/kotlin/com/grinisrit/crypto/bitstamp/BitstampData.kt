@@ -53,6 +53,7 @@ data class OrderBook(
         get() = Instant.ofEpochMilli(data.microtimestamp / 1000)
 }
 
+// TODO() Delete!!!
 data class TimestampedOrderBook(
     val receiving_datetime: Instant,
     val platform_data: OrderBook,

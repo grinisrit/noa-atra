@@ -1,45 +1,63 @@
 package com.grinisrit.crypto.bitstamp
 
-import org.litote.kmongo.*
+import com.grinisrit.crypto.common.mongo.getMongoDBServer
+import com.grinisrit.crypto.loadConf
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.Plotly
 import space.kscience.plotly.layout
 import space.kscience.plotly.makeFile
 import space.kscience.plotly.trace
+import java.time.Instant
 
-fun loadAllBookData(): List<OrderBook> {
-    val mongo = KMongo.createClient("mongodb://localhost:27017")
-    val col = mongo.getDatabase("bitstamp").getCollection<TimestampedOrderBook>("order_book")
 
-    val res = col.find(TimestampedOrderBook::platform_data / OrderBook::channel eq "detail_order_book_btcusd")
+fun main(args: Array<String>){
+    val config = loadConf(args)
 
-    return res.toList().map { it.platform_data }
-
-}
-
-// TODO: Andrei use conf.yaml
-fun main(){
     val btc1 = mutableListOf<Float>()
     val btc10 = mutableListOf<Float>()
-    val time = mutableListOf<String>()
+    val time1 = mutableListOf<String>()
+    val time10 = mutableListOf<String>()
 
-    loadAllBookData().forEach {
-        btc1.add(it.getBAS(1.0F))
-        btc10.add(it.getBAS(10.0F))
-        time.add(it.datetime.toString())
+
+    runBlocking {
+        val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
+
+        val flow = mongoClient.getOrderBook("btcusd")
+
+        launch {
+            flow.collect {
+                with(it.platform_data.toLocalOrderBook()){
+                    val bac1 = getBAS(contractSize.toLong()).div(contractSize).toFloat()
+                    val bac10 = getBAS(contractSize.times(10).toLong()).div(contractSize).toFloat()
+                    val time = Instant.ofEpochMilli(timestamp).toString()
+                    if (bac1 > 0) {
+                        btc1.add(bac1)
+                        time1.add(time)
+                    }
+                    if (bac10 > 0) {
+                        btc10.add(bac10)
+                        time10.add(time)
+                    }
+                }
+            }
+        }
     }
 
     val plot = Plotly.plot {
         trace {
-            x.set(time)
+            x.set(time1)
             y.set(btc1)
             name = "1 BTC"
         }
 
         trace {
-            x.set(time)
+            x.set(time10)
             y.set(btc10)
             name = "10 BTC"
         }
+
 
 
         layout {
