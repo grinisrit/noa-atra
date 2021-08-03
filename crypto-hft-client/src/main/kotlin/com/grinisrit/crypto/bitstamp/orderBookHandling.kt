@@ -2,27 +2,27 @@ package com.grinisrit.crypto.bitstamp
 
 import com.grinisrit.crypto.common.models.*
 
-const val contractSize = 1e5
+//const val contractSize = 1e5
 
-fun List<OrderData>.toArrays(): Pair<LongArray, LongArray> {
-    val prices = LongArray(size) { i ->
-        get(i).price.times(contractSize).toLong()
+fun List<OrderData>.toArrays(): Pair<FloatArray, FloatArray> {
+    val prices = FloatArray(size) { i ->
+        get(i).price
     }
-    val amounts = LongArray(size) { i ->
-        get(i).amount.times(contractSize).toLong()
+    val amounts = FloatArray(size) { i ->
+        get(i).amount
     }
 
     return Pair(prices, amounts)
 }
 
 fun OrderBook.toLocalOrderBook(): LocalOrderBook {
-    val asks = with(data.asks.toArrays()){
+    val asks = with(data.asks.toArrays()) {
         AsksArray(
             first,
             second
         )
     }
-    val bids = with(data.bids.toArrays()){
+    val bids = with(data.bids.toArrays()) {
         BidsArray(
             first,
             second

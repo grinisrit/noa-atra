@@ -7,27 +7,29 @@ class LocalOrderBook(
     val timestamp: Long,
 ) {
 
-    fun updateAsks(price: Long, amount: Long, timestamp: Long) = LocalOrderBook(
+    fun updateAsks(price: Float, amount: Float, timestamp: Long) = LocalOrderBook(
         asks.update(price, amount),
         bids,
         timestamp
     )
 
-    fun updateBids(price: Long, amount: Long) = LocalOrderBook(
+    fun updateBids(price: Float, amount: Float) = LocalOrderBook(
         asks,
         bids.update(price, amount),
         timestamp
     )
 
-    fun getBAS(amount: Long): Long {
+    val isInvalid = asks.prices.first() <= bids.prices.first() || asks.isInvalid || bids.isInvalid
+
+    fun getBAS(amount: Float): Float? {
         val askCost = asks.getCost(amount)
         val bidCost = bids.getCost(amount)
 
-        // TODO()
-        if (askCost < 0 || bidCost < 0){
-            return -100L
-
+        return if (askCost == null || bidCost == null) {
+            null
+        } else {
+            (askCost - bidCost) / amount
         }
-        return (asks.getCost(amount) - bids.getCost(amount))/amount
+
     }
 }

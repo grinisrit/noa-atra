@@ -1,12 +1,14 @@
 package com.grinisrit.crypto.common.models
 
 sealed class OrdersArray(
-    val prices: LongArray,
-    val amounts: LongArray,
+    val prices: FloatArray,
+    val amounts: FloatArray,
 ) {
+    abstract val isInvalid: Boolean
+
     val size = prices.size
 
-    private fun LongArray.insert(index: Int, value: Long) = LongArray(size + 1) { i ->
+    private fun FloatArray.insert(index: Int, value: Float) = FloatArray(size + 1) { i ->
         if (i < index) {
             this[i]
         } else if (i == index) {
@@ -16,7 +18,7 @@ sealed class OrdersArray(
         }
     }
 
-    private fun LongArray.update(index: Int, value: Long) = LongArray(size) { i ->
+    private fun FloatArray.update(index: Int, value: Float) = FloatArray(size) { i ->
         if (i != index) {
             this[i]
         } else {
@@ -24,7 +26,7 @@ sealed class OrdersArray(
         }
     }
 
-    private fun LongArray.erase(index: Int) = LongArray(size - 1) { i ->
+    private fun FloatArray.erase(index: Int) = FloatArray(size - 1) { i ->
         if (i < index) {
             this[i]
         } else {
@@ -32,13 +34,13 @@ sealed class OrdersArray(
         }
     }
 
-    abstract fun findLevelIndex(level: Long): Int
+    abstract fun findLevelIndex(level: Float): Int
 
-    protected fun updateArrays(price: Long, amount: Long): Pair<LongArray, LongArray> {
+    protected fun updateArrays(price: Float, amount: Float): Pair<FloatArray, FloatArray> {
         val index = findLevelIndex(price)
 
         if (prices[index] == price) {
-            return if (amount == 0L) {
+            return if (amount == 0.0F) {
                 Pair(
                     prices.erase(index),
                     amounts.erase(index)
@@ -56,15 +58,15 @@ sealed class OrdersArray(
         )
     }
 
-    fun getCost(amount: Long): Long {
+    fun getCost(amount: Float): Float? {
 
         var rest = amount
-        var cost = 0L
+        var cost = 0.0F
 
         for (i in 0 until size) {
             if (amounts[i] > rest) {
                 cost += rest * prices[i]
-                rest = 0L
+                rest = 0.0F
                 break
             }
             cost += amounts[i] * prices[i]
@@ -73,8 +75,8 @@ sealed class OrdersArray(
 
 
         // TODO()
-        if (rest != 0L){
-            return -100L
+        if (rest > 0.00001F) {
+            return null
         }
 
         return cost
@@ -82,15 +84,25 @@ sealed class OrdersArray(
 }
 
 class AsksArray(
-    prices: LongArray,
-    amounts: LongArray,
+    prices: FloatArray,
+    amounts: FloatArray,
 ) : OrdersArray(prices, amounts) {
 
-    fun update(price: Long, amount: Long): AsksArray = with(updateArrays(price, amount)) {
+    fun update(price: Float, amount: Float): AsksArray = with(updateArrays(price, amount)) {
         AsksArray(first, second)
     }
 
-    override fun findLevelIndex(level: Long): Int {
+    override val isInvalid: Boolean
+        get() {
+            for (i in 1 until size) {
+                if (prices[i] < prices[i - 1]) {
+                    return true
+                }
+            }
+            return false
+        }
+
+    override fun findLevelIndex(level: Float): Int {
         for (i in 0 until size) {
             if (prices[i] >= level) {
                 return i
@@ -101,15 +113,25 @@ class AsksArray(
 }
 
 class BidsArray(
-    prices: LongArray,
-    amounts: LongArray,
+    prices: FloatArray,
+    amounts: FloatArray,
 ) : OrdersArray(prices, amounts) {
 
-    fun update(price: Long, amount: Long) = with(updateArrays(price, amount)) {
+    override val isInvalid: Boolean
+        get() {
+            for (i in 1 until size) {
+                if (prices[i] > prices[i - 1]) {
+                    return true
+                }
+            }
+            return false
+        }
+
+    fun update(price: Float, amount: Float) = with(updateArrays(price, amount)) {
         BidsArray(first, second)
     }
 
-    override fun findLevelIndex(level: Long): Int {
+    override fun findLevelIndex(level: Float): Int {
         for (i in 0 until size) {
             if (prices[i] <= level) {
                 return i

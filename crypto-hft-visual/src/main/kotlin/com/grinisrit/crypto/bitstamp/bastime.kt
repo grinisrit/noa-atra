@@ -12,7 +12,7 @@ import space.kscience.plotly.trace
 import java.time.Instant
 
 
-fun main(args: Array<String>){
+fun main(args: Array<String>) {
     val config = loadConf(args)
 
     val btc1 = mutableListOf<Float>()
@@ -28,15 +28,18 @@ fun main(args: Array<String>){
 
         launch {
             flow.collect {
-                with(it.platform_data.toLocalOrderBook()){
-                    val bac1 = getBAS(contractSize.toLong()).div(contractSize).toFloat()
-                    val bac10 = getBAS(contractSize.times(10).toLong()).div(contractSize).toFloat()
+                with(it.platform_data.toLocalOrderBook()) {
+                    if (isInvalid) {
+                        return@collect
+                    }
+                    val bac1 = getBAS(1.0F)
+                    val bac10 = getBAS(10.0F)
                     val time = Instant.ofEpochMilli(timestamp).toString()
-                    if (bac1 > 0) {
+                    if (bac1 != null) {
                         btc1.add(bac1)
                         time1.add(time)
                     }
-                    if (bac10 > 0) {
+                    if (bac10 != null) {
                         btc10.add(bac10)
                         time10.add(time)
                     }
