@@ -1,5 +1,5 @@
 package com.grinisrit.crypto.common.models
 
-// TODO()
+// TODO() what parameters??
 class Trade {
 }

@@ -21,7 +21,7 @@ class OrderBook(
 
     val isInvalid = asks.prices.first() <= bids.prices.first() || asks.isInvalid || bids.isInvalid
 
-    fun getBAS(amount: Float): Float? {
+    fun getBidAskSpread(amount: Float): Float? {
         val askCost = asks.getCost(amount)
         val bidCost = bids.getCost(amount)
 
@@ -30,6 +30,16 @@ class OrderBook(
         } else {
             (askCost - bidCost) / amount
         }
-
     }
+
+    fun getMidPrice(): Float = (asks.prices.first() + bids.prices.first()) / 2
+
+    fun getAskSideSpread(amount: Float): Float? = asks.getCost(amount)?.let {
+        (it / amount) - getMidPrice()
+    }
+
+    fun getBidSideSpread(amount: Float): Float? = bids.getCost(amount)?.let {
+        getMidPrice() - (it / amount)
+    }
+
 }

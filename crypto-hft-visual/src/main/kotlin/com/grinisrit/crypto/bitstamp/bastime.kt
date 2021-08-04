@@ -7,6 +7,8 @@ import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.*
 import java.time.Instant
 
+
+
 fun main(args: Array<String>) {
 
     val config = loadConf(args)
@@ -15,7 +17,6 @@ fun main(args: Array<String>) {
     val btc10 = mutableListOf<Float>()
     val time1 = mutableListOf<String>()
     val time10 = mutableListOf<String>()
-
 
     runBlocking {
         val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
@@ -26,8 +27,8 @@ fun main(args: Array<String>) {
             if (it.isInvalid) {
                 return@collect
             }
-            val bac1 = it.getBAS(1.0F)
-            val bac10 = it.getBAS(10.0F)
+            val bac1 = it.getBidAskSpread(1.0F)
+            val bac10 = it.getBidAskSpread(10.0F)
             val time = Instant.ofEpochMilli(it.timestamp).toString()
             if (bac1 != null) {
                 btc1.add(bac1)

@@ -31,6 +31,6 @@ fun BitstampOrderBook.toOrderBook(): OrderBook {
     return OrderBook(
         asks,
         bids,
-        data.microtimestamp / 1000
+        data.microtimestamp
     )
 }
