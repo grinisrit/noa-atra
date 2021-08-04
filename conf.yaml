@@ -1,6 +1,6 @@
 version: 0.0.1
 mongodb:
-  address: mongodb://localhost:27016
+  address: mongodb://localhost:27017
   status: on
 zeromq:
   address: tcp://localhost:5897
