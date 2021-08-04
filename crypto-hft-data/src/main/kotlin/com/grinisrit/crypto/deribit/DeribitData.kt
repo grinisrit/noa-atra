@@ -1,6 +1,5 @@
 package com.grinisrit.crypto.deribit
 
-import com.grinisrit.crypto.bitstamp.OrderBook
 import com.grinisrit.crypto.common.models.UnbookedEvent
 import com.grinisrit.crypto.common.models.PlatformData
 import kotlinx.serialization.Serializable
@@ -36,7 +35,7 @@ data class TradesParameters(
 )
 
 @Serializable
-data class Trades(
+data class DeribitTrades(
     val params: TradesParameters,
     val method: String,
     val jsonrpc: String,
@@ -46,7 +45,7 @@ data class Trades(
 
 data class TimestampedTrades(
     val receiving_datetime: Instant,
-    val platform_data: Trades,
+    val platform_data: DeribitTrades,
 )
 
 @Serializable
@@ -86,7 +85,7 @@ data class BookParameters(
 )
 
 @Serializable
-data class Book(
+data class DeribitBook(
     val params: BookParameters,
     val method: String,
     val jsonrpc: String,
@@ -96,23 +95,23 @@ data class Book(
 
 data class TimestampedBook(
     val receiving_datetime: Instant,
-    val platform_data: Book,
+    val platform_data: DeribitBook,
 )
 
 @Serializable
-class Event: DeribitData, UnbookedEvent
+class DeribitEvent: DeribitData, UnbookedEvent
 
 object DeribitDataSerializer : JsonContentPolymorphicSerializer<DeribitData>(DeribitData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
-        element !is JsonObject -> Event.serializer()
-        element.jsonObject["params"] !is JsonObject -> Event.serializer()
-        element.jsonObject["params"]?.jsonObject?.get("channel") !is JsonPrimitive -> Event.serializer()
+        element !is JsonObject -> DeribitEvent.serializer()
+        element.jsonObject["params"] !is JsonObject -> DeribitEvent.serializer()
+        element.jsonObject["params"]?.jsonObject?.get("channel") !is JsonPrimitive -> DeribitEvent.serializer()
         else -> with(element.jsonObject["params"]?.jsonObject?.get("channel")?.jsonPrimitive?.content) {
             when {
-                this == null -> Event.serializer()
-                this.startsWith("trades") -> Trades.serializer()
-                this.startsWith("book") -> Book.serializer()
-                else -> Trades.serializer()
+                this == null -> DeribitEvent.serializer()
+                this.startsWith("trades") -> DeribitTrades.serializer()
+                this.startsWith("book") -> DeribitBook.serializer()
+                else -> DeribitTrades.serializer()
             }
         }
     }

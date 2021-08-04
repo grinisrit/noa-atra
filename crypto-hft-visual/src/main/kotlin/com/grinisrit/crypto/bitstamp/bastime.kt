@@ -3,16 +3,14 @@ package com.grinisrit.crypto.bitstamp
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.loadConf
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import space.kscience.plotly.Plotly
-import space.kscience.plotly.layout
-import space.kscience.plotly.makeFile
-import space.kscience.plotly.trace
+import space.kscience.plotly.*
 import java.time.Instant
 
 
+
 fun main(args: Array<String>) {
+
     val config = loadConf(args)
 
     val btc1 = mutableListOf<Float>()
@@ -20,32 +18,28 @@ fun main(args: Array<String>) {
     val time1 = mutableListOf<String>()
     val time10 = mutableListOf<String>()
 
-
     runBlocking {
         val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
 
-        val flow = mongoClient.getOrderBook("btcusd")
+        val rawDataFlow = mongoClient.getOrderBook("btcusd")
 
-        launch {
-            flow.collect {
-                with(it.platform_data.toLocalOrderBook()) {
-                    if (isInvalid) {
-                        return@collect
-                    }
-                    val bac1 = getBAS(1.0F)
-                    val bac10 = getBAS(10.0F)
-                    val time = Instant.ofEpochMilli(timestamp).toString()
-                    if (bac1 != null) {
-                        btc1.add(bac1)
-                        time1.add(time)
-                    }
-                    if (bac10 != null) {
-                        btc10.add(bac10)
-                        time10.add(time)
-                    }
-                }
+        BitstampRefinedDataPublisher().orderBookFlow(rawDataFlow).collect {
+            if (it.isInvalid) {
+                return@collect
+            }
+            val bac1 = it.getBidAskSpread(1.0F)
+            val bac10 = it.getBidAskSpread(10.0F)
+            val time = Instant.ofEpochMilli(it.timestamp).toString()
+            if (bac1 != null) {
+                btc1.add(bac1)
+                time1.add(time)
+            }
+            if (bac10 != null) {
+                btc10.add(bac10)
+                time10.add(time)
             }
         }
+
     }
 
     val plot = Plotly.plot {

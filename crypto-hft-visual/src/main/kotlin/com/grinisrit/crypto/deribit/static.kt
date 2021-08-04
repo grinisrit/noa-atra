@@ -15,7 +15,7 @@ fun someData(): List<Pair<Instant, Float>> {
 
     val col = mongo.getDatabase("deribit").getCollection<TimestampedTrades>("trades")
 
-    val f = with(TimestampedTrades::platform_data/ Trades::params / TradesParameters::data  / TradeData::datetime) {
+    val f = with(TimestampedTrades::platform_data/ DeribitTrades::params / TradesParameters::data  / TradeData::datetime) {
         col.find(and(this gte from, this lte to)).flatMap {
             it.platform_data.params.data.filter { data ->
                 data.instrument_name == "BTC-PERPETUAL"
@@ -41,7 +41,7 @@ fun someDataAsk(): List<Triple<Instant, Float, Float>> {
 
     val col = mongo.getDatabase("deribit").getCollection<TimestampedBook>("book")
 
-    val f = with(TimestampedBook::platform_data/ Book::params / BookParameters::data  / BookData::datetime) {
+    val f = with(TimestampedBook::platform_data/ DeribitBook::params / BookParameters::data  / BookData::datetime) {
         col.find(and(this gte from, this lte to)).toList().filter {
             it.platform_data.params.data.instrument_name == "BTC-PERPETUAL"
         }.map {

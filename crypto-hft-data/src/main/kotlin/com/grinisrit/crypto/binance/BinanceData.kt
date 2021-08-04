@@ -38,7 +38,7 @@ data class SnapshotData(
 )
 
 @Serializable
-data class Snapshot(
+data class BinanceSnapshot(
     val snapshot: SnapshotData,
     val symbol: String,
 ) : BinanceData {
@@ -46,7 +46,7 @@ data class Snapshot(
 }
 
 @Serializable
-data class Trade(
+data class BinanceTrade(
     @SerialName("e") val eventType: String,
     @SerialName("E") val eventTime: Long,
     @SerialName("s") val symbol: String,
@@ -66,7 +66,7 @@ data class Trade(
 }
 
 @Serializable
-data class BookUpdate(
+data class BinanceBookUpdate(
     @SerialName("e") val eventType: String,
     @SerialName("E") val eventTime: Long,
     @SerialName("s") val symbol: String,
@@ -82,14 +82,14 @@ data class BookUpdate(
 }
 
 @Serializable
-class Event : BinanceData, UnbookedEvent
+class BinanceEvent : BinanceData, UnbookedEvent
 
 object BinanceDataSerializer : JsonContentPolymorphicSerializer<BinanceData>(BinanceData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
-        element !is JsonObject -> Event.serializer()
-        "snapshot" in element.jsonObject -> Snapshot.serializer()
-        "U" in element.jsonObject -> BookUpdate.serializer()
-        "t" in element.jsonObject -> Trade.serializer()
-        else -> Event.serializer()
+        element !is JsonObject -> BinanceEvent.serializer()
+        "snapshot" in element.jsonObject -> BinanceSnapshot.serializer()
+        "U" in element.jsonObject -> BinanceBookUpdate.serializer()
+        "t" in element.jsonObject -> BinanceTrade.serializer()
+        else -> BinanceEvent.serializer()
     }
 }

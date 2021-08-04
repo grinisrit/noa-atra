@@ -11,7 +11,7 @@ import java.time.Instant
 interface KrakenData : PlatformData
 
 @Serializable
-class Event : KrakenData, UnbookedEvent
+class KrakenEvent : KrakenData, UnbookedEvent
 
 @Serializable
 data class TradeData(
@@ -43,7 +43,7 @@ object TradeDataSerializer :
 }
 
 @Serializable
-data class Trade(
+data class KrakenTrade(
     val channelId: Int,
     val tradeData: List<@Serializable(with = TradeDataSerializer::class) TradeData>,
     val channelName: String,
@@ -53,7 +53,7 @@ data class Trade(
 }
 
 object TradeSerializer :
-    JsonTransformingSerializer<Trade>(Trade.serializer()) {
+    JsonTransformingSerializer<KrakenTrade>(KrakenTrade.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return element.jsonArray.let {
             buildJsonObject {
@@ -96,7 +96,7 @@ data class BookSnapshotData(
 )
 
 @Serializable
-data class BookSnapshot(
+data class KrakenBookSnapshot(
     val channelId: Int,
     val bookData: BookSnapshotData,
     val channelName: String,
@@ -106,7 +106,7 @@ data class BookSnapshot(
 }
 
 object BookSnapshotSerializer :
-    JsonTransformingSerializer<BookSnapshot>(BookSnapshot.serializer()) {
+    JsonTransformingSerializer<KrakenBookSnapshot>(KrakenBookSnapshot.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return element.jsonArray.let {
             buildJsonObject {
@@ -159,7 +159,7 @@ data class BidsUpdate(
 )
 
 @Serializable
-data class BookUpdate(
+data class KrakenBookUpdate(
     val channelId: Int,
     val asksUpdate: AsksUpdate? = null,
     val bidsUpdate: BidsUpdate? = null,
@@ -170,7 +170,7 @@ data class BookUpdate(
 }
 
 object BookUpdateSerializer :
-    JsonTransformingSerializer<BookUpdate>(BookUpdate.serializer()) {
+    JsonTransformingSerializer<KrakenBookUpdate>(KrakenBookUpdate.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
 
         return element.jsonArray.let {
@@ -210,25 +210,25 @@ object BookUpdateSerializer :
 
 object KrakenDataSerializer : JsonContentPolymorphicSerializer<KrakenData>(KrakenData::class) {
     override fun selectDeserializer(element: JsonElement) = when {
-        element !is JsonArray -> Event.serializer()
+        element !is JsonArray -> KrakenEvent.serializer()
         else -> element.jsonArray.let { mainArray ->
             when {
-                mainArray.size < 2 -> Event.serializer()
-                mainArray[mainArray.size - 2] !is JsonPrimitive -> Event.serializer()
+                mainArray.size < 2 -> KrakenEvent.serializer()
+                mainArray[mainArray.size - 2] !is JsonPrimitive -> KrakenEvent.serializer()
                 else -> with(mainArray[mainArray.size - 2].jsonPrimitive.content) {
                     when {
                         this == "trade" -> TradeSerializer
                         startsWith("book") -> when {
-                            mainArray[1] !is JsonObject -> Event.serializer()
+                            mainArray[1] !is JsonObject -> KrakenEvent.serializer()
                             else -> with(mainArray[1].jsonObject.keys) {
                                 when {
                                     "as" in this -> BookSnapshotSerializer
                                     "a" in this || "b" in this -> BookUpdateSerializer
-                                    else -> Event.serializer()
+                                    else -> KrakenEvent.serializer()
                                 }
                             }
                         }
-                        else -> Event.serializer()
+                        else -> KrakenEvent.serializer()
                     }
                 }
             }

@@ -37,7 +37,7 @@ fun loadBookData(): BookData {
     val mongo = KMongo.createClient("mongodb://localhost:27017")
     val col = mongo.getDatabase("deribit").getCollection<TimestampedBook>("book")
 
-    val res = col.findOne(TimestampedBook::platform_data / Book::params/ BookParameters::data / BookData::instrument_name eq "BTC-PERPETUAL")
+    val res = col.findOne(TimestampedBook::platform_data / DeribitBook::params/ BookParameters::data / BookData::instrument_name eq "BTC-PERPETUAL")
 
     return res!!.platform_data.params.data
 }

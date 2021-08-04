@@ -15,7 +15,7 @@ fun List<OrderData>.toArrays(): Pair<FloatArray, FloatArray> {
     return Pair(prices, amounts)
 }
 
-fun OrderBook.toLocalOrderBook(): LocalOrderBook {
+fun BitstampOrderBook.toOrderBook(): OrderBook {
     val asks = with(data.asks.toArrays()) {
         AsksArray(
             first,
@@ -28,9 +28,9 @@ fun OrderBook.toLocalOrderBook(): LocalOrderBook {
             second
         )
     }
-    return LocalOrderBook(
+    return OrderBook(
         asks,
         bids,
-        data.microtimestamp / 1000
+        data.microtimestamp
     )
 }

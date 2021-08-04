@@ -73,7 +73,7 @@ object OrderUpdateDataSerializer :
 }
 
 @Serializable
-data class Snapshot(
+data class CoinbaseSnapshot(
     val product_id: String,
     val bids: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
     val asks: List<@Serializable(with = OrderDataSerializer::class) OrderData>,
@@ -82,7 +82,7 @@ data class Snapshot(
 }
 
 @Serializable
-data class L2Update(
+data class CoinbaseL2Update(
     val product_id: String,
     override val time: String,
     val changes: List<@Serializable(with = OrderUpdateDataSerializer::class) OrderUpdateData>,
@@ -91,7 +91,7 @@ data class L2Update(
 }
 
 @Serializable
-data class Match(
+data class CoinbaseMatch(
     val trade_id: Long,
     val maker_order_id: String,
     val taker_order_id: String,
@@ -106,19 +106,19 @@ data class Match(
 }
 
 @Serializable
-class Event : CoinbaseData, UnbookedEvent
+class CoinbaseEvent : CoinbaseData, UnbookedEvent
 
 object CoinbaseDataSerializer : JsonContentPolymorphicSerializer<CoinbaseData>(CoinbaseData::class) {
     override fun selectDeserializer(element: JsonElement) =
         when {
-            element !is JsonObject -> Event.serializer()
-            element.jsonObject["type"] !is JsonPrimitive -> Event.serializer()
+            element !is JsonObject -> CoinbaseEvent.serializer()
+            element.jsonObject["type"] !is JsonPrimitive -> CoinbaseEvent.serializer()
             else -> when (element.jsonObject["type"]?.jsonPrimitive?.content) {
                 "ticker" -> Ticker.serializer()
-                "snapshot" -> Snapshot.serializer()
-                "l2update" -> L2Update.serializer()
-                "match" -> Match.serializer()
-                else -> Event.serializer()
+                "snapshot" -> CoinbaseSnapshot.serializer()
+                "l2update" -> CoinbaseL2Update.serializer()
+                "match" -> CoinbaseMatch.serializer()
+                else -> CoinbaseEvent.serializer()
             }
         }
 }
