@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit
 fun ofEpochMicro(epochMicro: Long): Instant =
     Instant.EPOCH.plus(epochMicro, ChronoUnit.MICROS)
 
+typealias Points = Pair<List<String>, List<Float>>
 typealias MutablePoints = Pair<MutableList<String>, MutableList<Float>>
 
 fun MutablePoints.add(time: String, data: Float){
@@ -37,7 +38,7 @@ fun main(args: Array<String>) {
     runBlocking {
         val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
 
-        val rawDataFlow = mongoClient.getOrderBook("btcusd")
+        val rawDataFlow = mongoClient.loadOrderBooks("btcusd")
 
         BitstampRefinedDataPublisher().orderBookFlow(rawDataFlow).collect { orderBook ->
 

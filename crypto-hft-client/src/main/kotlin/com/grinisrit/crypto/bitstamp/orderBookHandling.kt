@@ -2,8 +2,6 @@ package com.grinisrit.crypto.bitstamp
 
 import com.grinisrit.crypto.common.models.*
 
-//const val contractSize = 1e5
-
 fun List<OrderData>.toArrays(): Pair<FloatArray, FloatArray> {
     val prices = FloatArray(size) { i ->
         get(i).price
