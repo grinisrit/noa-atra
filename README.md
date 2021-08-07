@@ -24,7 +24,7 @@ You will find the data collection utilities
 within [crypto-hft-data](crypto-hft-analytics). To run the app you need to simply
 execute:
 ```
-$ ./gradlew -Dorg.gradle.java.home=/path/to/local/jdk -q :crypto-hft-data:run --args=/path/to/conf.yaml
+./gradlew -Dorg.gradle.java.home=/path/to/local/jdk -q :crypto-hft-data:run --args=/path/to/conf.yaml
 ```
 You can configure it in [conf.yaml](conf.yaml) to get the LOB data feed from the following 
 exchanges and liquidity aggregators:
@@ -45,14 +45,15 @@ The module [crypto-hft-visual](crypto-hft-visual)
 provides the visualisation apps.
 
 
-## Contributions
+## Acknowledgements
 
 We are very grateful to contributions from:
 * [Roland Grinis, GrinisRIT ltd.](https://github.com/grinisrit)
 * [Andrei Kislitsin](https://github.com/AndreiKingsley)
 
-We kindly acknowledge support from 
-[JetBrains Research](https://research.jetbrains.org/) and
-[Finery Markets](https://finerymarkets.com/).
+We kindly acknowledge support from
+[Finery Markets](https://finerymarkets.com/), 
+[GrinisRIT ltd.](https://www.grinisrit.com/) and
+[JetBrains Research](https://research.jetbrains.org/).
 
 (c) 2021 noa-atra-examples contributors
