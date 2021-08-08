@@ -78,12 +78,6 @@ data class BitstampTrade(
         get() = Instant.ofEpochMilli(data.microtimestamp / 1000)
 }
 
-// TODO() delete!!!
-data class TimestampedTrade(
-    val receiving_datetime: Instant,
-    val platform_data: BitstampTrade,
-)
-
 @Serializable
 class BitstampEvent: BitstampData, UnbookedEvent
 

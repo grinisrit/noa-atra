@@ -30,5 +30,5 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("io.ktor:ktor-client-websockets:1.6.0")
     implementation("io.ktor:ktor-client-java:1.6.0")
-    implementation("space.kscience:plotlykt-server:0.4.2")
+    implementation("space.kscience:plotlykt-server:0.4.4")
 }

@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     runBlocking {
         val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
 
-        val rawDataFlow = mongoClient.getOrderBook("btcusd")
+        val rawDataFlow = mongoClient.loadOrderBooks("btcusd")
 
         BitstampRefinedDataPublisher().orderBookFlow(rawDataFlow).collect {
             if (it.isInvalid) {
