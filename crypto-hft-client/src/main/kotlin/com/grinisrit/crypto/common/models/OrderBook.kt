@@ -3,7 +3,7 @@ package com.grinisrit.crypto.common.models
 class OrderBook(
     val asks: AsksArray,
     val bids: BidsArray,
-    //milliseconds
+    //micros
     val timestamp: Long,
 ) {
 
