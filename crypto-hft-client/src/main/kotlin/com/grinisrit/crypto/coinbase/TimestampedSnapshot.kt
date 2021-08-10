@@ -1,12 +1,12 @@
-package com.grinisrit.crypto.bitstamp
+package com.grinisrit.crypto.coinbase
 
 import com.grinisrit.crypto.common.TimestampedMarketData
 import com.grinisrit.crypto.common.models.TimestampedData
 import java.time.Instant
 
-internal class TimestampedOrderBook(
+internal class TimestampedSnapshot(
     val receiving_datetime: Instant,
-    val platform_data: BitstampOrderBook,
+    val platform_data: CoinbaseSnapshot,
 ) {
     fun toTimestampedData(): TimestampedMarketData =
         TimestampedData(

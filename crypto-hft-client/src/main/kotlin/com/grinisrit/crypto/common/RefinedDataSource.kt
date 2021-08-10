@@ -11,10 +11,14 @@ typealias RawDataSharedFlow = SharedFlow<TimestampedMarketData>
 
 interface RefinedDataPublisher {
 
-    fun handleOrderBook(marketDataFlow: RawDataFlow): Flow<OrderBook>
-    fun handleTrade(marketDataFlow: RawDataFlow): Flow<Trade>
+    fun orderBookFlow(rawDataFlow: RawDataFlow): Flow<OrderBook>
+    fun tradeFlow(rawDataFlow: RawDataFlow): Flow<Trade>
 
-    fun orderBookFlow(rawDataFlow: RawDataFlow): Flow<OrderBook> = handleOrderBook(rawDataFlow)
-    fun tradeFlow(rawDataFlow: RawDataFlow): Flow<Trade> = handleTrade(rawDataFlow)
+}
+
+interface RefinedDataPublisherSU {
+
+    fun orderBookFlow(snapshots:List<TimestampedMarketData>, updates: RawDataFlow): Flow<OrderBook>
+    fun tradeFlow(rawDataFlow: RawDataFlow): Flow<Trade>
 
 }

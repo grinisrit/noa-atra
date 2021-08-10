@@ -13,7 +13,7 @@ class OrderBook(
         timestamp
     )
 
-    fun updateBids(price: Float, amount: Float) = OrderBook(
+    fun updateBids(price: Float, amount: Float, timestamp: Long) = OrderBook(
         asks,
         bids.update(price, amount),
         timestamp
