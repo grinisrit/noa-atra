@@ -1,7 +1,7 @@
 package com.grinisrit.crypto.common
 
 interface MarketDataSource {
-    fun getFlow(): RawDataFlow
+    fun getFlow(): unrefinedDataFlow
 }
 
 interface MarketDataSharedSource {

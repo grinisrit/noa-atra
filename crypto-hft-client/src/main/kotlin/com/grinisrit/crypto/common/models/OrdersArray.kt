@@ -1,5 +1,7 @@
 package com.grinisrit.crypto.common.models
 
+import kotlin.math.max
+
 sealed class OrdersArray(
     val prices: FloatArray,
     val amounts: FloatArray,
@@ -36,10 +38,10 @@ sealed class OrdersArray(
 
     abstract fun findLevelIndex(level: Float): Int
 
-    protected fun updateArrays(price: Float, amount: Float): Pair<FloatArray, FloatArray> {
+    protected fun updateArrays(price: Float, amount: Float, maxSize: Int? = null): Pair<FloatArray, FloatArray> {
         val index = findLevelIndex(price)
 
-        if (prices[index] == price) {
+        if (index < size && prices[index] == price) {
             return if (amount == 0.0F) {
                 Pair(
                     prices.erase(index),
@@ -52,6 +54,12 @@ sealed class OrdersArray(
                 )
             }
         }
+        /*
+        if (maxSize != null && size >= maxSize) {
+            return prices to amounts
+        }
+
+         */
         return Pair(
             prices.insert(index, price),
             amounts.insert(index, amount)
@@ -88,9 +96,10 @@ class AsksArray(
     amounts: FloatArray,
 ) : OrdersArray(prices, amounts) {
 
-    fun update(price: Float, amount: Float): AsksArray = with(updateArrays(price, amount)) {
-        AsksArray(first, second)
-    }
+    fun update(price: Float, amount: Float, maxSize: Int? = null): AsksArray =
+        with(updateArrays(price, amount, maxSize)) {
+            AsksArray(first, second)
+        }
 
     override val isInvalid: Boolean
         get() {
@@ -127,9 +136,10 @@ class BidsArray(
             return false
         }
 
-    fun update(price: Float, amount: Float) = with(updateArrays(price, amount)) {
-        BidsArray(first, second)
-    }
+    fun update(price: Float, amount: Float, maxSize: Int? = null) =
+        with(updateArrays(price, amount, maxSize)) {
+            BidsArray(first, second)
+        }
 
     override fun findLevelIndex(level: Float): Int {
         for (i in 0 until size) {

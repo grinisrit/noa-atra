@@ -4,21 +4,21 @@ import com.grinisrit.crypto.common.models.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
-typealias RawDataFlow = Flow<TimestampedMarketData>
+typealias unrefinedDataFlow = Flow<TimestampedMarketData>
 typealias RawDataSharedFlow = SharedFlow<TimestampedMarketData>
 
 
 
 interface RefinedDataPublisher {
 
-    fun orderBookFlow(rawDataFlow: RawDataFlow): Flow<OrderBook>
-    fun tradeFlow(rawDataFlow: RawDataFlow): Flow<Trade>
+    fun orderBookFlow(unrefinedDataFlow: unrefinedDataFlow): Flow<OrderBook>
+    fun tradeFlow(unrefinedDataFlow: unrefinedDataFlow): Flow<Trade>
 
 }
 
 interface RefinedDataPublisherSU {
 
-    fun orderBookFlow(snapshots:List<TimestampedMarketData>, updates: RawDataFlow): Flow<OrderBook>
-    fun tradeFlow(rawDataFlow: RawDataFlow): Flow<Trade>
+    fun orderBookFlow(snapshotsList: List<TimestampedMarketData>, unrefinedDataFlow: unrefinedDataFlow): Flow<OrderBook>
+    fun tradeFlow(unrefinedDataFlow: unrefinedDataFlow): Flow<Trade>
 
 }

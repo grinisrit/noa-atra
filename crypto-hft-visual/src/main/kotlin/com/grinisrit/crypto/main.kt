@@ -11,6 +11,7 @@ import space.kscience.plotly.makeFile
 import space.kscience.plotly.models.Bar
 import space.kscience.plotly.models.BarMode
 import space.kscience.plotly.palettes.Xkcd
+import java.time.Instant
 
 fun f() = flow {
     kotlinx.coroutines.delay(1000L)
@@ -21,7 +22,9 @@ fun f() = flow {
  * - Grouped bar chart
  * - Use XKCD color palette
  */
+
 suspend fun main() {
+
 
     println(f().toList().asSequence().iterator().next())
 

@@ -1,8 +1,7 @@
 package com.grinisrit.crypto.coinbase
 
 import com.grinisrit.crypto.common.models.*
-import java.time.Instant
-import java.util.concurrent.TimeUnit
+import kotlin.math.max
 
 fun List<OrderData>.toArrays(): Pair<FloatArray, FloatArray> {
     val prices = FloatArray(size) { i ->
@@ -15,14 +14,15 @@ fun List<OrderData>.toArrays(): Pair<FloatArray, FloatArray> {
     return Pair(prices, amounts)
 }
 
+// TODO
 fun CoinbaseSnapshot.toOrderBook(): OrderBook {
-    val asks = with(asks.toArrays()) {
+    val asks = with(asks.take(100).toArrays()) {
         AsksArray(
             first,
             second
         )
     }
-    val bids = with(bids.toArrays()) {
+    val bids = with(bids.take(100).toArrays()) {
         BidsArray(
             first,
             second
@@ -35,16 +35,14 @@ fun CoinbaseSnapshot.toOrderBook(): OrderBook {
     )
 }
 
-fun OrderBook.update(update: CoinbaseL2Update): OrderBook {
+fun OrderBook.update(update: CoinbaseL2Update, maxSize: Int? = 1000): OrderBook {
     var orderBook = this
-    val timestamp = with(update.datetime) {
-        TimeUnit.SECONDS.toMicros(getEpochSecond()) + TimeUnit.NANOSECONDS.toMicros(getNano().toLong());
-    }
+    val timestamp = update.datetime.toEpochMicro()
     update.changes.forEach {
         if (it.side == "sell") {
-            orderBook = orderBook.updateAsks(it.price, it.amount, timestamp)
+            orderBook = orderBook.updateAsks(it.price, it.amount, timestamp, maxSize)
         } else {
-            orderBook = orderBook.updateBids(it.price, it.amount, timestamp)
+            orderBook = orderBook.updateBids(it.price, it.amount, timestamp, maxSize)
         }
     }
     return orderBook
