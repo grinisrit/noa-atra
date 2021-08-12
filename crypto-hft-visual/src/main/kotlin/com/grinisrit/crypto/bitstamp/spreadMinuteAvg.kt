@@ -84,6 +84,7 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                                 initialTime to previousLastAsk
                             ).first
                         )
+
                     } else {
                         timeWeightedSpreads.ask.add(0.0F)
                     }
@@ -97,6 +98,7 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                                 initialTime to previousLastBid
                             ).first
                         )
+
                     } else {
                         timeWeightedSpreads.bid.add(0.0F)
                     }
@@ -108,6 +110,7 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                                 minuteAggregatedSpreads.bidAsk,
                             initialTime to previousLastBidAsk
                         )
+
                         timeWeightedSpreads.bidAsk.add(bidAskValue)
                         timeWeightedSpreads.liquidity.add(liquidityValue)
                     } else {
