@@ -1,5 +1,6 @@
 package com.grinisrit.crypto.bitstamp
 
+import com.grinisrit.crypto.analysis.getBidAskSpread
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.loadConf
 import kotlinx.coroutines.flow.collect
@@ -8,7 +9,7 @@ import space.kscience.plotly.*
 import java.time.Instant
 
 
-
+/*
 fun main(args: Array<String>) {
 
     val config = loadConf(args)
@@ -70,3 +71,5 @@ fun main(args: Array<String>) {
 
     plot.makeFile()
 }
+
+ */

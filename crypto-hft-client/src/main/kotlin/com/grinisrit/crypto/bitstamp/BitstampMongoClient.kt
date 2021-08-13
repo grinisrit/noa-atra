@@ -8,7 +8,7 @@ import org.litote.kmongo.*
 class BitstampMongoClient(server: MongoDBServer) {
     private val database = server.client.getDatabase(PlatformName.bitstamp.toString())
 
-    fun loadOrderBooks(symbol: String): RawDataFlow {
+    fun loadOrderBooks(symbol: String): unrefinedDataFlow {
         val collection = database.getCollection<TimestampedOrderBook>(BitstampDataType.order_book.toString())
         val channel = "detail_order_book_$symbol"
         return collection.find(
@@ -18,7 +18,7 @@ class BitstampMongoClient(server: MongoDBServer) {
         }
     }
 
-    fun loadTrades(symbol: String): RawDataFlow {
+    fun loadTrades(symbol: String): unrefinedDataFlow {
         val collection = database.getCollection<TimestampedTrade>(BitstampDataType.trade.toString())
         val channel = "live_trades_$symbol"
         return collection.find(
