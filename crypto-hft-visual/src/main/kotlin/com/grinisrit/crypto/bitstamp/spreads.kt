@@ -1,46 +1,34 @@
 package com.grinisrit.crypto.bitstamp
 
+import com.grinisrit.crypto.analysis.*
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.loadConf
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.*
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
-fun ofEpochMicro(epochMicro: Long): Instant =
-    Instant.EPOCH.plus(epochMicro, ChronoUnit.MICROS)
-
-typealias Points = Pair<List<String>, List<Float>>
-typealias MutablePoints = Pair<MutableList<String>, MutableList<Float>>
-
-fun MutablePoints.add(time: String, data: Float){
-    first.add(time)
-    second.add(data)
-}
-
-fun getEmptyPoints() = Pair(mutableListOf<String>(), mutableListOf<Float>())
 
 @OptIn(UnstablePlotlyAPI::class)
 fun main(args: Array<String>) {
 
     val config = loadConf(args)
 
-    val basPoints1 = getEmptyPoints()
-    val basPoints10 = getEmptyPoints()
+    val basPoints1 = emptyPoints()
+    val basPoints10 = emptyPoints()
 
-    val assPoints1 = getEmptyPoints()
-    val assPoints10 = getEmptyPoints()
+    val assPoints1 = emptyPoints()
+    val assPoints10 = emptyPoints()
 
-    val bssPoints1 = getEmptyPoints()
-    val bssPoints10 = getEmptyPoints()
+    val bssPoints1 = emptyPoints()
+    val bssPoints10 = emptyPoints()
 
     runBlocking {
+        println(1)
         val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
-
+        println(2)
         val rawDataFlow = mongoClient.loadOrderBooks("btcusd")
 
-        BitstampRefinedDataPublisher().orderBookFlow(rawDataFlow).collect { orderBook ->
+        BitstampRefinedDataPublisher.orderBookFlow(rawDataFlow).collect { orderBook ->
 
             if (orderBook.isInvalid) {
                 return@collect
@@ -49,13 +37,13 @@ fun main(args: Array<String>) {
             val bas1 = orderBook.getBidAskSpread(1.0F)
             val bas10 = orderBook.getBidAskSpread(10.0F)
 
-            val ass1 = orderBook.getAskSideSpread(1.0F)
-            val ass10 = orderBook.getAskSideSpread(10.0F)
+            val ass1 = orderBook.getAskSpread(1.0F)
+            val ass10 = orderBook.getAskSpread(10.0F)
 
-            val bss1 = orderBook.getBidSideSpread(1.0F)
-            val bss10 = orderBook.getBidSideSpread(10.0F)
+            val bss1 = orderBook.getBidSpread(1.0F)
+            val bss10 = orderBook.getBidSpread(10.0F)
 
-            val time = ofEpochMicro(orderBook.timestamp).toString()
+            val time = orderBook.timestamp
 
             bas1?.let {
                 basPoints1.add(time, it)

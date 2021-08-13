@@ -44,7 +44,7 @@ platforms:
     websocket_address: wss://trade.finerymarkets.com/ws
     key_path: C:\Users\admin\key.txt
     secret_path: C:\Users\admin\secret.txt
-    status: off
+    status: on
     symbols:
       - BTC-USD
       - ETH-USD
