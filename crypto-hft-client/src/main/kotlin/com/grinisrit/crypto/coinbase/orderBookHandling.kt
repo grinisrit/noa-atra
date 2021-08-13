@@ -16,13 +16,13 @@ fun List<OrderData>.toArrays(): Pair<FloatArray, FloatArray> {
 
 // TODO
 fun CoinbaseSnapshot.toOrderBook(): OrderBook {
-    val asks = with(asks.take(100).toArrays()) {
+    val asks = with(asks.toArrays()) {
         AsksArray(
             first,
             second
         )
     }
-    val bids = with(bids.take(100).toArrays()) {
+    val bids = with(bids.toArrays()) {
         BidsArray(
             first,
             second

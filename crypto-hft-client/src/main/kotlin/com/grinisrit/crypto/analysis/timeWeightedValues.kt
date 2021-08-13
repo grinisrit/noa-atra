@@ -60,7 +60,9 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
 
         if (minute > lastMinute) {
             if (lastMinute != -1L && minute == lastMinute + 1) {
+
                 val initialTime = minutesToMicros(lastMinute)
+
                 amountToSpreadsData.forEach { (_, spreadData) ->
                     val minuteAggregatedSpreads = spreadData.minuteAggregatedSpreads
                     val timeWeightedSpreads = spreadData.timeWeightedSpreads
@@ -131,6 +133,7 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
         // TODO
 
         if (orderBook.isInvalid) {
+            println("invalid orderbook")
 
             /*
             val timestampToNull = timestamp to null

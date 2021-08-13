@@ -60,6 +60,13 @@ sealed class OrdersArray(
         }
 
          */
+
+        if (amount == 0.0F) {
+            println("zero not found")
+            return prices to amounts
+        }
+
+
         return Pair(
             prices.insert(index, price),
             amounts.insert(index, amount)
