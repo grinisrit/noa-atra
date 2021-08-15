@@ -42,8 +42,8 @@ platforms:
       - ethusd
   finery:
     websocket_address: wss://trade.finerymarkets.com/ws
-    key:
-    secret:
+    key: your_key
+    secret: your_secret
     status: off
     symbols:
       - BTC-USD
