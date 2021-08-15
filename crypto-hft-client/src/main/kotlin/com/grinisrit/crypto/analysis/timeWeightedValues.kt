@@ -58,6 +58,9 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
 
         val minute = microsToMinutes(timestamp)
 
+        // TODO(log)
+        //println(instantOfEpochMinute(minute))
+
         if (minute > lastMinute) {
             if (lastMinute != -1L && minute == lastMinute + 1) {
 

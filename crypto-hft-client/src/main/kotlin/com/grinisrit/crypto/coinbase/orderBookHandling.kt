@@ -1,7 +1,7 @@
 package com.grinisrit.crypto.coinbase
 
+import com.grinisrit.crypto.analysis.toEpochMicro
 import com.grinisrit.crypto.common.models.*
-import kotlin.math.max
 
 fun List<OrderData>.toArrays(): Pair<FloatArray, FloatArray> {
     val prices = FloatArray(size) { i ->
@@ -35,14 +35,14 @@ fun CoinbaseSnapshot.toOrderBook(): OrderBook {
     )
 }
 
-fun OrderBook.update(update: CoinbaseL2Update, maxSize: Int? = 1000): OrderBook {
+fun OrderBook.update(update: CoinbaseL2Update): OrderBook {
     var orderBook = this
     val timestamp = update.datetime.toEpochMicro()
     update.changes.forEach {
         if (it.side == "sell") {
-            orderBook = orderBook.updateAsks(it.price, it.amount, timestamp, maxSize)
+            orderBook = orderBook.updateAsks(it.price, it.amount, timestamp)
         } else {
-            orderBook = orderBook.updateBids(it.price, it.amount, timestamp, maxSize)
+            orderBook = orderBook.updateBids(it.price, it.amount, timestamp)
         }
     }
     return orderBook

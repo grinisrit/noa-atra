@@ -38,39 +38,59 @@ sealed class OrdersArray(
 
     abstract fun findLevelIndex(level: Float): Int
 
-    protected fun updateArrays(price: Float, amount: Float, maxSize: Int? = null): Pair<FloatArray, FloatArray> {
+    protected fun updateArrays(price: Float, amount: Float): Pair<FloatArray, FloatArray> {
         val index = findLevelIndex(price)
 
         if (index < size && prices[index] == price) {
             return if (amount == 0.0F) {
-                Pair(
-                    prices.erase(index),
-                    amounts.erase(index)
-                )
+                prices.erase(index) to amounts.erase(index)
+
             } else {
-                Pair(
-                    prices.copyOf(),
-                    amounts.update(index, amount)
-                )
+                prices.copyOf() to amounts.update(index, amount)
             }
         }
-        /*
-        if (maxSize != null && size >= maxSize) {
-            return prices to amounts
-        }
 
-         */
-
+        //TODO exception
         if (amount == 0.0F) {
-            println("zero not found")
             return prices to amounts
         }
 
+        return prices.insert(index, price) to amounts.insert(index, amount)
+    }
 
-        return Pair(
-            prices.insert(index, price),
-            amounts.insert(index, amount)
-        )
+    enum class Action {
+        ADD,
+        DELETE,
+        UPDATE,
+        REMOVE_TOP
+    }
+
+    private fun FloatArray.removeTop(index: Int, newTopValue: Float) =
+        FloatArray(size - index) { i ->
+            if (i == 0) {
+                newTopValue
+            } else {
+                get(i + index)
+            }
+        }
+
+    protected fun updateArrays(action: Action, price: Float, amount: Float): Pair<FloatArray, FloatArray> {
+        val index = findLevelIndex(price)
+
+        // TODO checks
+        return when (action) {
+            Action.ADD ->
+                prices.insert(index, price) to amounts.insert(index, amount)
+            Action.DELETE ->
+                prices.erase(index) to amounts.erase(index)
+            Action.UPDATE ->
+                prices.copyOf() to amounts.update(index, amount)
+            Action.REMOVE_TOP -> if (price == 0F) {
+                TODO()
+            } else {
+                prices.removeTop(index, price) to amounts.removeTop(index, amount)
+            }
+        }
     }
 
     fun getCost(amount: Float): Float? {
@@ -103,8 +123,13 @@ class AsksArray(
     amounts: FloatArray,
 ) : OrdersArray(prices, amounts) {
 
-    fun update(price: Float, amount: Float, maxSize: Int? = null): AsksArray =
-        with(updateArrays(price, amount, maxSize)) {
+    fun update(price: Float, amount: Float): AsksArray =
+        with(updateArrays(price, amount)) {
+            AsksArray(first, second)
+        }
+
+    fun update(action: Action, price: Float, amount: Float): AsksArray =
+        with(updateArrays(action, price, amount)) {
             AsksArray(first, second)
         }
 
@@ -143,8 +168,13 @@ class BidsArray(
             return false
         }
 
-    fun update(price: Float, amount: Float, maxSize: Int? = null) =
-        with(updateArrays(price, amount, maxSize)) {
+    fun update(price: Float, amount: Float) =
+        with(updateArrays(price, amount)) {
+            BidsArray(first, second)
+        }
+
+    fun update(action: Action, price: Float, amount: Float): BidsArray =
+        with(updateArrays(action, price, amount)) {
             BidsArray(first, second)
         }
 
