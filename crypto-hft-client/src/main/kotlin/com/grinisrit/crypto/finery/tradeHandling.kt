@@ -1,8 +1,8 @@
-package com.grinisrit.crypto.coinbase
+package com.grinisrit.crypto.finery
 
-import com.grinisrit.crypto.analysis.toEpochMicro
 import com.grinisrit.crypto.common.models.Trade
 
+/* TODO
 fun CoinbaseMatch.toTrade(): Trade =
     Trade(
         price,
@@ -14,3 +14,5 @@ fun CoinbaseMatch.toTrade(): Trade =
             Trade.Type.SELL
         }
     )
+
+ */
