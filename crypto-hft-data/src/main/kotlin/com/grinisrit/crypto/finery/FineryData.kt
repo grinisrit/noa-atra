@@ -70,7 +70,7 @@ data class FinerySnapshot(
     val dataType: Char,
     @Serializable(with = SnapshotDataSerializer::class) val data: SnapshotData,
 ) : FineryData {
-    val symbol = feedIdToSymbol[feedId]
+    val symbol = feedIdToSymbol[feedId]!! // TODO!!!
     override val type = FineryDataType.snapshot
 }
 
@@ -114,7 +114,7 @@ data class FineryUpdates(
     val dataType: Char,
     @Serializable(with = UpdatesDataSerializer::class) val data: UpdatesData,
 ) : FineryData {
-    val symbol = feedIdToSymbol[feedId]
+    val symbol = feedIdToSymbol[feedId]!! // todo!!!
     override val type = FineryDataType.updates
 }
 
