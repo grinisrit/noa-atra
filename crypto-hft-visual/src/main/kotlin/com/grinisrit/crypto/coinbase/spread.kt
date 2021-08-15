@@ -1,11 +1,11 @@
 package com.grinisrit.crypto.coinbase
 
 
+
 import com.grinisrit.crypto.analysis.*
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.*
 import com.grinisrit.crypto.loadConf
-import kotlinx.coroutines.flow.collect
 
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -45,7 +45,7 @@ fun main(args: Array<String>) {
 
     }
 
-    val platformName = "Finery"
+    val platformName = "Coinbase"
 
     Plotly.grid {
         spreadMetrics.map { (amount, metrics) ->
