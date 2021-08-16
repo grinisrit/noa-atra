@@ -5,6 +5,8 @@ import space.kscience.plotly.*
 import space.kscience.plotly.models.*
 import kotlin.math.min
 
+const val bpMultiplier = 10000
+
 // TODO??
 fun timeWeightedSpreadsPlot(
     amount: Float,
@@ -15,32 +17,63 @@ fun timeWeightedSpreadsPlot(
     return Plotly.plot {
         bar {
             x.set(time)
-            y.set(timeWeightedSpreads.bidAsk)
+            y.set(timeWeightedSpreads.bidAsk.map { it * bpMultiplier })
             name = "Bid-ask spread"
         }
-
+        /*
         bar {
             x.set(time)
-            y.set(timeWeightedSpreads.ask)
+            y.set(timeWeightedSpreads.ask.map { it * bpMultiplier })
             name = "Ask spread"
         }
 
         bar {
             x.set(time)
-            y.set(timeWeightedSpreads.bid)
+            y.set(timeWeightedSpreads.bid.map { it * bpMultiplier })
             name = "Bid spread"
         }
 
+         */
+
+
+
         // TODO symbols
         layout {
-            title = "$platformName time weighted spreads for $amount BTC"
+            title = "$platformName time weighted bid-ask spread for $amount BTC"
             barmode = BarMode.group
             showlegend = true
             xaxis {
                 title = "Time, UTC"
             }
             yaxis {
-                title = "Spread, $/BTC"
+                title = "Spread, base points"
+            }
+        }
+    }
+}
+
+fun timeWeightedMidPricesPlot(
+    amountToTimeWeightedSpreads: AmountToTimeWeightedSpreads,
+    platformName: String
+): Plot {
+    val traces = amountToTimeWeightedSpreads.map { (amount, spreadData) ->
+        Trace {
+            x.set(spreadData.time.map { instantOfEpochMinute(it).toString() })
+            y.set(spreadData.midPrice)
+            name = "$amount BTC"
+        }
+    }
+    return Plotly.plot {
+        traces(traces)
+
+        layout {
+            title = "$platformName mid prices"
+            showlegend = true
+            xaxis {
+                title = "Time, UTC"
+            }
+            yaxis {
+                title = "Price, $"
             }
         }
     }

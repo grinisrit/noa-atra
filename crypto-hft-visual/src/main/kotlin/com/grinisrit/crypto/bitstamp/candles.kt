@@ -14,7 +14,7 @@ import space.kscience.dataforge.meta.invoke
 import space.kscience.plotly.makeFile
 
 
-
+// TODO
 fun main(args: Array<String>) {
 
     val config = loadConf(args)
@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
                     return@collect
                 }
 
-                orderBook.getMidPrice().let {
+                orderBook.getMidPrice(1.0F).let {
                     minuteToMidPrice.add(orderBook.timestamp, it)
                 }
 

@@ -1,5 +1,6 @@
 package com.grinisrit.crypto
 
+import com.grinisrit.crypto.analysis.instantOfEpochMicro
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import space.kscience.dataforge.meta.invoke
@@ -25,8 +26,9 @@ fun f() = flow {
 
 suspend fun main() {
 
+    val b = (1628243378.815078 * 1000).toLong()
 
-    println(f().toList().asSequence().iterator().next())
+    println(Instant.ofEpochMilli(b))
 
     /*
     val trace1 = Bar {

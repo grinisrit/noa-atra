@@ -6,26 +6,41 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
 class MinuteAggregatedSpreads {
+    /*
     val ask = emptyAggregatedValues()
     val bid = emptyAggregatedValues()
-    val bidAsk = emptyAggregatedValues()
 
+     */
+    val bidAsk = emptyAggregatedValues()
+    val midPrice = emptyAggregatedValues()
+/*
     var previousMinuteLastAsk: Float? = null
     var previousMinuteLastBid: Float? = null
+
+ */
     var previousMinuteLastBidAsk: Float? = null
+    var previousMinuteLastMidPrice: Float? = null
 
     fun clear() {
+        /*
         ask.clear()
         bid.clear()
+
+         */
         bidAsk.clear()
+        midPrice.clear()
     }
 }
 
 class TimeWeightedSpreads {
     val time = mutableListOf<Long>()
     val liquidity = mutableListOf<Float>()
+    /*
     val ask = mutableListOf<Float>()
     val bid = mutableListOf<Float>()
+
+     */
+    val midPrice = mutableListOf<Float>()
     val bidAsk = mutableListOf<Float>()
 }
 
@@ -59,7 +74,7 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
         val minute = microsToMinutes(timestamp)
 
         // TODO(log)
-        //println(instantOfEpochMinute(minute))
+        println(instantOfEpochMinute(minute))
 
         if (minute > lastMinute) {
             if (lastMinute != -1L && minute == lastMinute + 1) {
@@ -71,6 +86,8 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                     val timeWeightedSpreads = spreadData.timeWeightedSpreads
 
                     timeWeightedSpreads.time.add(minute)
+
+                    /*
 
                     val previousLastAsk = minuteAggregatedSpreads.previousMinuteLastAsk
                     if (previousLastAsk != null) {
@@ -99,6 +116,8 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                         timeWeightedSpreads.bid.add(0.0F)
                     }
 
+                     */
+
                     val previousLastBidAsk = minuteAggregatedSpreads.previousMinuteLastBidAsk
                     if (previousLastBidAsk != null) {
                         val (bidAskValue, liquidityValue) =
@@ -113,29 +132,45 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                         timeWeightedSpreads.bidAsk.add(0.0F)
                         timeWeightedSpreads.liquidity.add(0.0F)
                     }
+
+                    val previousLastMidPrice = minuteAggregatedSpreads.previousMinuteLastMidPrice
+                    if (previousLastMidPrice != null) {
+                        val (midPriceValue, _) =
+                            timeWeightedValueLiquidity(
+                                minuteAggregatedSpreads.midPrice,
+                                initialTime to previousLastBidAsk
+                            )
+
+                        timeWeightedSpreads.midPrice.add(midPriceValue)
+                    } else {
+                        timeWeightedSpreads.midPrice.add(0.0F)
+                    }
                 }
 
             }
 
             amountToSpreadsData.forEach { (_, spreadData) ->
                 val minuteAggregatedSpreads = spreadData.minuteAggregatedSpreads
+                /*
                 minuteAggregatedSpreads.previousMinuteLastAsk = minuteAggregatedSpreads.ask.lastOrNull()?.second
                 minuteAggregatedSpreads.previousMinuteLastBid = minuteAggregatedSpreads.bid.lastOrNull()?.second
-                minuteAggregatedSpreads.previousMinuteLastBidAsk = minuteAggregatedSpreads.bidAsk.lastOrNull()?.second
+                 */
+
+                minuteAggregatedSpreads.previousMinuteLastBidAsk =
+                    minuteAggregatedSpreads.bidAsk.lastOrNull()?.second
+                minuteAggregatedSpreads.previousMinuteLastMidPrice =
+                    minuteAggregatedSpreads.midPrice.lastOrNull()?.second
+
+                spreadData.minuteAggregatedSpreads.clear()
             }
 
-
-
-            amountToSpreadsData.forEach { (_, spreadData) ->
-                val minuteAggregatedSpreads = spreadData.minuteAggregatedSpreads
-                minuteAggregatedSpreads.clear()
-            }
         }
 
         lastMinute = minute
         // TODO
 
         if (orderBook.isInvalid) {
+            // TODO log
             println("invalid orderbook")
 
             /*
@@ -153,14 +188,21 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
 
 
         amountToSpreadsData.forEach { (amount, spreadData) ->
+            /*
             spreadData.minuteAggregatedSpreads.ask.add(
                 timestamp to orderBook.getAskSpread(amount)
             )
             spreadData.minuteAggregatedSpreads.bid.add(
                 timestamp to orderBook.getBidSpread(amount)
             )
+
+             */
             spreadData.minuteAggregatedSpreads.bidAsk.add(
                 timestamp to orderBook.getBidAskSpread(amount)
+            )
+
+            spreadData.minuteAggregatedSpreads.midPrice.add(
+                timestamp to orderBook.getMidPrice(amount)
             )
         }
 
