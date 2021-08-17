@@ -10,14 +10,14 @@ const val bpMultiplier = 10000
 // TODO??
 fun timeWeightedSpreadsPlot(
     amount: Float,
-    timeWeightedSpreads: TimeWeightedSpreads,
+    timeWeightedValues: TimeWeightedValues,
     platformName: String
 ): Plot {
-    val time = timeWeightedSpreads.time.map { instantOfEpochMinute(it).toString() }
+    val time = timeWeightedValues.time.map { instantOfEpochMinute(it).toString() }
     return Plotly.plot {
         bar {
             x.set(time)
-            y.set(timeWeightedSpreads.bidAsk.map { it * bpMultiplier })
+            y.set(timeWeightedValues.bidAsk.map { it * bpMultiplier })
             name = "Bid-ask spread"
         }
         /*
@@ -52,33 +52,6 @@ fun timeWeightedSpreadsPlot(
     }
 }
 
-fun timeWeightedMidPricesPlot(
-    amountToTimeWeightedSpreads: AmountToTimeWeightedSpreads,
-    platformName: String
-): Plot {
-    val traces = amountToTimeWeightedSpreads.map { (amount, spreadData) ->
-        Trace {
-            x.set(spreadData.time.map { instantOfEpochMinute(it).toString() })
-            y.set(spreadData.midPrice)
-            name = "$amount BTC"
-        }
-    }
-    return Plotly.plot {
-        traces(traces)
-
-        layout {
-            title = "$platformName mid prices"
-            showlegend = true
-            xaxis {
-                title = "Time, UTC"
-            }
-            yaxis {
-                title = "Price, $"
-            }
-        }
-    }
-}
-
 fun timeWeightedLiquidityPlot(
     amountToTimeWeightedSpreads: AmountToTimeWeightedSpreads,
     platformName: String,
@@ -86,8 +59,8 @@ fun timeWeightedLiquidityPlot(
     // TODO symbols
     val traces = amountToTimeWeightedSpreads.map { (amount, spreadData) ->
         Bar {
-            x.set(spreadData.time.map { instantOfEpochMinute(it).toString() })
-            y.set(spreadData.liquidity)
+            x.set(spreadData.first.time.map { instantOfEpochMinute(it).toString() })
+            y.set(spreadData.first.liquidity)
             name = "$amount BTC"
         }
     }

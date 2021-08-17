@@ -1,42 +1,49 @@
 package com.grinisrit.crypto.analysis
 
-class CandlePoints {
-    val timeList: MutableList<String> = mutableListOf()
+class Candle(
+    val open: Float,
+    val close: Float,
+    val low: Float,
+    val high: Float
+)
+
+class Candles {
+    val timeList: MutableList<Long> = mutableListOf()
     val openList: MutableList<Float> = mutableListOf()
     val closeList: MutableList<Float> = mutableListOf()
     val lowList: MutableList<Float> = mutableListOf()
     val highList: MutableList<Float> = mutableListOf()
-}
 
-fun CandlePoints.add(
-    time: String,
-    open: Float,
-    close: Float,
-    low: Float,
-    high: Float
-) {
-    timeList.add(time)
-    openList.add(open)
-    closeList.add(close)
-    lowList.add(low)
-    highList.add(high)
-}
-
-fun MinuteToValues.toCandlePoints(): CandlePoints {
-    val candlePoints = CandlePoints()
-    var close = values.first().first().second!! // TODO()
-    forEach { (minute, values) ->
-        val open = close
-        close = values.last().second!!
-        val low = values.minOf { it.second!! }
-        val high = values.maxOf { it.second!! }
-        candlePoints.add(
-            instantOfEpochMinute(minute).toString(),
-            open,
-            close,
-            low,
-            high
-        )
+    fun add(
+        time: Long,
+        open: Float,
+        close: Float,
+        low: Float,
+        high: Float
+    ) {
+        timeList.add(time)
+        openList.add(open)
+        closeList.add(close)
+        lowList.add(low)
+        highList.add(high)
     }
-    return candlePoints
+
+    fun add(candle: Candle, time: Long) {
+        with(candle) {
+            timeList.add(time)
+            openList.add(open)
+            closeList.add(close)
+            lowList.add(low)
+            highList.add(high)
+        }
+    }
+}
+
+fun countCandle(values: List<Float>, initialOpen: Float): Candle {
+    return Candle(
+        initialOpen,
+        values.last(),
+        values.minOf { it },
+        values.maxOf { it }
+    )
 }

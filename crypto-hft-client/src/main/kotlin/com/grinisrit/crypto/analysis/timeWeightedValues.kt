@@ -5,7 +5,7 @@ import com.grinisrit.crypto.common.models.Trade
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
-class MinuteAggregatedSpreads {
+class MinuteAggregatedValues {
     /*
     val ask = emptyAggregatedValues()
     val bid = emptyAggregatedValues()
@@ -32,7 +32,7 @@ class MinuteAggregatedSpreads {
     }
 }
 
-class TimeWeightedSpreads {
+class TimeWeightedValues {
     val time = mutableListOf<Long>()
     val liquidity = mutableListOf<Float>()
     /*
@@ -40,22 +40,26 @@ class TimeWeightedSpreads {
     val bid = mutableListOf<Float>()
 
      */
-    val midPrice = mutableListOf<Float>()
+    //val midPrice = mutableListOf<Float>()
     val bidAsk = mutableListOf<Float>()
 }
 
+// TODO
 class TimeWeightedTradesAmountsData(
     val time: LongArray,
     val buy: FloatArray,
     val sell: FloatArray,
 )
 
+// TODO
 class SpreadData(
-    val minuteAggregatedSpreads : MinuteAggregatedSpreads,
-    val timeWeightedSpreads: TimeWeightedSpreads
+    val minuteAggregatedValues : MinuteAggregatedValues,
+    val timeWeightedValues: TimeWeightedValues,
+    val candles: Candles,
 )
 
-typealias AmountToTimeWeightedSpreads = Map<Float, TimeWeightedSpreads>
+// TODO
+typealias AmountToTimeWeightedSpreads = Map<Float, Pair<TimeWeightedValues, Candles>>
 
 suspend fun countTimeWeightedMetricsAndLiquidity(
     orderBookFlow: Flow<OrderBook>,
@@ -63,7 +67,7 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
 ): AmountToTimeWeightedSpreads {
 
     val amountToSpreadsData = amountsList.associateWith {
-        SpreadData(MinuteAggregatedSpreads(), TimeWeightedSpreads())
+        SpreadData(MinuteAggregatedValues(), TimeWeightedValues(), Candles())
     }
 
     var lastMinute = -1L
@@ -82,8 +86,8 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                 val initialTime = minutesToMicros(lastMinute)
 
                 amountToSpreadsData.forEach { (_, spreadData) ->
-                    val minuteAggregatedSpreads = spreadData.minuteAggregatedSpreads
-                    val timeWeightedSpreads = spreadData.timeWeightedSpreads
+                    val minuteAggregatedSpreads = spreadData.minuteAggregatedValues
+                    val timeWeightedSpreads = spreadData.timeWeightedValues
 
                     timeWeightedSpreads.time.add(minute)
 
@@ -135,22 +139,19 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
 
                     val previousLastMidPrice = minuteAggregatedSpreads.previousMinuteLastMidPrice
                     if (previousLastMidPrice != null) {
-                        val (midPriceValue, _) =
-                            timeWeightedValueLiquidity(
-                                minuteAggregatedSpreads.midPrice,
-                                initialTime to previousLastBidAsk
-                            )
+                        val candle = countCandle(minuteAggregatedSpreads.midPrice.mapNotNull {
+                            it.second
+                        }, previousLastMidPrice)
 
-                        timeWeightedSpreads.midPrice.add(midPriceValue)
-                    } else {
-                        timeWeightedSpreads.midPrice.add(0.0F)
+                        spreadData.candles.add(candle, minute)
                     }
+
                 }
 
             }
 
             amountToSpreadsData.forEach { (_, spreadData) ->
-                val minuteAggregatedSpreads = spreadData.minuteAggregatedSpreads
+                val minuteAggregatedSpreads = spreadData.minuteAggregatedValues
                 /*
                 minuteAggregatedSpreads.previousMinuteLastAsk = minuteAggregatedSpreads.ask.lastOrNull()?.second
                 minuteAggregatedSpreads.previousMinuteLastBid = minuteAggregatedSpreads.bid.lastOrNull()?.second
@@ -161,7 +162,7 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                 minuteAggregatedSpreads.previousMinuteLastMidPrice =
                     minuteAggregatedSpreads.midPrice.lastOrNull()?.second
 
-                spreadData.minuteAggregatedSpreads.clear()
+                spreadData.minuteAggregatedValues.clear()
             }
 
         }
@@ -197,11 +198,11 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
             )
 
              */
-            spreadData.minuteAggregatedSpreads.bidAsk.add(
+            spreadData.minuteAggregatedValues.bidAsk.add(
                 timestamp to orderBook.getBidAskSpread(amount)
             )
 
-            spreadData.minuteAggregatedSpreads.midPrice.add(
+            spreadData.minuteAggregatedValues.midPrice.add(
                 timestamp to orderBook.getMidPrice(amount)
             )
         }
@@ -209,7 +210,7 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
     }
 
     return amountToSpreadsData.map { (amount, spreadData) ->
-        amount to spreadData.timeWeightedSpreads
+        amount to (spreadData.timeWeightedValues to spreadData.candles)
     }.toMap()
 }
 

@@ -44,10 +44,10 @@ fun main(args: Array<String>) {
         plot(timeWeightedTradesPlot(tradeMetrics, platformName, 35.0F))
 
         spreadMetrics.map { (amount, metrics) ->
-            plot(timeWeightedSpreadsPlot(amount, metrics, platformName))
+            plot(timeWeightedSpreadsPlot(amount, metrics.first, platformName))
         }
 
-        plot(timeWeightedMidPricesPlot(spreadMetrics, platformName))
+        plot(midPriceCandlestickPlot(spreadMetrics, platformName))
     }.makeFile()
 
 }
