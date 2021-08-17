@@ -17,14 +17,12 @@ fun main(args: Array<String>) {
 
     val config = loadConf(args)
 
-
-
     val plotAmount1 = 1.0F
     val plotAmount2 = 5.0F
     val plotAmount3 = 10.0F
 
-
     lateinit var spreadMetrics: AmountToTimeWeightedSpreads
+    lateinit var tradeMetrics: TimeWeightedTradesAmountsData
 
     runBlocking {
 
@@ -32,26 +30,33 @@ fun main(args: Array<String>) {
 
         val snapshotsList = mongoClient.loadSnapshots("BTC-USD").toList()
         val updatesFlow = mongoClient.loadUpdates("BTC-USD")
+        val unrefinedTradeFlow = mongoClient.loadTrades("BTC-USD")
 
-        val orderBookFlow = CoinbaseRefinedDataPublisher().orderBookFlow(snapshotsList, updatesFlow)
-
+        val orderBookFlow = CoinbaseRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
+        val tradeFlow = CoinbaseRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
         launch {
             spreadMetrics =
                 countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(plotAmount1, plotAmount2, plotAmount3))
         }
 
-
+        launch {
+            tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
+        }
 
     }
 
     val platformName = "Coinbase"
 
     Plotly.grid {
+
+        plot(timeWeightedTradesPlot(tradeMetrics, platformName, 35.0F))
+
         spreadMetrics.map { (amount, metrics) ->
-            plot(timeWeightedSpreadsPlot(amount, metrics, platformName))
+            plot(timeWeightedSpreadsPlot(amount, metrics.first, platformName))
         }
-        plot(timeWeightedLiquidityPlot(spreadMetrics, platformName))
+
+        //plot(timeWeightedLiquidityPlot(spreadMetrics, platformName))
     }.makeFile()
 
 

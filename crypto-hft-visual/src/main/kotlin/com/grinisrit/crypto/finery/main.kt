@@ -45,7 +45,7 @@ fun main(args: Array<String>) {
 
     Plotly.grid {
         spreadMetrics.map { (amount, metrics) ->
-            plot(timeWeightedSpreadsPlot(amount, metrics, platformName))
+            plot(timeWeightedSpreadsPlot(amount, metrics.first, platformName))
         }
         plot(timeWeightedLiquidityPlot(spreadMetrics, platformName))
     }.makeFile()

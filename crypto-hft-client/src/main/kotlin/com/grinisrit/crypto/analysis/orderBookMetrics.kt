@@ -9,16 +9,39 @@ fun OrderBook.getBidAskSpread(amount: Float): Float? {
     return if (askCost == null || bidCost == null) {
         null
     } else {
-        (askCost - bidCost) / amount
+        (askCost - bidCost) / (0.5F * (askCost + bidCost))
     }
 }
 
-fun OrderBook.getMidPrice(): Float = (asks.prices.first() + bids.prices.first()) / 2
+fun OrderBook.getMidPrice(amount: Float): Float? {
+    val askCost = asks.getCost(amount)
+    val bidCost = bids.getCost(amount)
 
-fun OrderBook.getAskSpread(amount: Float): Float? = asks.getCost(amount)?.let {
-    (it / amount) - getMidPrice()
+    return if (askCost == null || bidCost == null) {
+        null
+    } else {
+        0.5F * (askCost + bidCost)
+    }
 }
 
-fun OrderBook.getBidSpread(amount: Float): Float? = bids.getCost(amount)?.let {
-    getMidPrice() - (it / amount)
+fun OrderBook.getAskSpread(amount: Float): Float? {
+    val askCost = asks.getCost(amount)
+    val bidCost = bids.getCost(amount)
+
+    return if (askCost == null || bidCost == null) {
+        null
+    } else {
+        askCost / (0.5F * (askCost + bidCost)) - 1.0F
+    }
+}
+
+fun OrderBook.getBidSpread(amount: Float): Float? {
+    val askCost = asks.getCost(amount)
+    val bidCost = bids.getCost(amount)
+
+    return if (askCost == null || bidCost == null) {
+        null
+    } else {
+        1.0F - bidCost / (0.5F * (askCost + bidCost))
+    }
 }
