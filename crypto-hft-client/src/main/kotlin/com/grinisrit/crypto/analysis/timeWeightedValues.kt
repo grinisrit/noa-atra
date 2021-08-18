@@ -89,6 +89,10 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                     val minuteAggregatedSpreads = spreadData.minuteAggregatedValues
                     val timeWeightedSpreads = spreadData.timeWeightedValues
 
+                    if (minuteAggregatedSpreads.midPrice.size == 0){
+                        return@forEach
+                    }
+
                     timeWeightedSpreads.time.add(minute)
 
                     /*
@@ -138,6 +142,7 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                     }
 
                     val previousLastMidPrice = minuteAggregatedSpreads.previousMinuteLastMidPrice
+
                     if (previousLastMidPrice != null) {
                         val candle = countCandle(minuteAggregatedSpreads.midPrice.mapNotNull {
                             it.second
