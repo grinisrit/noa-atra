@@ -35,7 +35,7 @@ object KrakenRefinedDataPublisher : RefinedDataPublisherSU {
     }
 
     @OptIn(FlowPreview::class)
-    override fun tradeFlow(unrefinedDataFlow: unrefinedDataFlow): Flow<Trade> = // TODO()
+    override fun tradeFlow(unrefinedDataFlow: unrefinedDataFlow): Flow<Trade> =
         unrefinedDataFlow.flatMapConcat {
             (it.platform_data as KrakenTrade).tradeData.map { trade -> trade.toTrade() }.asFlow()
         }
