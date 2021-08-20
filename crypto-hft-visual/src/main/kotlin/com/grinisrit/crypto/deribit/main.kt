@@ -4,18 +4,19 @@ import com.grinisrit.crypto.analysis.*
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.*
 import com.grinisrit.crypto.loadConf
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.*
 
 @OptIn(UnstablePlotlyAPI::class)
-fun main(args: Array<String>){
+suspend fun main(args: Array<String>) = coroutineScope {
+
     val config = loadConf(args)
 
     val plotAmount1 = 1000.0F
 
-    val mongoClient = runBlocking {
-        DeribitMongoClient(config.mongodb.getMongoDBServer())
-    }
+    val mongoClient = DeribitMongoClient(config.mongodb.getMongoDBServer())
 
     val unrefinedOrderBookFlow = mongoClient.loadOrderBooks("BTC-PERPETUAL")
     val orderBookFlow = DeribitRefinedDataPublisher.orderBookFlow(unrefinedOrderBookFlow)
@@ -23,13 +24,8 @@ fun main(args: Array<String>){
     val unrefinedTradeFlow = mongoClient.loadTrades("BTC-PERPETUAL")
     val tradeFlow = DeribitRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
-    val spreadMetrics = runBlocking {
-        countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(plotAmount1))
-    }
-
-    val tradeMetrics = runBlocking {
-        countTimeWeightedTradesAmounts(tradeFlow)
-    }
+    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(plotAmount1))
+    val tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
 
     val platformName = "Deribit"
 
