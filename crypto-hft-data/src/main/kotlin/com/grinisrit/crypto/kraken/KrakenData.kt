@@ -13,6 +13,7 @@ interface KrakenData : PlatformData
 @Serializable
 class KrakenEvent : KrakenData, UnbookedEvent
 
+// TODO time!!!
 @Serializable
 data class TradeData(
     val price: Float,
@@ -66,6 +67,7 @@ object TradeSerializer :
     }
 }
 
+// TODO time!!!
 @Serializable
 data class OrderData(
     val price: Float,

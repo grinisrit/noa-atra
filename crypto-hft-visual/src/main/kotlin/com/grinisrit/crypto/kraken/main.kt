@@ -1,30 +1,34 @@
-package com.grinisrit.crypto.bitstamp
+package com.grinisrit.crypto.kraken
 
 import com.grinisrit.crypto.analysis.*
-import com.grinisrit.crypto.common.mongo.*
+import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.*
 import com.grinisrit.crypto.loadConf
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.*
 import space.kscience.plotly.*
 
-@OptIn(UnstablePlotlyAPI::class)
 fun main(args: Array<String>) {
-
     val config = loadConf(args)
 
     val plotAmount1 = 1.0F
     val plotAmount2 = 5.0F
     val plotAmount3 = 10.0F
 
+
     lateinit var spreadMetrics: AmountToTimeWeightedSpreads
     lateinit var tradeMetrics: TimeWeightedTradesAmountsData
 
     runBlocking {
-        val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
-        val unrefinedOrderBookFlow = mongoClient.loadOrderBooks("btcusd")
-        val orderBookFlow = BitstampRefinedDataPublisher.orderBookFlow(unrefinedOrderBookFlow)
-        val unrefinedTradeFlow = mongoClient.loadTrades("btcusd")
-        val tradeFlow = BitstampRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
+
+        val mongoClient = KrakenMongoClient(config.mongodb.getMongoDBServer())
+
+        val snapshotsList = mongoClient.loadSnapshots("XBT/USD").toList()
+        val updatesFlow = mongoClient.loadUpdates("XBT/USD")
+        val unrefinedTradeFlow = mongoClient.loadTrades("XBT/USD")
+
+        val orderBookFlow = KrakenRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
+        val tradeFlow = KrakenRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
         launch {
             spreadMetrics =
@@ -37,10 +41,9 @@ fun main(args: Array<String>) {
 
     }
 
-    val platformName = "Bitstamp"
+    val platformName = "Kraken"
 
     Plotly.grid {
-
         plot(timeWeightedTradesPlot(tradeMetrics, platformName, 35.0F))
 
         spreadMetrics.map { (amount, metrics) ->

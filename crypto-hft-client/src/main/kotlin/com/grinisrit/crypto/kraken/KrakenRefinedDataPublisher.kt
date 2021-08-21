@@ -1,14 +1,12 @@
-package com.grinisrit.crypto.coinbase
+package com.grinisrit.crypto.kraken
 
-import com.grinisrit.crypto.common.unrefinedDataFlow
-import com.grinisrit.crypto.common.RefinedDataPublisherSU
-import com.grinisrit.crypto.common.TimestampedMarketData
-import com.grinisrit.crypto.common.models.OrderBook
-import com.grinisrit.crypto.common.models.Trade
+import com.grinisrit.crypto.common.*
+import com.grinisrit.crypto.common.models.*
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import java.time.Instant
 
-object CoinbaseRefinedDataPublisher: RefinedDataPublisherSU {
+object KrakenRefinedDataPublisher : RefinedDataPublisherSU {
 
     override fun orderBookFlow(
         snapshotsList: List<TimestampedMarketData>,
@@ -16,10 +14,10 @@ object CoinbaseRefinedDataPublisher: RefinedDataPublisherSU {
     ): Flow<OrderBook> = flow {
         val snapshotsDatetime = mutableListOf<Instant>()
         val snapshotsOrderBooks = snapshotsList.filter {
-            it.platform_data is CoinbaseSnapshot // TODO()
+            it.platform_data is KrakenBookSnapshot // TODO()
         }.map {
             snapshotsDatetime.add(it.receiving_datetime)
-            (it.platform_data as CoinbaseSnapshot).toOrderBook()
+            (it.platform_data as KrakenBookSnapshot).toOrderBook(it.receiving_datetime)
         }
         var curIndex = 0
         var orderBook = snapshotsOrderBooks[curIndex]
@@ -31,15 +29,16 @@ object CoinbaseRefinedDataPublisher: RefinedDataPublisherSU {
                 orderBook = snapshotsOrderBooks[curIndex]
                 nextDatetime = snapshotsDatetime.getOrNull(curIndex + 1)
             }
-            orderBook = orderBook.update(it.platform_data as CoinbaseL2Update)
+            orderBook = orderBook.update(it.platform_data as KrakenBookUpdate, it.receiving_datetime)
             emit(orderBook)
         }
     }
 
+    @OptIn(FlowPreview::class)
     override fun tradeFlow(unrefinedDataFlow: unrefinedDataFlow): Flow<Trade> =
-        unrefinedDataFlow.filter {
-            it.platform_data is CoinbaseMatch
-        }.map {
-            (it.platform_data as CoinbaseMatch).toTrade()
+        unrefinedDataFlow.flatMapConcat {
+            (it.platform_data as KrakenTrade).tradeData.map { trade -> trade.toTrade() }.asFlow()
         }
 }
+
+

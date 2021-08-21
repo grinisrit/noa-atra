@@ -1,13 +1,18 @@
-package com.grinisrit.crypto.bitstamp
+package com.grinisrit.crypto.binance
+
 
 import com.grinisrit.crypto.analysis.*
-import com.grinisrit.crypto.common.mongo.*
+import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.*
 import com.grinisrit.crypto.loadConf
-import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.*
 
-@OptIn(UnstablePlotlyAPI::class)
+
 fun main(args: Array<String>) {
 
     val config = loadConf(args)
@@ -20,11 +25,15 @@ fun main(args: Array<String>) {
     lateinit var tradeMetrics: TimeWeightedTradesAmountsData
 
     runBlocking {
-        val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
-        val unrefinedOrderBookFlow = mongoClient.loadOrderBooks("btcusd")
-        val orderBookFlow = BitstampRefinedDataPublisher.orderBookFlow(unrefinedOrderBookFlow)
-        val unrefinedTradeFlow = mongoClient.loadTrades("btcusd")
-        val tradeFlow = BitstampRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
+
+        val mongoClient = BinanceMongoClient(config.mongodb.getMongoDBServer())
+
+        val snapshotsList = mongoClient.loadSnapshots("BTCUSDT").toList()
+        val updatesFlow = mongoClient.loadUpdates("BTCUSDT")
+        val unrefinedTradeFlow = mongoClient.loadTrades("BTCUSDT")
+
+        val orderBookFlow = BinanceRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
+        val tradeFlow = BinanceRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
         launch {
             spreadMetrics =
@@ -35,9 +44,11 @@ fun main(args: Array<String>) {
             tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
         }
 
+
+
     }
 
-    val platformName = "Bitstamp"
+    val platformName = "Binance"
 
     Plotly.grid {
 
@@ -47,7 +58,8 @@ fun main(args: Array<String>) {
             plot(timeWeightedSpreadsPlot(amount, metrics.first, platformName))
         }
 
-        plot(midPriceCandlestickPlot(spreadMetrics, platformName))
+        plot(midPriceCandlestickPlot(spreadMetrics.filter { it.key == 1.0F }, platformName))
     }.makeFile()
+
 
 }
