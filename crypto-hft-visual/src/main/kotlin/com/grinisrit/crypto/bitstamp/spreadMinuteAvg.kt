@@ -8,34 +8,25 @@ import kotlinx.coroutines.*
 import space.kscience.plotly.*
 
 @OptIn(UnstablePlotlyAPI::class)
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) = coroutineScope {
 
     val config = loadConf(args)
 
-    val plotAmount1 = 1.0F
-    val plotAmount2 = 5.0F
-    val plotAmount3 = 10.0F
+    val amounts = listOf(1F, 5F, 10F)
 
-    lateinit var spreadMetrics: AmountToTimeWeightedSpreads
-    lateinit var tradeMetrics: TimeWeightedTradesAmountsData
 
-    runBlocking {
-        val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
-        val unrefinedOrderBookFlow = mongoClient.loadOrderBooks("btcusd")
-        val orderBookFlow = BitstampRefinedDataPublisher.orderBookFlow(unrefinedOrderBookFlow)
-        val unrefinedTradeFlow = mongoClient.loadTrades("btcusd")
-        val tradeFlow = BitstampRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
+    val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
+    val unrefinedOrderBookFlow = mongoClient.loadOrderBooks("btcusd")
+    val orderBookFlow = BitstampRefinedDataPublisher.orderBookFlow(unrefinedOrderBookFlow)
+    val unrefinedTradeFlow = mongoClient.loadTrades("btcusd")
+    val tradeFlow = BitstampRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
-        launch {
-            spreadMetrics =
-                countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(plotAmount1, plotAmount2, plotAmount3))
-        }
 
-        launch {
-            tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
-        }
+    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, amounts)
 
-    }
+
+    val tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
+
 
     val platformName = "Bitstamp"
 

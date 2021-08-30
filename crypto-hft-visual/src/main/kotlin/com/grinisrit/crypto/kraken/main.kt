@@ -8,38 +8,24 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.*
 import space.kscience.plotly.*
 
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) = coroutineScope {
     val config = loadConf(args)
 
-    val plotAmount1 = 1.0F
-    val plotAmount2 = 5.0F
-    val plotAmount3 = 10.0F
+    val amounts = listOf(1F, 5F, 10F)
 
+    val mongoClient = KrakenMongoClient(config.mongodb.getMongoDBServer())
 
-    lateinit var spreadMetrics: AmountToTimeWeightedSpreads
-    lateinit var tradeMetrics: TimeWeightedTradesAmountsData
+    val snapshotsList = mongoClient.loadSnapshots("XBT/USD").toList()
+    val updatesFlow = mongoClient.loadUpdates("XBT/USD")
+    val unrefinedTradeFlow = mongoClient.loadTrades("XBT/USD")
 
-    runBlocking {
+    val orderBookFlow = KrakenRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
+    val tradeFlow = KrakenRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
-        val mongoClient = KrakenMongoClient(config.mongodb.getMongoDBServer())
+    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, amounts)
 
-        val snapshotsList = mongoClient.loadSnapshots("XBT/USD").toList()
-        val updatesFlow = mongoClient.loadUpdates("XBT/USD")
-        val unrefinedTradeFlow = mongoClient.loadTrades("XBT/USD")
+    val tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
 
-        val orderBookFlow = KrakenRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
-        val tradeFlow = KrakenRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
-
-        launch {
-            spreadMetrics =
-                countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(plotAmount1, plotAmount2, plotAmount3))
-        }
-
-        launch {
-            tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
-        }
-
-    }
 
     val platformName = "Kraken"
 

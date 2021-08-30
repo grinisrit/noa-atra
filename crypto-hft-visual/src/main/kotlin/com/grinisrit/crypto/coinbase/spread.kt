@@ -5,6 +5,7 @@ import com.grinisrit.crypto.analysis.*
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.*
 import com.grinisrit.crypto.loadConf
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
 
 import kotlinx.coroutines.flow.toList
@@ -13,38 +14,27 @@ import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.*
 
 
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) = coroutineScope {
 
     val config = loadConf(args)
 
-    val plotAmount1 = 1.0F
-    val plotAmount2 = 5.0F
-    val plotAmount3 = 10.0F
+    val amounts = listOf(1F, 5F, 10F)
 
-    lateinit var spreadMetrics: AmountToTimeWeightedSpreads
-    lateinit var tradeMetrics: TimeWeightedTradesAmountsData
 
-    runBlocking {
+    val mongoClient = CoinbaseMongoClient(config.mongodb.getMongoDBServer())
 
-        val mongoClient = CoinbaseMongoClient(config.mongodb.getMongoDBServer())
+    val snapshotsList = mongoClient.loadSnapshots("BTC-USD").toList()
+    val updatesFlow = mongoClient.loadUpdates("BTC-USD")
+    val unrefinedTradeFlow = mongoClient.loadTrades("BTC-USD")
 
-        val snapshotsList = mongoClient.loadSnapshots("BTC-USD").toList()
-        val updatesFlow = mongoClient.loadUpdates("BTC-USD")
-        val unrefinedTradeFlow = mongoClient.loadTrades("BTC-USD")
+    val orderBookFlow = CoinbaseRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
+    val tradeFlow = CoinbaseRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
-        val orderBookFlow = CoinbaseRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
-        val tradeFlow = CoinbaseRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
-        launch {
-            spreadMetrics =
-                countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(plotAmount1, plotAmount2, plotAmount3))
-        }
+    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, amounts)
 
-        launch {
-            tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
-        }
+    val tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
 
-    }
 
     val platformName = "Finery"
 
