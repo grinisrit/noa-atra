@@ -6,45 +6,31 @@ import com.grinisrit.crypto.analysis.*
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.*
 import com.grinisrit.crypto.loadConf
-
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.*
 
 
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) = coroutineScope {
 
     val config = loadConf(args)
 
-    val plotAmount1 = 1.0F
-    val plotAmount2 = 5.0F
-    val plotAmount3 = 10.0F
+    val amounts = listOf(1, 5, 10)
 
-    lateinit var spreadMetrics: AmountToTimeWeightedSpreads
-    lateinit var tradeMetrics: TimeWeightedTradesAmountsData
+    val mongoClient = CoinbaseMongoClient(config.mongodb.getMongoDBServer())
 
-    runBlocking {
+    val snapshotsList = mongoClient.loadSnapshots("BTC-USD").toList()
+    val updatesFlow = mongoClient.loadUpdates("BTC-USD")
+    val unrefinedTradeFlow = mongoClient.loadTrades("BTC-USD")
 
-        val mongoClient = CoinbaseMongoClient(config.mongodb.getMongoDBServer())
+    val orderBookFlow = CoinbaseRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
+    val tradeFlow = CoinbaseRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
-        val snapshotsList = mongoClient.loadSnapshots("BTC-USD").toList()
-        val updatesFlow = mongoClient.loadUpdates("BTC-USD")
-        val unrefinedTradeFlow = mongoClient.loadTrades("BTC-USD")
 
-        val orderBookFlow = CoinbaseRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
-        val tradeFlow = CoinbaseRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
+    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, amounts)
 
-        launch {
-            spreadMetrics =
-                countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(plotAmount1, plotAmount2, plotAmount3))
-        }
+    val tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
 
-        launch {
-            tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
-        }
-
-    }
 
     val platformName = "Coinbase"
 

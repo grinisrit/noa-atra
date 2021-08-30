@@ -59,11 +59,11 @@ class SpreadData(
 )
 
 // TODO
-typealias AmountToTimeWeightedSpreads = Map<Float, Pair<TimeWeightedValues, Candles>>
+typealias AmountToTimeWeightedSpreads = Map<Int, Pair<TimeWeightedValues, Candles>>
 
 suspend fun countTimeWeightedMetricsAndLiquidity(
     orderBookFlow: Flow<OrderBook>,
-    amountsList: List<Float>
+    amountsList: List<Int>
 ): AmountToTimeWeightedSpreads {
 
     val amountToSpreadsData = amountsList.associateWith {
@@ -137,8 +137,11 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                         timeWeightedSpreads.bidAsk.add(bidAskValue)
                         timeWeightedSpreads.liquidity.add(liquidityValue)
                     } else {
+                        /*
                         timeWeightedSpreads.bidAsk.add(0.0F)
                         timeWeightedSpreads.liquidity.add(0.0F)
+
+                         */
                     }
 
                     val previousLastMidPrice = minuteAggregatedSpreads.previousMinuteLastMidPrice
@@ -193,7 +196,8 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
         }
 
 
-        amountToSpreadsData.forEach { (amount, spreadData) ->
+        amountToSpreadsData.forEach { (amountInt, spreadData) ->
+            val amount = amountInt.toFloat()
             /*
             spreadData.minuteAggregatedSpreads.ask.add(
                 timestamp to orderBook.getAskSpread(amount)

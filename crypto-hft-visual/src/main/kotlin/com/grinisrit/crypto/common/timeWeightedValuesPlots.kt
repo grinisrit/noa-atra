@@ -9,7 +9,7 @@ const val bpMultiplier = 10000
 
 // TODO??
 fun timeWeightedSpreadsPlot(
-    amount: Float,
+    amount: Int,
     timeWeightedValues: TimeWeightedValues,
     platformName: String
 ): Plot {

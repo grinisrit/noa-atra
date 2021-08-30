@@ -7,6 +7,7 @@ import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.timeWeightedLiquidityPlot
 import com.grinisrit.crypto.common.timeWeightedSpreadsPlot
 import com.grinisrit.crypto.loadConf
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -15,31 +16,19 @@ import space.kscience.plotly.Plotly
 import space.kscience.plotly.grid
 import space.kscience.plotly.makeFile
 
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) = coroutineScope {
     val config = loadConf(args)
 
-    val plotAmount1 = 1.0F
-    val plotAmount2 = 5.0F
-    val plotAmount3 = 10.0F
+    val amounts = listOf(1, 5, 10)
 
+    val mongoClient = FineryMongoClient(config.mongodb.getMongoDBServer())
 
-    lateinit var spreadMetrics: AmountToTimeWeightedSpreads
+    val snapshotsList = mongoClient.loadSnapshots("BTC-USD").toList()
+    val updatesFlow = mongoClient.loadUpdates("BTC-USD")
 
-    runBlocking {
+    val orderBookFlow = FineryRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
 
-        val mongoClient = FineryMongoClient(config.mongodb.getMongoDBServer())
-
-        val snapshotsList = mongoClient.loadSnapshots("BTC-USD").toList()
-        val updatesFlow = mongoClient.loadUpdates("BTC-USD")
-
-        val orderBookFlow = FineryRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
-
-        launch {
-            spreadMetrics =
-                countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(plotAmount1, plotAmount2, plotAmount3))
-        }
-
-    }
+    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, amounts)
 
     val platformName = "Finery Markets"
 
