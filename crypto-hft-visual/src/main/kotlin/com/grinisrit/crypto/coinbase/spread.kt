@@ -1,16 +1,13 @@
 package com.grinisrit.crypto.coinbase
 
 
+
 import com.grinisrit.crypto.analysis.*
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.*
 import com.grinisrit.crypto.loadConf
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
-
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.*
 
 
@@ -36,7 +33,7 @@ suspend fun main(args: Array<String>) = coroutineScope {
     val tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
 
 
-    val platformName = "Finery"
+    val platformName = "Coinbase"
 
     Plotly.grid {
 
