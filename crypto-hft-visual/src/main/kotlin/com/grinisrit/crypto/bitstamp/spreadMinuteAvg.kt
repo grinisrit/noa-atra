@@ -20,9 +20,7 @@ suspend fun main(args: Array<String>) = coroutineScope {
     val unrefinedTradeFlow = mongoClient.loadTrades("btcusd")
     val tradeFlow = BitstampRefinedDataPublisher.tradeFlow(unrefinedTradeFlow)
 
-
     val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, amounts)
-
 
     val tradeMetrics = countTimeWeightedTradesAmounts(tradeFlow)
 
