@@ -22,7 +22,6 @@ val jNoaLocation: String = "$home/.konan/third-party/noa-v0.0.1/cpp-build/jnoa"
 
 tasks {
     withType<Test>{
-        systemProperty("java.library.path",
-            "$home/.konan/third-party/noa-v0.0.1/cpp-build/jnoa")
+        systemProperty("java.library.path", jNoaLocation)
     }
 }

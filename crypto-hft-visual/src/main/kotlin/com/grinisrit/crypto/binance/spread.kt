@@ -17,9 +17,9 @@ fun main(args: Array<String>) {
 
     val config = loadConf(args)
 
-    val plotAmount1 = 1.0F
-    val plotAmount2 = 5.0F
-    val plotAmount3 = 10.0F
+    val plotAmount1 = 1
+    val plotAmount2 = 5
+    val plotAmount3 = 10
 
     lateinit var spreadMetrics: AmountToTimeWeightedSpreads
     lateinit var tradeMetrics: TimeWeightedTradesAmountsData
@@ -58,7 +58,7 @@ fun main(args: Array<String>) {
             plot(timeWeightedSpreadsPlot(amount, metrics.first, platformName))
         }
 
-        plot(midPriceCandlestickPlot(spreadMetrics.filter { it.key == 1.0F }, platformName))
+        plot(midPriceCandlestickPlot(spreadMetrics.filter { it.key == 1 }, platformName))
     }.makeFile()
 
 

@@ -14,7 +14,7 @@ suspend fun main(args: Array<String>) = coroutineScope {
 
     val config = loadConf(args)
 
-    val plotAmount1 = 1000.0F
+    val plotAmount1 = 1000
 
     val mongoClient = DeribitMongoClient(config.mongodb.getMongoDBServer())
 
