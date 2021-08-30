@@ -30,8 +30,8 @@ You can configure it in [conf.yaml](conf.yaml) to get the LOB data feed from the
 exchanges and liquidity aggregators:
 
 * [Coinbase](https://docs.pro.coinbase.com/#websocket-feed)
-* [Kraken](https://docs.kraken.com/websockets/#message-book/)
-* [Bitstamp](https://www.bitstamp.net/websocket/v2/) 
+* [Kraken](https://docs.kraken.com/websockets/#message-book)
+* [Bitstamp](https://www.bitstamp.net/websocket/v2) 
 * [Binance](https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md)
 * [Deribit](https://docs.deribit.com/?python#subscriptions)
 * [Finery Markets](https://faq.finerymarkets.com/api-specifications)
@@ -39,7 +39,8 @@ exchanges and liquidity aggregators:
 for any of the traded instruments available on the platforms.
 
 Once you've collected a bit of data you can run the analysis with
-the models we provide in [crypto-hft-analytics](crypto-hft-analytics). 
+the models we provide in [crypto-hft-client](crypto-hft-client) 
+and  [crypto-hft-analytics](crypto-hft-analytics). 
 
 The module [crypto-hft-visual](crypto-hft-visual) 
 provides the visualisation apps.
@@ -56,4 +57,4 @@ We kindly acknowledge support from
 [GrinisRIT ltd.](https://www.grinisrit.com/) and
 [JetBrains Research](https://research.jetbrains.org/).
 
-(c) 2021 noa-atra-examples contributors
+(c) 2021 GrinisRIT ltd. and contributors
