@@ -137,8 +137,11 @@ suspend fun countTimeWeightedMetricsAndLiquidity(
                         timeWeightedSpreads.bidAsk.add(bidAskValue)
                         timeWeightedSpreads.liquidity.add(liquidityValue)
                     } else {
+                        /*
                         timeWeightedSpreads.bidAsk.add(0.0F)
                         timeWeightedSpreads.liquidity.add(0.0F)
+
+                         */
                     }
 
                     val previousLastMidPrice = minuteAggregatedSpreads.previousMinuteLastMidPrice
