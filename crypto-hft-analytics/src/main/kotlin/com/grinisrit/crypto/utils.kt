@@ -5,6 +5,8 @@ import com.grinisrit.crypto.analysis.TimeWeightedValues
 import space.kscience.kmath.noa.NoaFloat
 import space.kscience.kmath.noa.NoaLong
 
+val DATE = 20210830
+
 /*
 to read that in python do:
 import torch

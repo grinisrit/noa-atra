@@ -16,8 +16,8 @@ suspend fun main(args: Array<String>) = coroutineScope {
     val amount = 10
     val symbol = "BTC-USD"
 
-    val bidAskPt = "coinbaseBidAsk$amount$symbol.pt"
-    val timePt = "coinbaseTime$amount$symbol.pt"
+    val bidAskPt = "../cryptofed/bidask/$DATE/coinbaseBidAsk${amount}BTCUSD.pt"
+    val timePt = "../cryptofed/bidask/$DATE/coinbaseTime${amount}BTCUSD.pt"
 
     val mongoClient = CoinbaseMongoClient(config.mongodb.getMongoDBServer())
     val snapshotsList = mongoClient.loadSnapshots(symbol).toList()

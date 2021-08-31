@@ -1,9 +1,9 @@
-package com.grinisrit.crypto.bitstamp
+package com.grinisrit.crypto
 
 import com.grinisrit.crypto.analysis.countTimeWeightedMetricsAndLiquidity
+import com.grinisrit.crypto.bitstamp.BitstampMongoClient
+import com.grinisrit.crypto.bitstamp.BitstampRefinedDataPublisher
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
-import com.grinisrit.crypto.loadConf
-import com.grinisrit.crypto.saveBidAskMetric
 import kotlinx.coroutines.coroutineScope
 
 
@@ -16,8 +16,8 @@ suspend fun main(args: Array<String>) = coroutineScope {
     val amount = 10
     val symbol = "btcusd"
 
-    val bidAskPt = "bitstampBidAsk$amount$symbol.pt"
-    val timePt = "bitstampTime$amount$symbol.pt"
+    val bidAskPt = "../cryptofed/bidask/$DATE/bitstampBidAsk${amount}BTCUSD.pt"
+    val timePt = "../cryptofed/bidask/$DATE/bitstampTime${amount}BTCUSD.pt"
 
     val mongoClient = BitstampMongoClient(config.mongodb.getMongoDBServer())
     val unrefinedOrderBookFlow = mongoClient.loadOrderBooks(symbol)

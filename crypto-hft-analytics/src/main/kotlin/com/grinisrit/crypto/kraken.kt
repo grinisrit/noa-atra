@@ -15,8 +15,8 @@ suspend fun main(args: Array<String>) = coroutineScope {
     val amount = 10
     val symbol = "XBT/USD"
 
-    val bidAskPt = "krakenBidAsk$amount${symbol.replace("/", "")}.pt"
-    val timePt = "krakenTime$amount${symbol.replace("/", "")}.pt"
+    val bidAskPt = "../cryptofed/bidask/$DATE/krakenBidAsk${amount}BTCUSD.pt"
+    val timePt = "../cryptofed/bidask/$DATE/krakenTime${amount}BTCUSD.pt"
 
     val mongoClient = KrakenMongoClient(config.mongodb.getMongoDBServer())
     val snapshotsList = mongoClient.loadSnapshots(symbol).toList()
