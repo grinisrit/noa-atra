@@ -23,7 +23,7 @@ suspend fun main(args: Array<String>) = coroutineScope {
     val unrefinedOrderBookFlow = mongoClient.loadOrderBooks(symbol)
     val orderBookFlow = BitstampRefinedDataPublisher.orderBookFlow(unrefinedOrderBookFlow)
 
-    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(amount))[amount]?.first!!
+    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(amount))[amount]!!
 
     saveBidAskMetric(spreadMetrics, bidAskPt, timePt)
 

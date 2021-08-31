@@ -23,7 +23,7 @@ suspend fun main(args: Array<String>) = coroutineScope {
     val snapshotsList = mongoClient.loadSnapshots(symbol).toList()
     val updatesFlow = mongoClient.loadUpdates(symbol)
     val orderBookFlow = CoinbaseRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
-    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(amount))[amount]?.first!!
+    val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(amount))[amount]!!
 
     saveBidAskMetric(spreadMetrics, bidAskPt, timePt)
 
