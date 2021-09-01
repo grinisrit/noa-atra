@@ -8,7 +8,8 @@ import org.litote.kmongo.*
 class BinanceMongoClient(server: MongoDBServer) {
     private val database = server.client.getDatabase(PlatformName.binance.toString())
 
-    fun loadSnapshots(symbol: String): unrefinedDataFlow {
+    fun loadSnapshots(symbolRaw: String): unrefinedDataFlow {
+        val symbol = symbolRaw.uppercase()
         val collection = database.getCollection<TimestampedSnapshot>(BinanceDataType.snapshot.toString())
         return collection.find(
             TimestampedSnapshot::platform_data / BinanceSnapshot::symbol eq symbol
@@ -17,7 +18,8 @@ class BinanceMongoClient(server: MongoDBServer) {
         }
     }
 
-    fun loadUpdates(symbol: String): unrefinedDataFlow {
+    fun loadUpdates(symbolRaw: String): unrefinedDataFlow {
+        val symbol = symbolRaw.uppercase()
         val collection = database.getCollection<TimestampedUpdate>(BinanceDataType.update.toString())
         return collection.find(
             TimestampedSnapshot::platform_data / BinanceSnapshot::symbol eq symbol

@@ -7,22 +7,36 @@ import com.grinisrit.crypto.kraken.KrakenRefinedDataPublisher
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.toList
 
-// Make sure to add to the VM options:
-// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
-suspend fun main(args: Array<String>) = coroutineScope {
-    val config = loadConf(args)
 
-    val amount = 10
-    val symbol = "XBT/USD"
+private val defaultKrakenAmounts = mapOf(
+    "ETH/USD" to 100,
+    "ETH/XBT" to 100,
+    "XBT/USD" to 10,
+    "XBT/EUR" to 10,
+    "ETH/EUR" to 100
+)
 
-    val bidAskPt = "../cryptofed/bidask/$DATE/krakenBidAsk${amount}BTCUSD.pt"
-    val timePt = "../cryptofed/bidask/$DATE/krakenTime${amount}BTCUSD.pt"
-
-    val mongoClient = KrakenMongoClient(config.mongodb.getMongoDBServer())
+suspend fun computeKrakenSpreads(symbol: String, amount: Int, mongoClient: KrakenMongoClient) {
     val snapshotsList = mongoClient.loadSnapshots(symbol).toList()
     val updatesFlow = mongoClient.loadUpdates(symbol)
     val orderBookFlow = KrakenRefinedDataPublisher.orderBookFlow(snapshotsList, updatesFlow)
     val spreadMetrics = countTimeWeightedMetricsAndLiquidity(orderBookFlow, listOf(amount))[amount]!!
+    val spreadsPt = "kraken_${amount}${symbol.replace("/", "-")}_spreads.pt"
 
-    saveBidAskMetric(spreadMetrics, bidAskPt, timePt)
+    saveSpreads(spreadMetrics, spreadsPt)
+}
+
+// Make sure to add to the VM options:
+// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
+suspend fun main(args: Array<String>) = coroutineScope {
+    val config = loadConf(args)
+    val mongoClient = KrakenMongoClient(config.mongodb.getMongoDBServer())
+
+    with(config.platforms.kraken) {
+        symbols.forEach { symbol ->
+            defaultKrakenAmounts[symbol]?.let {
+                computeKrakenSpreads(symbol, it, mongoClient)
+            }
+        }
+    }
 }

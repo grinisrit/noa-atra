@@ -10,5 +10,4 @@ class TestKMathNoa {
         println("CUDA found: ${cudaAvailable()}")
     }
 
-
 }
