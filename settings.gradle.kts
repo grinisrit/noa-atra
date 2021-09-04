@@ -6,7 +6,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "noa-atra-examples"
+rootProject.name = "noa-atra"
 
 include(":crypto-hft-data")
 include(":crypto-hft-visual")
