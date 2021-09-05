@@ -25,12 +25,7 @@ suspend fun computeFinerySpreads(symbol: String, amount: Int, mongoClient: Finer
     saveSpreads(spreadMetrics, spreadsPt)
 }
 
-
-// Make sure to add to the VM options:
-// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
-suspend fun main(args: Array<String>) = coroutineScope {
-
-    val config = loadConf(args)
+suspend fun saveFinerySpreads(config: ConfYAMl) = coroutineScope {
     val mongoClient = FineryMongoClient(config.mongodb.getMongoDBServer())
 
     with(config.platforms.finery) {
@@ -41,4 +36,11 @@ suspend fun main(args: Array<String>) = coroutineScope {
         }
     }
 
+}
+
+// Make sure to add to the VM options:
+// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
+suspend fun main(args: Array<String>) = coroutineScope {
+    val config = loadConf(args)
+    saveFinerySpreads(config)
 }

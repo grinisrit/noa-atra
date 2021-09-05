@@ -26,12 +26,9 @@ suspend fun computeKrakenSpreads(symbol: String, amount: Int, mongoClient: Krake
     saveSpreads(spreadMetrics, spreadsPt)
 }
 
-// Make sure to add to the VM options:
-// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
-suspend fun main(args: Array<String>) = coroutineScope {
-    val config = loadConf(args)
-    val mongoClient = KrakenMongoClient(config.mongodb.getMongoDBServer())
 
+suspend fun saveKrakenSpreads(config: ConfYAMl) = coroutineScope {
+    val mongoClient = KrakenMongoClient(config.mongodb.getMongoDBServer())
     with(config.platforms.kraken) {
         symbols.forEach { symbol ->
             defaultKrakenAmounts[symbol]?.let {
@@ -40,3 +37,11 @@ suspend fun main(args: Array<String>) = coroutineScope {
         }
     }
 }
+
+// Make sure to add to the VM options:
+// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
+suspend fun main(args: Array<String>) = coroutineScope {
+    val config = loadConf(args)
+    saveKrakenSpreads(config)
+}
+

@@ -26,10 +26,7 @@ suspend fun computeCoinbaseSpreads(symbol: String, amount: Int, mongoClient: Coi
     saveSpreads(spreadMetrics, spreadsPt)
 }
 
-// Make sure to add to the VM options:
-// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
-suspend fun main(args: Array<String>) = coroutineScope {
-    val config = loadConf(args)
+suspend fun saveCoinbaseSpreads(config: ConfYAMl) = coroutineScope {
     val mongoClient = CoinbaseMongoClient(config.mongodb.getMongoDBServer())
 
     with(config.platforms.coinbase) {
@@ -40,4 +37,11 @@ suspend fun main(args: Array<String>) = coroutineScope {
         }
     }
 
+}
+
+// Make sure to add to the VM options:
+// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
+suspend fun main(args: Array<String>) = coroutineScope {
+    val config = loadConf(args)
+    saveCoinbaseSpreads(config)
 }

@@ -26,11 +26,8 @@ suspend fun computeBinanceSpreads(symbol: String, amount: Int, mongoClient: Bina
 }
 
 
-// Make sure to add to the VM options:
-// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
-suspend fun main(args: Array<String>) = coroutineScope {
+suspend fun saveBinanceSpreads(config: ConfYAMl) = coroutineScope {
 
-    val config = loadConf(args)
     val mongoClient = BinanceMongoClient(config.mongodb.getMongoDBServer())
 
     with(config.platforms.binance) {
@@ -42,3 +39,12 @@ suspend fun main(args: Array<String>) = coroutineScope {
     }
 
 }
+
+// Make sure to add to the VM options:
+// -Djava.library.path=${HOME}/.konan/third-party/noa-v0.0.1/cpp-build/jnoa
+suspend fun main(args: Array<String>) = coroutineScope {
+
+    val config = loadConf(args)
+    saveBinanceSpreads(config)
+}
+
