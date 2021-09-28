@@ -39,8 +39,7 @@ exchanges and liquidity aggregators:
 for any of the traded instruments available on the platforms.
 
 Once you've collected a bit of data you can run the analysis with
-the models we provide in [crypto-hft-client](crypto-hft-client) 
-and  [crypto-hft-analytics](crypto-hft-analytics). 
+the models we provide in [crypto-hft-analytics](crypto-hft-analytics). 
 
 The module [crypto-hft-visual](crypto-hft-visual) 
 provides the visualisation apps.

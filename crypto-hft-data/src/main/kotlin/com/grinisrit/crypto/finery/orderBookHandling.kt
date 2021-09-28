@@ -51,16 +51,16 @@ fun OrderBook.update(update: FineryUpdates, datetime: Instant): OrderBook {
     update.data.asks.forEach {
         orderBook = orderBook.updateAsks(
             it.action.toAction(),
-            it.price / contractSize,
-            it.size / contractSize,
+            it.price / com.grinisrit.crypto.finery.contractSize,
+            it.size / com.grinisrit.crypto.finery.contractSize,
             timestamp
         )
     }
     update.data.bids.forEach {
         orderBook = orderBook.updateBids(
             it.action.toAction(),
-            it.price / contractSize,
-            it.size / contractSize,
+            it.price / com.grinisrit.crypto.finery.contractSize,
+            it.size / com.grinisrit.crypto.finery.contractSize,
             timestamp
         )
     }

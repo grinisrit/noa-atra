@@ -6,11 +6,8 @@ import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.*
 import com.grinisrit.crypto.loadConf
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
 
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.*
 
 

@@ -1,7 +1,5 @@
 package com.grinisrit.crypto.common.models
 
-import kotlin.math.max
-
 sealed class OrdersArray(
     val prices: FloatArray,
     val amounts: FloatArray,

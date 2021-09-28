@@ -10,7 +10,6 @@ repositories {
 dependencies {
 
     implementation(project(":crypto-hft-data"))
-    implementation(project(":crypto-hft-client"))
     implementation("space.kscience:kmath-noa:0.3.0-dev-14")
     implementation("space.kscience:kmath-tensors:0.3.0-dev-14")
 

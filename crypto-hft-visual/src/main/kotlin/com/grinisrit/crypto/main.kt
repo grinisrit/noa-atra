@@ -1,8 +1,6 @@
 package com.grinisrit.crypto
 
 import com.grinisrit.crypto.analysis.countTimeWeightedMetricsAndLiquidity
-import com.grinisrit.crypto.analysis.countTimeWeightedTradesAmounts
-import com.grinisrit.crypto.analysis.instantOfEpochMicro
 import com.grinisrit.crypto.analysis.instantOfEpochMinute
 import com.grinisrit.crypto.binance.BinanceMongoClient
 import com.grinisrit.crypto.binance.BinanceRefinedDataPublisher
@@ -11,24 +9,14 @@ import com.grinisrit.crypto.bitstamp.BitstampRefinedDataPublisher
 import com.grinisrit.crypto.coinbase.CoinbaseMongoClient
 import com.grinisrit.crypto.coinbase.CoinbaseRefinedDataPublisher
 import com.grinisrit.crypto.common.bpMultiplier
-import com.grinisrit.crypto.common.midPriceCandlestickPlot
 import com.grinisrit.crypto.common.mongo.getMongoDBServer
-import com.grinisrit.crypto.common.timeWeightedSpreadsPlot
-import com.grinisrit.crypto.common.timeWeightedTradesPlot
 import com.grinisrit.crypto.deribit.*
 import com.grinisrit.crypto.finery.*
 import com.grinisrit.crypto.kraken.*
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import space.kscience.dataforge.meta.invoke
-import space.kscience.dataforge.meta.set
 import space.kscience.plotly.*
-
-import space.kscience.plotly.models.Bar
-import space.kscience.plotly.models.BarMode
-import space.kscience.plotly.palettes.Xkcd
-import java.time.Instant
 
 
 @OptIn(UnstablePlotlyAPI::class)

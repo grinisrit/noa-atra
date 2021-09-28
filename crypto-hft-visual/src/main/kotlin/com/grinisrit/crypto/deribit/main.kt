@@ -5,8 +5,6 @@ import com.grinisrit.crypto.common.mongo.getMongoDBServer
 import com.grinisrit.crypto.common.*
 import com.grinisrit.crypto.loadConf
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import space.kscience.plotly.*
 
 @OptIn(UnstablePlotlyAPI::class)
