@@ -47,9 +47,11 @@ provides the visualisation apps.
 
 ## Acknowledgements
 
-We are very grateful to contributions from:
-* [Roland Grinis, GrinisRIT ltd.](https://github.com/grinisrit)
-* [Andrei Kislitsin](https://github.com/AndreiKingsley)
+The following research has been carried out using our platform:
+* R. Grinis, A. Kislitsyn, I. Drozdov and K. Shulga *Are Cryptocurrency Markets 
+Running Behind the Fed? A Significant Shift in Crypto Markets Microstructure* 
+(October 20, 2021). Available at 
+[SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3951812)
 
 We kindly acknowledge support from
 [Finery Markets](https://finerymarkets.com/), 
