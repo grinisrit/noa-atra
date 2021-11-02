@@ -51,7 +51,7 @@ The following research has been carried out using our platform:
 * R. Grinis, A. Kislitsyn, I. Drozdov and K. Shulga *Are Cryptocurrency Markets 
 Running Behind the Fed? A Significant Shift in Crypto Markets Microstructure* 
 (October 20, 2021). Available at 
-[SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3951812)
+[SSRN](http://ssrn.com/abstract=3951812)
 
 We kindly acknowledge support from
 [Finery Markets](https://finerymarkets.com/), 
