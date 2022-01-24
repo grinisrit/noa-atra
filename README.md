@@ -58,4 +58,21 @@ We kindly acknowledge support from
 [GrinisRIT ltd.](https://www.grinisrit.com/) and
 [JetBrains Research](https://research.jetbrains.org/).
 
-(c) 2021 GrinisRIT ltd. and contributors
+## License
+
+NOA-ATRA is licensed under the terms and conditions of the GNU General
+Public License (GPL) version 3 or - at your option - any later
+version. The GPL can be read [online](https://www.gnu.org/licenses/gpl-3.0.en.html), 
+or see the full [LICENSE](LICENSE)
+
+Please note that NOA-ATRA license does NOT feature a
+template exception to the GNU General Public License. This means that
+you must publish any source code which uses any of the NOA-ATRA library functionality 
+if you want to redistribute your program to third parties. If
+this is unacceptable to you, please [contact us](info@grinisrit.com) 
+for a commercial license.
+
+For support or consultancy services 
+contact [GrinisRIT](https://www.grinisrit.com).
+
+(c) 2022 GrinisRIT ltd. 
